@@ -23,12 +23,17 @@ alias cp='nocorrect cp'       # no spelling correction on cp
 alias mkdir='nocorrect mkdir' # no spelling correction on mkdir
 alias m="nocorrect make -j3 -k"
 alias v="valgrind --tool=memcheck --track-origins=yes  --show-reachable=yes --error-limit=no"
+alias rm="trash"
 
 export ALTERNATE_EDITOR="" # Should start emacs --daemon if emacsclient runs without one.
 alias e='emacsclient -t'
 alias ec='emacsclient -c'
 
+# oh-my-zsh options
+DISABLE_CORRECTION="true"
 DISABLE_AUTO_UPDATE="true"
+
+
 plugins=(git github screen dev-profile keychain archlinux battery ssh-agent autojump)
 
 source $ZSH/oh-my-zsh.sh

@@ -1,0 +1,31 @@
+" Color scheme
+colorscheme molokai
+
+" No spell checking
+set nospell
+
+set linebreak
+set wrap
+
+" Ignored packages
+UnBundle 'PIV'
+UnBundle 'clang_complete'
+UnBundle 'Valloric/YouCompleteMe'
+UnBundle 'Shougo/neocomplcache'
+UnBundle 'vim-powerline'
+
+set clipboard+=unnamed
+set guioptions+=a
+
+" set exrc            " enable per-directory .vimrc files
+" set secure          " disable unsafe commands in local .vimrc files
+set modeline
+
+set switchbuf=usetab
+
+" 80-column limit
+set colorcolumn=80
+highlight ColorColumn ctermbg=lightgrey guibg=lightgrey
+
+"set syntax=on
+"set filetype=on
