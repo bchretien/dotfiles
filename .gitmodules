@@ -1,0 +1,6 @@
+[submodule "gdbinit"]
+	path = gdbinit
+	url = https://github.com/bchretien/Gdbinit
+[submodule "oh-my-zsh"]
+	path = oh-my-zsh
+	url = git@github.com:bchretien/oh-my-zsh.git
