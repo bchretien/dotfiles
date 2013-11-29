@@ -1,6 +1,6 @@
-[user]
-    email = chretien@lirmm.fr
-    name = Benjamin Chrétien
+[include]
+    # For username / creds / etc
+    path = ~/.gitconfig.local
 
 [color]
     branch = auto
