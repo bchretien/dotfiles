@@ -33,8 +33,8 @@ alias ec='emacsclient -c'
 DISABLE_CORRECTION="true"
 DISABLE_AUTO_UPDATE="true"
 
-
-plugins=(git github screen dev-profile keychain archlinux battery ssh-agent autojump)
+# Plugins to be loaded
+plugins=(git github screen dev-profile keychain archlinux battery ssh-agent autojump history-substring-search)
 
 source $ZSH/oh-my-zsh.sh
 
