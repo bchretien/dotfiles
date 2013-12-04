@@ -20,6 +20,11 @@ for i in $dotfiles; do
  ln -sf `pwd`/$i $HOME/$i
 done
 
+dotdirs=`find . -maxdepth 1 -type d -and -name '.*' -and -not \( -path "./.git" -o -path "." \)`
+for i in $dotdirs; do
+ ln -sf `pwd`/$i $HOME/$i
+done
+
 ln -sf `pwd`/.emacs.d ~/.emacs.d
 
 # Create directories if necessary

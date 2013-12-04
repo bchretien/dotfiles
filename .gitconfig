@@ -2,6 +2,9 @@
     # For username / creds / etc
     path = ~/.gitconfig.local
 
+[init]
+    templatedir = ~/.git_template
+
 [color]
     branch = auto
     diff = auto
@@ -25,6 +28,9 @@
 
 [alias]
     st = status -s
+
+    # Ctags support
+    ctags = "!.git/hooks/ctags"
 
     cl = clone
 

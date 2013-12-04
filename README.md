@@ -21,3 +21,4 @@ Supported:
 * zsh
 * vim
 * tmux
+* exuberant-ctags
