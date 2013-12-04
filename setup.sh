@@ -15,11 +15,19 @@ cd spf13-vim
 ./bootstrap.sh
 cd ..
 
+# Files starting with .
 dotfiles=`find . -maxdepth 1 -type f -and -name '.*'`
 for i in $dotfiles; do
  ln -sf `pwd`/$i $HOME/$i
 done
 
+# Links starting with .
+dotlinks=`find . -maxdepth 1 -type l -and -name '.*'`
+for i in $dotlinks; do
+ ln -sf `pwd`/$i $HOME/$i
+done
+
+# Directories starting with . (except . and .git)
 dotdirs=`find . -maxdepth 1 -type d -and -name '.*' -and -not \( -path "./.git" -o -path "." \)`
 for i in $dotdirs; do
  ln -sf `pwd`/$i $HOME/$i
