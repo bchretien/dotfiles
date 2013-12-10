@@ -29,3 +29,17 @@ highlight ColorColumn ctermbg=lightgrey guibg=lightgrey
 
 "set syntax=on
 "set filetype=on
+
+" Vim-CtrlSpace
+let g:airline_exclude_preview = 1
+let g:ctrlspace_use_tabline = 1
+hi CtrlSpaceSelected term=reverse ctermfg=187 ctermbg=23 cterm=bold
+hi CtrlSpaceNormal term=NONE ctermfg=244 ctermbg=232 cterm=NONE
+hi CtrlSpaceFound ctermfg=220 ctermbg=NONE cterm=bold
+
+" Automatically reload .vimrc when updated
+" See: http://superuser.com/questions/132029/how-do-you-reload-your-vimrc-file-without-restarting-vim
+augroup myvimrc
+    au!
+    au BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
+augroup END

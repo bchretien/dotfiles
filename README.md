@@ -26,5 +26,6 @@ Supported:
 * tmux
 * exuberant-ctags
 * autojump
+* ack
 
 [1]: .gitconfig.local

@@ -9,12 +9,6 @@ if ! `test x$(basename $(pwd)) = x.dotfiles`; then
  exit 1
 fi
 
-# Install spf13-vim
-echo "Installing spf13-vim..."
-cd spf13-vim
-./bootstrap.sh
-cd ..
-
 # Files starting with .
 dotfiles=`find . -maxdepth 1 -type f -and -name '.*'`
 for i in $dotfiles; do
@@ -32,6 +26,12 @@ dotdirs=`find . -maxdepth 1 -type d -and -name '.*' -and -not \( -path "./.git" 
 for i in $dotdirs; do
  ln -sf `pwd`/$i $HOME/$i
 done
+
+# Install spf13-vim
+echo "Installing spf13-vim..."
+cd spf13-vim
+./bootstrap.sh
+cd ..
 
 ln -sf `pwd`/.emacs.d ~/.emacs.d
 
