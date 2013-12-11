@@ -24,3 +24,6 @@ export MAIL="/var/mail/$USER"
 export TERM=xterm-256color
 
 apt_pref='apt-get'
+
+# Python
+export PYTHONSTARTUP=$HOME/.pythonrc.py
