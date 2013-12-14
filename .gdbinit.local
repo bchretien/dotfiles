@@ -48,3 +48,25 @@ set $CONTEXTSIZE_STACK = 6
 set $CONTEXTSIZE_DATA  = 8
 set $CONTEXTSIZE_CODE  = 8
 
+# __________________local functions_________________
+
+# Source code coloring
+define clist
+    set logging overwrite on
+    set logging file /tmp/gdb_clist
+    set logging redirect on
+    set logging on
+    list
+    set logging off
+    set logging redirect off
+    set logging overwrite off
+    shell if `test pygmentize`; then \
+              pygmentize -l cpp -g /tmp/gdb_clist; \
+          else \
+              cat /tmp/gdb_clist; \
+          fi
+end
+document clist
+Syntax: list <COUNT>
+| Print colored source code.
+end
