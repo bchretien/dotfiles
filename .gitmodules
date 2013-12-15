@@ -10,3 +10,6 @@
 [submodule ".git_template"]
 	path = .git_template
 	url = https://github.com/bchretien/git_template
+[submodule ".conky-themes"]
+	path = .conky-themes
+	url = https://github.com/bchretien/conky-themes
