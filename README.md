@@ -21,9 +21,13 @@ Required:
 * Git
 
 Supported:
-* zsh
-* vim
+* conky
+* gpg
 * tmux
+* vim
+* zsh
+
+Dependencies:
 * exuberant-ctags
 * autojump
 * ack
