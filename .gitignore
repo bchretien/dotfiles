@@ -2,5 +2,7 @@
 .vimrc
 .vimrc.before
 .vimrc.bundles
+.zshrc.local
 .zprofile.local
+.gitconfig.local
 gmail.dat

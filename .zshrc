@@ -44,10 +44,10 @@ setopt autocd
 # Unset shared history
 unsetopt share_history
 
-if [ -f  $HOME/.travis/travis.sh ]; then
-    . /home/moulard/.travis/travis.sh
-fi
-
 if [ -f /etc/zsh_command_not_found ]; then
     . /etc/zsh_command_not_found
+fi
+
+if [ -f ~/.zshrc.local ]; then
+    source ~/.zshrc.local
 fi
