@@ -9,6 +9,9 @@ if ! `test x$(basename $(pwd)) = x.dotfiles`; then
     exit 1
 fi
 
+git submodule init
+git submodule update --recursive
+
 # Files ending with .ini are copied if they do not already exist
 inifiles=`find . -maxdepth 1 -type f -and -name '*.ini'`
 for i in $inifiles; do
