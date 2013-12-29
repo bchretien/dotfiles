@@ -37,8 +37,6 @@ DISABLE_AUTO_UPDATE="true"
 # Plugins to be loaded
 plugins=(git github screen dev-profile keychain archlinux battery ssh-agent autojump history-substring-search)
 
-source $ZSH/oh-my-zsh.sh
-
 setopt autocd
 
 # Unset shared history
@@ -51,3 +49,5 @@ fi
 if [ -f ~/.zshrc.local ]; then
     source ~/.zshrc.local
 fi
+
+source $ZSH/oh-my-zsh.sh
