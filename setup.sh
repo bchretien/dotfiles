@@ -19,7 +19,7 @@ for i in $inifiles; do
 done
 
 # Files starting with .
-dotfiles=`find . -maxdepth 1 -type f -and -name '.*'`
+dotfiles=`find . -maxdepth 1 -type f -and -name '.*' -and -not -name '*.ini'`
 for i in $dotfiles; do
     ln -sf `pwd`/$i $HOME/$i
 done
