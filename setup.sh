@@ -45,7 +45,7 @@ cd spf13-vim
 ./bootstrap.sh
 cd ..
 
-ln -sf `pwd`/.emacs.d ~/.emacs.d
+ln -sf `pwd`/.emacs.d ~
 
 # Create directories if necessary
 mkdir ~/.ssh 2> /dev/null || true

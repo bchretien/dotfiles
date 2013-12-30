@@ -13,7 +13,11 @@ cd .dotfiles
 ```
 ## Configuration
 
-The only file that has to be modified is [.gitconfig.local][1] (name and e-mail address for Git).
+The only files that have to be modified are:
+* [.gitconfig.local]() (name and e-mail address for Git)
+* [.zprofile.local]() (local .zprofile, i.e. put the code that starts the X Window System etc.)
+* [.zshenv.local]() (exported variables: paths, $EDITOR, etc.)
+* [.zshrc.local]() (local .zshrc, to change the theme etc.)
 
 ## Dependencies
 
@@ -32,4 +36,3 @@ Dependencies:
 * autojump
 * ack
 
-[1]: .gitconfig.local

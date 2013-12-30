@@ -27,3 +27,12 @@ apt_pref='apt-get'
 
 # Python
 export PYTHONSTARTUP=$HOME/.pythonrc.py
+
+# Useful aliases
+alias m="make -j8"
+alias v="valgrind --tool=memcheck --track-origins=yes  --show-reachable=yes --error-limit=no"
+
+# Use local .zshenv
+if [ -f ~/.zshenv.local ]; then
+    source ~/.zshenv.local
+fi
