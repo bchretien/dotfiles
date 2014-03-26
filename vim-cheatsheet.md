@@ -230,6 +230,16 @@ Arrow keys require full `vim` package.
     e
     E
 
+## EasyAlign
+
+### Align selected text around =
+
+    <Enter>=
+
+#### Example: align paragraph around =
+
+    vip<Enter>=
+
 ## EasyMotion
 
 ### Move forward
