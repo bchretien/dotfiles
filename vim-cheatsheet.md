@@ -217,6 +217,17 @@ Arrow keys require full `vim` package.
 
     gd
 
+# Miscellaneous
+
+### Type digraphs (e.g. subscript, superscript) in insert mode
+
+    <ctrl> + K, <digraph code>
+
+#### Example: type ² and ₃
+
+    <ctrl> + K, 22
+    <ctrl> + K, s3
+
 # Plugins
 
 ## Vim-CtrlSpace
