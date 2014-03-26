@@ -3,3 +3,6 @@ Bundle 'majutsushi/tagbar'
 Bundle 'szw/vim-ctrlspace'
 Bundle 'tpope/vim-obsession'
 Bundle 'LaTeX-Box-Team/LaTeX-Box'
+Bundle 'chrisbra/csv.vim'
+Bundle 'junegunn/vim-easy-align'
+Bundle "myusuf3/numbers.vim"
