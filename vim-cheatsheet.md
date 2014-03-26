@@ -62,14 +62,14 @@ From Normal mode, press `v` to switch to Visual mode.
 
 To return to Normal mode, press `ESC`.
 
-## Open File/Directory
+### Open File/Directory
 
     $ vim <file/dir>
 
     $ vim
     :e <file/dir>
 
-## View File
+### View File
 
     $ view <file/dir>
 
@@ -79,57 +79,57 @@ To return to Normal mode, press `ESC`.
 
     gitbash$ vim <file/dir>
 
-## Save
+### Save
 
     :w
 
-## Save As...
+### Save As...
 
     :o
 
-## Quit
+### Quit
 
     :q
 
-## Force Quit
+### Force Quit
 
     :q!
 
-## Undo
+### Undo
 
     u
 
-## Redo
+### Redo
 
-    Control+R
+    <ctrl> + R
 
-## Cancel Vim Command Chain
+### Cancel Vim Command Chain
 
     ESC
 
-## Next Search Result
+### Next Search Result
 
     n
 
-## Find
+### Find
 
     /<term>
 
 `n` next match.
 
-## Replace
+### Replace
 
     :s/<term>/<replacement>/g
 
-## Search in Directory
+### Search in Directory
 
     :grep <term> *.?<file extensions>
 
-## Copy Lines
+### Copy Lines
 
     yy[n]
 
-## Paste Lines
+### Paste Lines
 
     p
 
@@ -139,47 +139,55 @@ To return to Normal mode, press `ESC`.
 
 Arrow keys require full `vim` package.
 
-## Left (Visual)
+### Left (Visual)
 
     h
 
-## Down (Visual)
+### Down (Visual)
 
     j
 
-## Up (Visual)
+### Up (Visual)
 
     k
 
-## Right (Visual)
+### Right (Visual)
 
     l
 
-## Start of Line
+### Start of Line
 
     I
 
-## End of Line
+### End of Line
 
     A
 
-## Go to Line
+### Go to Line
 
     :<n>
 
-## Insert Line Below
+### Insert Line Below
 
     o
 
-## Insert Line Above
+### Insert Line Above
 
     O
 
-## Delete
+### Delete
 
     x
 
-    Control+D
+    <ctrl> + D
+
+### Go to previous position (in stack)
+
+    <ctrl> + O
+
+### Go to next position (in stack)
+
+    <ctrl> + I
 
 ### End of File
 
@@ -191,14 +199,49 @@ Arrow keys require full `vim` package.
 
 # Windows
 
-## Split Windows
+### Split Windows
 
-    Control+W, S
+    <ctrl> + W, S
 
-## Switch Window
+### Switch Window
 
-    Control+W, Control+W
+    <ctrl> + W, <ctrl> + W
 
-## Close Window
+### Close Window
 
     :hide
+
+# Development
+
+### Jump to function definition
+
+    gd
+
+# Plugins
+
+## Vim-CtrlSpace
+
+### Toggle
+
+    <ctrl> + space
+
+### Open file
+
+    e
+    E
+
+## EasyMotion
+
+### Move forward
+
+    <leader><leader>w
+
+### Move backward
+
+    <leader><leader>b
+
+## Tagbar
+
+### Toggle tag bar
+
+    <leader>tt
