@@ -221,6 +221,10 @@ Arrow keys require full `vim` package.
 
     gd
 
+### Reflow the current paragraph to fit within 80 characters
+
+    gqap
+
 # Miscellaneous
 
 ### Type digraphs (e.g. subscript, superscript) in insert mode
@@ -270,3 +274,13 @@ Arrow keys require full `vim` package.
 ### Toggle tag bar
 
     <leader>tt
+
+## vim-dragvisuals
+
+### Move block of selected text
+
+    h, j, k, l
+
+### Duplicate block of selected text
+
+    D
