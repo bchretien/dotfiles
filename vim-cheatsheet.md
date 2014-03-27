@@ -183,15 +183,19 @@ Arrow keys require full `vim` package.
 
 ### Go to previous position (in stack)
 
-    <ctrl> + O
+    <ctrl> + o
 
 ### Go to next position (in stack)
 
-    <ctrl> + I
+    <ctrl> + i
 
 ### End of File
 
     G
+
+### Go to next same word on cursor
+
+    gd
 
 # Help
 
