@@ -284,3 +284,13 @@ Arrow keys require full `vim` package.
 ### Duplicate block of selected text
 
     D
+
+## YankStack
+
+### Cycle backwards through your history of yanks
+
+    <alt> p
+
+### Cycle forwards through your history of yanks
+
+    <alt> P
