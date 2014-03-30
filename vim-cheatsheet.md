@@ -18,25 +18,22 @@ Original file from [Andrew Pennebaker](https://github.com/mcandre/dotfiles/blob/
 
 ## Install
 
-    $ apt-get install vim
+    On Debian/Ubuntu:
+    $ sudo apt-get install vim
 
-    $ brew install vim macvim
-
-    C:\> chocolatey install vim
-
-[vim-7.3.exe](http://www.vim.org/download.php#pc)
+    On Arch Linux:
+    $ sudo pacman -S vim
 
 By default, Ubuntu uses the `vim.tiny`, which lacks support for arrow key navigation. Use `apt-get install vim` to upgrade to full `vim` with arrow key support.
 
 
-
 ## Configure
 
-    ~/.vimrc
+In these dotfiles:
 
-    ~/_vimrc
-
-[Reference Dotfile](https://github.com/mcandre/dotfiles/blob/master/.vimrc)
+    ~/.vimrc.local
+    ~/.vimrc.before.local
+    ~/.vimrc.bundles.local
 
 ## Repositories
 
@@ -72,12 +69,6 @@ To return to Normal mode, press `ESC`.
 ### View File
 
     $ view <file/dir>
-
-### Windows
-
-    C:\> vim <file/dir>
-
-    gitbash$ vim <file/dir>
 
 ### Save
 
