@@ -190,3 +190,5 @@ let g:ycm_key_list_previous_completion=['<C-S-TAB>', '<Up>']
 " Set the default action of SuperTab to triggering <C-TAB>
 "let g:SuperTabDefaultCompletionType = '<C-Tab>'
 let g:SuperTabBackward = '<C-S-Tab>'
+
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
