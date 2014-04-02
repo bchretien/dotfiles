@@ -260,6 +260,13 @@ Arrow keys require full `vim` package.
 
     <leader><leader>b
 
+## DoxygenToolkit
+
+### Generate Doxygen block for current function
+
+    <leader>d
+    :Dox
+
 ## Tagbar
 
 ### Toggle tag bar

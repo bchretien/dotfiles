@@ -83,6 +83,34 @@ let g:DVB_TrimWS = 1
 " ctags support
 set tags+=tags;$HOME
 
+" Doxygen syntax highlighting
+let g:load_doxygen_syntax=1
+
+" Default number of spaces for indent
+set shiftwidth=2
+
+" N-s: do not indent C++ namespaces
+" g0:  do not indent public,private...
+set cino=N0,g0
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" DoxygenToolkit.vim
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use C++ here for /// doxygen doc, else /** */ is used.
+let g:DoxygenToolkit_commentType = "C++"
+" Leading character used for @brief, @param...
+let g:DoxygenToolkit_versionString = "\\"
+" Comment block with ,d
+nmap <Leader>d :Dox<Enter>
+
+let g:DoxygenToolkit_briefTag_pre="\\brief "
+let g:DoxygenToolkit_paramTag_pre="\\param "
+let g:DoxygenToolkit_returnTag="\\return "
+let g:DoxygenToolkit_blockHeader=""
+let g:DoxygenToolkit_blockFooter=""
+let g:DoxygenToolkit_authorName=$FULLNAME
+"let g:DoxygenToolkit_licenseTag=
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" EasyAlign
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -107,8 +135,8 @@ hi CtrlSpaceFound ctermfg=220 ctermbg=NONE cterm=bold
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" YankStack
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set <m-p>=^[p
-set <m-P>=^[P
+set <M-p>=^[p
+set <M-P>=^[P
 
 " fix meta-keys which generate <Esc>a .. <Esc>z
 let c='a'
@@ -117,3 +145,6 @@ while c <= 'z'
   exec "imap \e".c." <M-".toupper(c).">"
   let c = nr2char(1+char2nr(c))
 endw
+
+" Work around the ambiguity with escape sequences
+set ttimeout ttimeoutlen=50
