@@ -13,5 +13,17 @@ Bundle 'chrisbra/unicode.vim'
 Bundle 'maxbrunsfeld/vim-yankstack'
 Bundle 'tpope/vim-liquid'
 Bundle 'othree/html5.vim'
+
+" DoxygenToolkit: Doxygen support.
 Bundle 'vim-scripts/DoxygenToolkit.vim'
+
+" vim-cpp-enhanced-highlight: Enhanced syntax highlighting for C++
 Bundle 'octol/vim-cpp-enhanced-highlight'
+
+" UltiSnips: engine.
+Bundle 'sirver/ultisnips'
+" UltiSnips: snippets.
+Bundle 'honza/vim-snippets'
+
+" SuperTab: Perform all vim insert mode completions with Tab
+Bundle 'ervandew/supertab'

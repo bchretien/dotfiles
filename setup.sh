@@ -45,6 +45,9 @@ cd spf13-vim
 ./bootstrap.sh
 cd ..
 
+# Compile YouCompleteMe for vim
+./compile_youcompleteme.sh
+
 ln -sf `pwd`/.emacs.d ~
 
 # Create directories if necessary

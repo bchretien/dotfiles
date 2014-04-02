@@ -229,6 +229,12 @@ Arrow keys require full `vim` package.
 
 # Plugins
 
+## ctrlp
+
+### Fast mechanism to load files
+
+    <ctrl> + p
+
 ## Vim-CtrlSpace
 
 ### Toggle
@@ -282,6 +288,26 @@ Arrow keys require full `vim` package.
 ### Duplicate block of selected text
 
     D
+
+## UltiSnips
+
+### Load snippet
+
+    [snippet name]<tab>
+
+### Jump to next part of snippet
+
+    <tab>
+
+### Jump to previous part of snippet
+
+    <shift> + <tab>
+
+## Undotree
+
+### Trigger Undotree
+
+    <leader>u
 
 ## YankStack
 

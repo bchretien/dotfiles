@@ -8,6 +8,9 @@ let g:UltiSnipsJumpBackwardTrigger = "<c-b>"
 
 " spf13 options {
 
+    " Choose groups to bundle
+    let g:spf13_bundle_groups=['general', 'youcompleteme', 'programming', 'python', 'javascript', 'html', 'misc']
+
     " Prevent automatically changing to open file directory
     "   let g:spf13_no_autochdir = 1
 
@@ -47,7 +50,7 @@ let g:UltiSnipsJumpBackwardTrigger = "<c-b>"
     " automatically complete, pressing <CR> inserts a newline, etc. Iff the
     " menu is open, tab will cycle through it. If a snippet is selected, <C-k>
     " expands it and jumps between fields.
-    "   let g:spf13_noninvasive_completion = 1
+    let g:spf13_noninvasive_completion = 1
 
     " Don't turn conceallevel or concealcursor
     "   let g:spf13_no_conceal = 1
