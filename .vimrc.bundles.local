@@ -27,3 +27,6 @@ Bundle 'honza/vim-snippets'
 
 " SuperTab: Perform all vim insert mode completions with Tab
 Bundle 'ervandew/supertab'
+
+" CUDA snippets and syntax highlighting
+Bundle 'cmaureir/snipmate-snippets-cuda'
