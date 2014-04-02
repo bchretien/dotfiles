@@ -309,6 +309,12 @@ Arrow keys require full `vim` package.
 
     <leader>u
 
+## vim-multiple-cursors
+
+### Select multiple words
+
+    <ctrl> + n
+
 ## YankStack
 
 ### Cycle backwards through your history of yanks

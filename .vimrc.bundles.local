@@ -32,3 +32,6 @@ Bundle 'cmaureir/snipmate-snippets-cuda'
 
 " over.vim: replace preview
 Bundle 'osyo-manga/vim-over'
+
+" vim-multiple-cursors: True Sublime Text style multiple selections for Vim
+Bundle 'terryma/vim-multiple-cursors'
