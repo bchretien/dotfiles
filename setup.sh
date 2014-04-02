@@ -24,26 +24,37 @@ done
 # Files starting with .
 dotfiles=`find . -maxdepth 1 -type f -and -name '.*' -and -not -name '*.ini'`
 for i in $dotfiles; do
-    ln -sf `pwd`/$i $HOME/$i
+    # ./.filename becomes .filename
+    ii=${i#./}
+    ln -sf `pwd`/$ii $HOME/$ii
 done
 
 # Links starting with .
 dotlinks=`find . -maxdepth 1 -type l -and -name '.*'`
 for i in $dotlinks; do
-    ln -sf `pwd`/$i $HOME/$i
+    # ./.filename becomes .filename
+    ii=${i#./}
+    ln -sf `pwd`/$ii $HOME/$ii
 done
 
 # Directories starting with . (except . and .git)
 dotdirs=`find . -maxdepth 1 -type d -and -name '.*' -and -not \( -path "./.git" -o -path "." \)`
 for i in $dotdirs; do
-    ln -sf `pwd`/$i $HOME/$i
+    # ./.filename becomes .filename
+    ii=${i#./}
+    ln -sf `pwd`/$ii $HOME/$ii
 done
 
 # Install spf13-vim
-echo "Installing spf13-vim..."
-cd spf13-vim
-./bootstrap.sh
-cd ..
+if [[ -L ~/.vimrc ]] && [[ "$(readlink ~/.vimrc)" = "$HOME/.spf13-vim-3/.vimrc" ]]; then
+    echo "Updating spf13-vim..."
+    vim +BundleInstall! +BundleClean +qall
+else
+    echo "Installing spf13-vim..."
+    cd spf13-vim
+    ./bootstrap.sh
+    cd ..
+fi
 
 # Compile YouCompleteMe for vim
 ./compile_youcompleteme.sh

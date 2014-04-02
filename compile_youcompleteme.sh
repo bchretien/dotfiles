@@ -1,6 +1,11 @@
 #!/bin/sh
 cd ~/.spf13-vim-3/.vim/bundle/YouCompleteMe/
 
+# command_exists function from YouCompleteMe's install.sh script
+function command_exists {
+  hash "$1" 2>/dev/null ;
+}
+
 # num_cores function from YouCompleteMe's install.sh script
 function num_cores {
   if command_exists nproc; then
