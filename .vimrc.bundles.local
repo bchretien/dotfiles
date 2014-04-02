@@ -3,7 +3,6 @@ Bundle 'majutsushi/tagbar'
 Bundle 'szw/vim-ctrlspace'
 Bundle 'tpope/vim-obsession'
 Bundle 'LaTeX-Box-Team/LaTeX-Box'
-Bundle 'chrisbra/csv.vim'
 Bundle 'junegunn/vim-easy-align'
 Bundle 'myusuf3/numbers.vim'
 Bundle 'atweiden/vim-betterdigraphs'
@@ -30,3 +29,6 @@ Bundle 'ervandew/supertab'
 
 " CUDA snippets and syntax highlighting
 Bundle 'cmaureir/snipmate-snippets-cuda'
+
+" over.vim: replace preview
+Bundle 'osyo-manga/vim-over'

@@ -19,6 +19,12 @@ set guioptions+=a
 set modeline
 set switchbuf=usetab
 
+" Searching starts after you enter the string
+set incsearch
+
+" Turns on search highlighting
+set hlsearch
+
 " Remove indent guides
 let g:indent_guides_enable_on_vim_startup = 0
 
