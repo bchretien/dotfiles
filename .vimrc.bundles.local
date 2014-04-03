@@ -35,3 +35,6 @@ Bundle 'osyo-manga/vim-over'
 
 " vim-multiple-cursors: True Sublime Text style multiple selections for Vim
 Bundle 'terryma/vim-multiple-cursors'
+
+" Incorporates the functionality of CMake into Vim
+Bundle 'jalcine/cmake.vim'
