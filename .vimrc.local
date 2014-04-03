@@ -89,7 +89,9 @@ let g:DVB_TrimWS = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " ctags support
-set tags+=tags;$HOME
+" Note: with Git hooks available in these dotfiles, using "git ctags" will
+" generate tags in .git/tags
+set tags+=~/.vim/tags;.git/tags;$HOME
 
 " Doxygen syntax highlighting
 let g:load_doxygen_syntax=1
@@ -118,6 +120,15 @@ let g:DoxygenToolkit_blockHeader=""
 let g:DoxygenToolkit_blockFooter=""
 let g:DoxygenToolkit_authorName=$FULLNAME
 "let g:DoxygenToolkit_licenseTag=
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" cmake.vim
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let g:cmake_cxx_compiler = 'g++'
+let g:cmake_c_compiler = 'gcc'
+let g:cmake_build_dirs = [ "build" ]
+let g:cmake_build_type = "RelWithDebInfo"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" EasyAlign
