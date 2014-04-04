@@ -14,7 +14,17 @@ UnBundle 'clang_complete'
 UnBundle 'vim-powerline'
 
 set clipboard+=unnamed
-set guioptions+=a
+
+" Enable/disable GUI features
+set guioptions+=a " autoselect
+set guioptions+=c " console dialogs
+set guioptions-=m " menu bar
+set guioptions-=T " toolbar
+set guioptions-=l " left-hand scrollbar
+set guioptions-=L
+set guioptions-=r " right-hand scrollbar
+set guioptions-=R
+set guioptions-=b " bottom scrollbar
 
 set modeline
 set switchbuf=usetab
