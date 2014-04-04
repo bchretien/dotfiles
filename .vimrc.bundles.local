@@ -38,3 +38,8 @@ Bundle 'terryma/vim-multiple-cursors'
 
 " Incorporates the functionality of CMake into Vim
 Bundle 'jalcine/cmake.vim'
+
+" Extended session management for Vim
+Bundle 'xolox/vim-misc'
+Bundle 'xolox/vim-session'
+

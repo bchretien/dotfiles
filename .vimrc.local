@@ -105,7 +105,9 @@ let g:DVB_TrimWS = 1
 " ctags support
 " Note: with Git hooks available in these dotfiles, using "git ctags" will
 " generate tags in .git/tags
-set tags+=~/.vim/tags;.git/tags;$HOME
+set autochdir
+set tags+=./.git/tags;
+set tags+=$HOME/.vim/tags/*
 
 " Doxygen syntax highlighting
 let g:load_doxygen_syntax=1
@@ -116,6 +118,13 @@ set shiftwidth=2
 " N-s: do not indent C++ namespaces
 " g0:  do not indent public,private...
 set cino=N0,g0
+
+" Add comment on newline when dealing with doxygen comments
+au FileType c,cpp,cuda setlocal formatoptions+=r
+au FileType c,cpp,cuda setlocal formatoptions+=c
+au FileType c,cpp,cuda setlocal formatoptions+=o
+au FileType c,cpp,cuda setlocal comments-=://
+au FileType c,cpp,cuda setlocal comments+=:///
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" DoxygenToolkit.vim
@@ -154,10 +163,10 @@ vmap <Enter> <Plug>(EasyAlign)
 " Start interactive EasyAlign with a Vim movement
 nmap <Leader>a <Plug>(EasyAlign)
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" Syntastic
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 highlight link SyntasticError ErrMsg
 highlight link SyntasticWarning airline_warning
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
@@ -225,3 +234,9 @@ let g:ycm_key_list_previous_completion=['<C-S-TAB>', '<Up>']
 let g:SuperTabBackward = '<C-S-Tab>'
 
 let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+
+" Use tags that can be generated with 'git ctags'
+let g:ycm_collect_identifiers_from_tags_files = 1
+
+nmap <Leader>n :lnext<Enter>
+nmap <Leader>p :lprevious<Enter>
