@@ -1,6 +1,11 @@
 " Color scheme
 colorscheme molokai
 
+" Font (patched for airline)
+"set guifont=Meslo\ LG\ M\ Regular\ for\ Powerline
+let g:airline_powerline_fonts = 1
+let g:airline_theme="murmur"
+
 " No spell checking
 set nospell
 
@@ -11,7 +16,6 @@ set wrap
 " Ignored packages
 UnBundle 'PIV'
 UnBundle 'clang_complete'
-UnBundle 'vim-powerline'
 
 set clipboard+=unnamed
 

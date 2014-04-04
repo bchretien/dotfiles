@@ -13,3 +13,6 @@
 [submodule ".conky-themes"]
 	path = .conky-themes
 	url = https://github.com/bchretien/conky-themes
+[submodule ".fonts"]
+	path = .fonts
+	url = https://github.com/Lokaltog/powerline-fonts

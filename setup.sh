@@ -67,3 +67,6 @@ mkdir ~/.gnupg 2> /dev/null || true
 
 echo "Symbolic links have been created successfully"
 
+# Load fonts
+fc-cache -vf ~/.fonts
+echo "Powerline fonts have been cached. If using vim in a terminal, close all open terminal windows."
