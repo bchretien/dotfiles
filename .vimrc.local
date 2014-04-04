@@ -154,15 +154,13 @@ vmap <Enter> <Plug>(EasyAlign)
 " Start interactive EasyAlign with a Vim movement
 nmap <Leader>a <Plug>(EasyAlign)
 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" Vim-CtrlSpace
+"" Syntastic
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:airline_exclude_preview = 1
-let g:ctrlspace_use_tabline = 0
-let g:ctrlspace_use_mouse_and_arrows = 1
-hi CtrlSpaceSelected term=reverse ctermfg=187 ctermbg=23 cterm=bold
-hi CtrlSpaceNormal term=NONE ctermfg=244 ctermbg=232 cterm=NONE
-hi CtrlSpaceFound ctermfg=220 ctermbg=NONE cterm=bold
+highlight link SyntasticError ErrMsg
+highlight link SyntasticWarning airline_warning
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" UltiSnips
@@ -174,6 +172,16 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Vim-CtrlSpace
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:airline_exclude_preview = 1
+let g:ctrlspace_use_tabline = 0
+let g:ctrlspace_use_mouse_and_arrows = 1
+hi CtrlSpaceSelected term=reverse ctermfg=187 ctermbg=23 cterm=bold
+hi CtrlSpaceNormal term=NONE ctermfg=244 ctermbg=232 cterm=NONE
+hi CtrlSpaceFound ctermfg=220 ctermbg=NONE cterm=bold
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" vim-multiple-cursors
