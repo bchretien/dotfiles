@@ -59,6 +59,9 @@ fi
 # Compile YouCompleteMe for vim
 ./compile_youcompleteme.sh
 
+# Add custom snippets
+ln -sf `pwd`/custom_snippets $HOME/.vim/bundle/vim-snippets/
+
 ln -sf `pwd`/.emacs.d ~
 
 # Create directories if necessary

@@ -229,7 +229,7 @@ Arrow keys require full `vim` package.
 
 # Plugins
 
-## ctrlp
+## ctrlp.vim
 
 ### Fast mechanism to load files
 

@@ -182,6 +182,10 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
 
+" Custom snippets
+let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/custom_snippets"
+let g:UltiSnipsSnippetDirectories=["UltiSnips", "custom_snippets"]
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" Vim-CtrlSpace
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
