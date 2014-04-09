@@ -138,6 +138,7 @@ nmap <Leader>d :Dox<Enter>
 
 let g:DoxygenToolkit_briefTag_pre="\\brief "
 let g:DoxygenToolkit_paramTag_pre="\\param "
+let g:DoxygenToolkit_templateParamTag_pre="\\tparam "
 let g:DoxygenToolkit_returnTag="\\return "
 let g:DoxygenToolkit_blockHeader=""
 let g:DoxygenToolkit_blockFooter=""
