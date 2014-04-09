@@ -117,7 +117,8 @@ set shiftwidth=2
 
 " N-s: do not indent C++ namespaces
 " g0:  do not indent public,private...
-set cino=N0,g0
+" (0:  align function arguments
+set cino=N0,g0,(0
 
 " Add comment on newline when dealing with doxygen comments
 au FileType c,cpp,cuda setlocal formatoptions+=r
