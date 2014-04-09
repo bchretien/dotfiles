@@ -127,6 +127,46 @@ au FileType c,cpp,cuda setlocal formatoptions+=o
 au FileType c,cpp,cuda setlocal comments-=://
 au FileType c,cpp,cuda setlocal comments+=:///
 
+" Do not indent template in C++
+function! CppNoTemplateIndent()
+  let l:cline_num = line('.')
+  let l:cline = getline(l:cline_num)
+  let l:pline_num = prevnonblank(l:cline_num - 1)
+  let l:pline = getline(l:pline_num)
+  while l:pline =~# '\(^\s*{\s*\|^\s*//\|^\s*/\*\|\*/\s*$\)'
+    let l:pline_num = prevnonblank(l:pline_num - 1)
+    let l:pline = getline(l:pline_num)
+  endwhile
+  let l:retv = cindent('.')
+  let l:pindent = indent(l:pline_num)
+  "template<typename U,
+  "<--- here
+  if l:pline =~# '^\s*template\s*[<]\=\s*[a-zA-Z_ ,\t]*$'
+    let l:retv = l:pindent + &shiftwidth
+  "template <typename U, typename V>
+  "<--- here
+  elseif l:pline =~# '\s*template\s*<[a-zA-Z_ ,\t]*>\s*$'
+    let l:retv = l:pindent
+  elseif l:pline =~# '\s*[a-zA-Z_]*\s*<[a-zA-Z_ ,\t]*>\s*$'
+    let l:retv = l:pindent
+  elseif l:pline =~# '\s*typename\s*.*,\s*$'
+    let l:retv = l:pindent
+  "  typename U>
+  "<--- here
+  elseif l:pline =~# '\s*[a-zA-Z ,\t]*\s*>\s*$'
+    let l:retv = l:pindent - &shiftwidth
+  elseif l:cline =~# '^[a-zA-Z_ ,\t]*>\s*$'
+    let l:retv = l:pindent - &shiftwidth
+  "elseif l:pline =~# '^\s*namespace.*'
+  "  let l:retv = 0
+  endif
+  return l:retv
+endfunction
+
+if has("autocmd")
+  autocmd BufEnter *.{cc,cxx,cpp,cu,h,hh,hpp,hxx,cuh} setlocal indentexpr=CppNoTemplateIndent()
+endif
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" DoxygenToolkit.vim
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
