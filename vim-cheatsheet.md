@@ -246,6 +246,14 @@ Arrow keys require full `vim` package.
     e
     E
 
+### Save workspace
+
+    S
+
+### Load workspace
+
+    L
+
 ## EasyAlign
 
 ### Align selected text around =
