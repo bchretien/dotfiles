@@ -167,6 +167,17 @@ if has("autocmd")
   autocmd BufEnter *.{cc,cxx,cpp,cu,h,hh,hpp,hxx,cuh} setlocal indentexpr=CppNoTemplateIndent()
 endif
 
+" Write file, call emacs for indenting, then reload
+" To use this:
+" :call EmacsIndent()
+function! EmacsIndent()
+  let l:filename = expand("%:p")
+  w
+  echom system("emacs -batch " . l:filename . " --eval '(indent-region (point-min) (point-max) nil)' -f save-buffer -kill")
+  edit!
+  redraw
+endfunction
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" DoxygenToolkit.vim
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
