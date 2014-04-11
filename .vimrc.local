@@ -192,6 +192,10 @@ let g:cmake_build_type = "RelWithDebInfo"
 " Stay in the root directory of the project
 let g:ctrlp_working_path_mode = 'r'
 
+" Ignore build directories
+unlet g:ctrlp_user_command
+set wildignore+=**/*build*/*
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" DoxygenToolkit.vim
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
