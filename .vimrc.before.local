@@ -12,7 +12,7 @@ let g:UltiSnipsJumpBackwardTrigger = "<c-b>"
     let g:spf13_bundle_groups=['general', 'youcompleteme', 'programming', 'python', 'javascript', 'html', 'misc']
 
     " Prevent automatically changing to open file directory
-    "   let g:spf13_no_autochdir = 1
+    let g:spf13_no_autochdir = 1
 
     " Disable views
     "   let g:spf13_no_views = 1
