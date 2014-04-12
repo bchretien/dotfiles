@@ -127,6 +127,10 @@ au FileType c,cpp,cuda setlocal formatoptions+=o
 au FileType c,cpp,cuda setlocal comments-=://
 au FileType c,cpp,cuda setlocal comments+=:///
 
+" Python-mode can be quite slow
+let g:pymode_rope_complete_on_dot = 0
+let g:pymode_rope_lookup_project = 0
+
 " Do not indent template in C++
 function! CppNoTemplateIndent()
   let l:cline_num = line('.')
@@ -185,6 +189,7 @@ let g:cmake_cxx_compiler = 'g++'
 let g:cmake_c_compiler = 'gcc'
 let g:cmake_build_dirs = [ "build" ]
 let g:cmake_build_type = "RelWithDebInfo"
+let g:cmake_inject_flags = {}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" ctrlp.vim
@@ -303,6 +308,17 @@ let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 
 " Use tags that can be generated with 'git ctags'
 let g:ycm_collect_identifiers_from_tags_files = 1
+
+" Disable diagnostics UI
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_enable_diagnostic_highlighting = 0
+
+set completeopt=menu
+
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_max_diagnostics_to_display = 4
+let g:ycm_filepath_completion_use_working_dir = 1
+let g:ycm_cache_omnifunc = 0
 
 nmap <Leader>n :lnext<Enter>
 nmap <Leader>p :lprevious<Enter>
