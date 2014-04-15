@@ -45,6 +45,9 @@ let g:indent_guides_enable_on_vim_startup = 0
 " Set hidden character list that can de display with set list
 set listchars=tab:>-,trail:~,extends:>,precedes:<
 
+" Force saving files that require root permission with w!!
+cmap w!! w !sudo tee > /dev/null %
+
 "====[ Automatically reload .vimrc when updated ]====
 " See: http://superuser.com/questions/132029/how-do-you-reload-your-vimrc-file-without-restarting-vim
 augroup myvimrc

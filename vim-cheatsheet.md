@@ -231,9 +231,13 @@ Arrow keys require full `vim` package.
 
 ## ctrlp.vim
 
-### Fast mechanism to load files
+### Toggle ctrlp (file loader)
 
     <ctrl> + p
+
+### To mark/unmark multiple files
+
+    <ctrl> + z
 
 ## Vim-CtrlSpace
 
