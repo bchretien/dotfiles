@@ -158,6 +158,10 @@ function! CppNoTemplateIndent()
     let l:retv = l:pindent
   elseif l:pline =~# '\s*typename\s*.*,\s*$'
     let l:retv = l:pindent
+  " Foo<Bar<int,double> >
+  "<--- here
+  elseif l:pline =~# '\s*[a-zA-Z ,\t:]*\s*<\s*[a-zA-Z ,\t:&]*\s*<\s*[a-zA-Z ,\t:&]*\s*>\s*>\s*[a-zA-Z ,\t:&]*\s*$'
+    let l:retv = l:pindent
   "  typename U>
   "<--- here
   elseif l:pline =~# '\s*[a-zA-Z ,\t]*\s*>\s*$'

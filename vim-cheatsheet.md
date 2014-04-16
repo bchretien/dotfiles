@@ -188,6 +188,10 @@ Arrow keys require full `vim` package.
 
     gd
 
+### Go to matching brace
+
+    %
+
 # Help
 
     :h '<term>

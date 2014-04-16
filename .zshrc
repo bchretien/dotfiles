@@ -25,6 +25,7 @@ alias m="nocorrect make -j3 -k"
 alias v="valgrind --tool=memcheck --track-origins=yes  --show-reachable=yes --error-limit=no"
 alias rm="trash"
 alias lf="ls -hltra"
+alias cls='printf "\033c"' # clear screen
 
 export ALTERNATE_EDITOR="" # Should start emacs --daemon if emacsclient runs without one.
 alias e='emacsclient -t'
