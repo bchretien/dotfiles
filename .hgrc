@@ -1,0 +1,8 @@
+[extensions]
+hgext.hgk=
+hgext.convert=
+hgext.strip=
+hgext.record=
+hgext.color=
+
+%include ~/.hgrc.local

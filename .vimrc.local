@@ -152,19 +152,19 @@ function! CppNoTemplateIndent()
     let l:retv = l:pindent + &shiftwidth
   "template <typename U, typename V>
   "<--- here
-  elseif l:pline =~# '\s*template\s*<[a-zA-Z_ ,\t]*>\s*$'
+  elseif l:pline =~# '^\s*template\s*<[a-zA-Z_ ,\t]*>\s*$'
     let l:retv = l:pindent
-  elseif l:pline =~# '\s*[a-zA-Z_]*\s*<[a-zA-Z_ ,\t]*>\s*$'
+  elseif l:pline =~# '^\s*[a-zA-Z_]*\s*<[a-zA-Z_ ,\t]*>\s*$'
     let l:retv = l:pindent
-  elseif l:pline =~# '\s*typename\s*.*,\s*$'
+  elseif l:pline =~# '^\s*typename\s*.*,\s*$'
     let l:retv = l:pindent
   " Foo<Bar<int,double> >
   "<--- here
-  elseif l:pline =~# '\s*[a-zA-Z ,\t:]*\s*<\s*[a-zA-Z ,\t:&]*\s*<\s*[a-zA-Z ,\t:&]*\s*>\s*>\s*[a-zA-Z ,\t:&]*\s*$'
+  elseif l:pline =~# '^\s*[a-zA-Z ,\t:]*\s*<\s*[a-zA-Z ,\t:&]*\s*<\s*[a-zA-Z ,\t:&]*\s*>\s*>\s*[a-zA-Z ,\t:&]*\s*$'
     let l:retv = l:pindent
   "  typename U>
   "<--- here
-  elseif l:pline =~# '\s*[a-zA-Z ,\t]*\s*>\s*$'
+  elseif l:pline =~# '^\s*[a-zA-Z ,\t]*\s*>\s*$'
     let l:retv = l:pindent - &shiftwidth
   elseif l:cline =~# '^[a-zA-Z_ ,\t]*>\s*$'
     let l:retv = l:pindent - &shiftwidth
@@ -205,7 +205,9 @@ let g:cmake_inject_flags = {}
 let g:ctrlp_working_path_mode = 'r'
 
 " Ignore build directories
-unlet g:ctrlp_user_command
+if exists("g:ctrl_user_command")
+  unlet g:ctrlp_user_command
+endif
 set wildignore+=**/*build*/*
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -221,6 +223,7 @@ nmap <Leader>d :Dox<Enter>
 let g:DoxygenToolkit_briefTag_pre="\\brief "
 let g:DoxygenToolkit_paramTag_pre="\\param "
 let g:DoxygenToolkit_templateParamTag_pre="\\tparam "
+let g:DoxygenToolkit_throwTag_pre="\\throw "
 let g:DoxygenToolkit_returnTag="\\return "
 let g:DoxygenToolkit_blockHeader=""
 let g:DoxygenToolkit_blockFooter=""
