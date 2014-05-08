@@ -1,5 +1,5 @@
-Bundle 'mileszs/ack.vim'
-Bundle 'majutsushi/tagbar'
+"Bundle 'mileszs/ack.vim'
+"Bundle 'majutsushi/tagbar'
 Bundle 'szw/vim-ctrlspace'
 Bundle 'tpope/vim-obsession'
 Bundle 'LaTeX-Box-Team/LaTeX-Box'
@@ -19,10 +19,12 @@ Bundle 'vim-scripts/DoxygenToolkit.vim'
 " vim-cpp-enhanced-highlight: Enhanced syntax highlighting for C++
 Bundle 'octol/vim-cpp-enhanced-highlight'
 
+" YouCompleteMe
+"Bundle 'Valloric/YouCompleteMe'
 " UltiSnips: engine.
-Bundle 'sirver/ultisnips'
+"Bundle 'sirver/ultisnips'
 " UltiSnips: snippets.
-Bundle 'honza/vim-snippets'
+"Bundle 'honza/vim-snippets'
 
 " SuperTab: Perform all vim insert mode completions with Tab
 Bundle 'ervandew/supertab'
@@ -31,15 +33,31 @@ Bundle 'ervandew/supertab'
 Bundle 'cmaureir/snipmate-snippets-cuda'
 
 " over.vim: replace preview
-Bundle 'osyo-manga/vim-over'
+"Bundle 'osyo-manga/vim-over'
 
 " vim-multiple-cursors: True Sublime Text style multiple selections for Vim
-Bundle 'terryma/vim-multiple-cursors'
+"Bundle 'terryma/vim-multiple-cursors'
 
 " Incorporates the functionality of CMake into Vim
-Bundle 'jalcine/cmake.vim'
+"Bundle 'jalcine/cmake.vim'
 
 " Extended session management for Vim
 Bundle 'xolox/vim-misc'
 Bundle 'xolox/vim-session'
 
+" Silver searcher
+Bundle 'rking/ag.vim'
+
+" Qargs utily command
+Bundle 'henrik/vim-qargs'
+
+" gitk for Vim
+Bundle 'gregsexton/gitv'
+
+" fancy start screen
+Bundle 'mhinz/vim-startify'
+
+UnBundle 'Shougo/neocomplete'
+UnBundle 'Shougo/neosnippet'
+
+UnBundle 'justmao945/vim-clang'
