@@ -57,7 +57,5 @@ Bundle 'gregsexton/gitv'
 " fancy start screen
 Bundle 'mhinz/vim-startify'
 
-UnBundle 'Shougo/neocomplete'
-UnBundle 'Shougo/neosnippet'
-
-UnBundle 'justmao945/vim-clang'
+" quickly display quickfix list/location list
+Bundle 'Valloric/ListToggle'
