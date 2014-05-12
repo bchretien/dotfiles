@@ -14,6 +14,8 @@ if command_exists ctags; then
   filelist=$(list_package_files boost)
   $filelist | grep -E -o "/usr/include/.*\.(h|hpp)" \
             | grep -v "/usr/include/boost/typeof/" \
+            | grep -v "/usr/include/boost/phoenix/" \
+            | grep -v "/usr/include/boost/fusion/" \
             > ~/.vim/tags/boost-filelist
   ctags --sort=foldcase --c++-kinds=+p --fields=+iaS --extra=+q \
     -f ~/.vim/tags/boost -L ~/.vim/tags/boost-filelist
