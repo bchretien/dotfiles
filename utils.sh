@@ -34,7 +34,7 @@ function list_package_files {
   if [ "$distrib" == "Arch" ]; then
     name=$1
     # If package with given name cannot be found
-    if ! (( $(pacman -Q $1 &>/dev/null) )) ; then
+    if ! pacman -Qq | grep -qw $1; then
       # $1 not found, try to find git, hg or svn version
       name=`pacman -Qqs $1 | grep "$1-" | grep -E "hg|git|svn"`
       if [ -z "$name" ]; then
