@@ -1,14 +1,17 @@
 " Color scheme
 colorscheme molokai
 
+" Font
+set guifont=Monospace\ 11
+
 " Font (patched for airline)
-"set guifont=Meslo\ LG\ M\ Regular\ for\ Powerline
 let g:airline_powerline_fonts = 1
 let g:airline_theme="murmur"
 
 " No spell checking
 set nospell
 
+set relativenumber
 set number
 set linebreak
 set wrap
@@ -17,7 +20,7 @@ set wrap
 UnBundle 'PIV'
 UnBundle 'clang_complete'
 
-set clipboard+=unnamed
+set clipboard+=unnamedplus
 
 " Enable/disable GUI features
 set guioptions+=a " autoselect
@@ -29,6 +32,9 @@ set guioptions-=L
 set guioptions-=r " right-hand scrollbar
 set guioptions-=R
 set guioptions-=b " bottom scrollbar
+
+" Disable all blinking:
+set guicursor+=a:blinkon0
 
 set modeline
 set switchbuf=usetab
@@ -47,6 +53,10 @@ set listchars=tab:>-,trail:~,extends:>,precedes:<
 
 " Force saving files that require root permission with w!!
 cmap w!! w !sudo tee > /dev/null %
+
+" Fix spellchecking color
+hi clear SpellBad
+hi SpellBad cterm=underline ctermfg=red
 
 "====[ Automatically reload .vimrc when updated ]====
 " See: http://superuser.com/questions/132029/how-do-you-reload-your-vimrc-file-without-restarting-vim
@@ -109,8 +119,7 @@ let g:DVB_TrimWS = 1
 " Note: with Git hooks available in these dotfiles, using "git ctags" will
 " generate tags in .git/tags
 set noautochdir
-set tags+=./.git/tags;
-set tags+=$HOME/.vim/tags/*
+set tags=./.git/tags;$HOME/.vim/tags/*.tags
 
 " Doxygen syntax highlighting
 let g:load_doxygen_syntax=1
@@ -297,6 +306,12 @@ let g:lt_quickfix_list_toggle_map = '<leader>ql'
 "inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" numbers.vim
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Disable
+let g:enable_numbers = 0
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" Startify
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Call fortune and cowsay (if present)
@@ -353,6 +368,15 @@ let g:multi_cursor_next_key='<C-n>'
 let g:multi_cursor_prev_key='<C-p>'
 let g:multi_cursor_skip_key='<C-x>'
 let g:multi_cursor_quit_key='<Esc>'
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" vim-signify
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:signify_vcs_list = [ 'git' ]
+let g:signify_disable_by_default = 0
+let g:signify_update_on_bufenter = 0
+let g:signify_line_highlight = 0
+let g:signify_update_on_focusgained = 0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" YankStack

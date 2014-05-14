@@ -59,3 +59,9 @@ Bundle 'mhinz/vim-startify'
 
 " quickly display quickfix list/location list
 Bundle 'Valloric/ListToggle'
+
+" Add autojump support (:J filename)
+Bundle 'trotter/autojump.vim'
+
+" Change Vim working directory to the project root
+Bundle 'airblade/vim-rooter'

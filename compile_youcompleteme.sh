@@ -7,7 +7,9 @@ cd ~/.spf13-vim-3/.vim/bundle/YouCompleteMe/
 mkdir -p build && cd build
 
 # Run CMake
-cmake -G "Unix Makefiles" -DUSE_SYSTEM_LIBCLANG=ON -DCMAKE_BUILD_TYPE=Release ../cpp
+cmake ../cpp -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release \
+   -DUSE_SYSTEM_LIBCLANG=ON \
+   -DUSE_CLANG_COMPLETER=ON
 
 # Build libraries
 make -j$(num_cores) ycm_core

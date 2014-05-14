@@ -18,14 +18,14 @@ if command_exists ctags; then
             | grep -v "/usr/include/boost/fusion/" \
             > ~/.vim/tags/boost-filelist
   ctags --sort=foldcase --c++-kinds=+p --fields=+iaS --extra=+q \
-    -f ~/.vim/tags/boost -L ~/.vim/tags/boost-filelist
+    -f ~/.vim/tags/boost.tags -L ~/.vim/tags/boost-filelist
 
   echo "Generating ctags for Eigen"
   filelist=$(list_package_files eigen)
   $filelist | grep -E -o "/usr/include/eigen3/.*\.(h|hpp)" \
             > ~/.vim/tags/eigen3-filelist
   ctags --sort=foldcase --c++-kinds=+p --fields=+iaS --extra=+q \
-    -f ~/.vim/tags/eigen3 -L ~/.vim/tags/eigen3-filelist
+    -f ~/.vim/tags/eigen3.tags -L ~/.vim/tags/eigen3-filelist
 
   # Generating ctags for other user-defined folders
   for dir_path in "$@"
@@ -49,7 +49,7 @@ if command_exists ctags; then
         find "$dir_path" -type f -regex ".*\.\(h\|hh\|hpp\|hxx\)" \
           > ~/.vim/tags/$name-filelist
         ctags --sort=foldcase --c++-kinds=+p --fields=+iaS --extra=+q \
-          -f ~/.vim/tags/$name -L ~/.vim/tags/$name-filelist
+          -f ~/.vim/tags/$name.tags -L ~/.vim/tags/$name-filelist
       else
         echo "Skipping tags for $dir_path"
       fi
