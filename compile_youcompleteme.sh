@@ -1,7 +1,7 @@
 #!/bin/sh
 source ./utils.sh
 
-cd ~/.spf13-vim-3/.vim/bundle/YouCompleteMe/
+cd ~/.spf13-vim-3/.vim/bundle/YouCompleteMe/third_party/ycmd
 
 # Create build directory
 mkdir -p build && cd build
