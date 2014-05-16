@@ -51,9 +51,12 @@ set width 0
 set $SHOW_CONTEXT = 1
 set $SHOW_NEST_INSN = 0
 
-set $CONTEXTSIZE_STACK = 6
+set $CONTEXTSIZE_STACK = 8
 set $CONTEXTSIZE_DATA  = 8
-set $CONTEXTSIZE_CODE  = 8
+set $CONTEXTSIZE_CODE  = 0
+
+# Set colored prompt
+set extended-prompt \[\e[31m\]gdb$ \[\e[0m\]
 
 # __________________local functions_________________
 
@@ -68,7 +71,7 @@ define clist
     set logging redirect off
     set logging overwrite off
     shell if `test pygmentize`; then \
-              pygmentize -l cpp -g /tmp/gdb_clist; \
+              pygmentize -l cpp -O bg=dark -g /tmp/gdb_clist; \
           else \
               cat /tmp/gdb_clist; \
           fi
@@ -76,4 +79,10 @@ end
 document clist
 Syntax: list <COUNT>
 | Print colored source code.
+end
+
+python from voidwalker import voidwalker
+
+define hook-stop
+    voidwalker hook-stop
 end

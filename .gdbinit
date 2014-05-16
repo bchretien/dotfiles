@@ -1,1 +1,1 @@
-gdbinit/gdbinit
+dotgdb/.gdbinit
