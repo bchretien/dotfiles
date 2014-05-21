@@ -1,3 +1,6 @@
+" Bug in spf13: https://github.com/spf13/spf13-vim/issues/302
+let g:spf13_no_autochdir = 1
+
 "Bundle 'mileszs/ack.vim'
 "Bundle 'majutsushi/tagbar'
 Bundle 'szw/vim-ctrlspace'
