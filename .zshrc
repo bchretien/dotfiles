@@ -23,9 +23,14 @@ alias cp='nocorrect cp'       # no spelling correction on cp
 alias mkdir='nocorrect mkdir' # no spelling correction on mkdir
 alias m="nocorrect make -j3 -k"
 alias v="valgrind --tool=memcheck --track-origins=yes  --show-reachable=yes --error-limit=no"
-alias rm="trash"
 alias lf="ls -hltra"
 alias cls='printf "\033c"' # clear screen
+
+alias rm="trash"
+if ! type "trash" > /dev/null; then
+  echo "trash not installed. Falling back to actual rm."
+  alias rm="rm"
+fi
 
 export ALTERNATE_EDITOR="" # Should start emacs --daemon if emacsclient runs without one.
 alias e='emacsclient -t'
