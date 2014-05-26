@@ -15,4 +15,4 @@
 	url = https://github.com/Lokaltog/powerline-fonts
 [submodule "dotgdb"]
 	path = dotgdb
-	url = https://github.com/dholm/dotgdb
+	url = https://github.com/bchretien/Gdbinit
