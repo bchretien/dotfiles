@@ -45,6 +45,19 @@ for i in $dotdirs; do
     ln -sf `pwd`/$ii $HOME/$ii
 done
 
+# Directories in config
+configdirs=`find ./config -mindepth 1 -type f`
+for i in $configdirs; do
+    # ./config/dir/filename becomes onfig/dir/filename
+    ii=${i#./}
+
+    # Create parent directories if needed
+    mkdir -p $HOME/.${ii%/*}
+
+    # Create link
+    ln -sf `pwd`/$ii $HOME/.$ii
+done
+
 # Install spf13-vim
 if [[ -L ~/.vimrc ]] && [[ "$(readlink ~/.vimrc)" = "$HOME/.spf13-vim-3/.vimrc" ]]; then
     echo "Updating spf13-vim..."

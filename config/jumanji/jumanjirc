@@ -1,0 +1,35 @@
+## Jumanji configuration
+
+# Search engines
+searchengine ggl http://www.google.com/search?q=%s
+searchengine wiki http://en.wikipedia.org/w/index.php?search=%s
+
+# Browser settings
+set homepage http://www.google.com/
+set auto_save 60
+set single_instance false
+
+# Use privoxy for adblocking
+set proxy localhost:8118
+
+# Look 'n feel
+set font monospace normal 9
+set font Ubuntu Light 10
+set stylesheet file:///home/inxs/.config/jumanji/style.css
+
+# Follow hints
+script ~/.config/jumanji/scripts/hinting.js
+
+# Downloads
+set download_dir ~/Downloads/
+set download_command urxvt -e sh -c "wget --load-cookies ~/.config/jumanji/cookies '%s' -O '%s'";
+
+# Keybindings
+map <C-,> nav_history previous
+map <C-.> nav_history next
+bmap ^DD$ quit
+map <C-q> quit
+
+# Enable plugins
+plugin application/x-shockwave-flash
+
