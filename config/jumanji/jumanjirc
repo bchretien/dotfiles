@@ -13,12 +13,11 @@ set single_instance false
 set proxy localhost:8118
 
 # Look 'n feel
-set font monospace normal 9
-set font Ubuntu Light 10
-set stylesheet file:///home/inxs/.config/jumanji/style.css
+#set font monospace normal 9
+set font Ubuntu Light 11
 
 # Follow hints
-script ~/.config/jumanji/scripts/hinting.js
+script ~/.config/jumanji/scripts/hints.js
 
 # Downloads
 set download_dir ~/Downloads/
@@ -29,6 +28,7 @@ map <C-,> nav_history previous
 map <C-.> nav_history next
 bmap ^DD$ quit
 map <C-q> quit
+map <Esc> focus_inputbar :stop
 
 # Enable plugins
 plugin application/x-shockwave-flash
