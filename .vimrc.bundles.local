@@ -68,3 +68,9 @@ Bundle 'trotter/autojump.vim'
 
 " Change Vim working directory to the project root
 Bundle 'airblade/vim-rooter'
+
+" Open a quickfix item in a window you choose
+Bundle 'yssl/QFEnter'
+
+" Better tab names
+Bundle 'mkitt/tabline.vim'

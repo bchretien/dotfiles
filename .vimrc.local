@@ -1,6 +1,11 @@
 " Color scheme
 colorscheme molokai
 
+" Color of the tabline
+hi TabLine      ctermfg=White  ctermbg=DarkGray  cterm=NONE
+hi TabLineFill  ctermfg=White  ctermbg=Black     cterm=NONE
+hi TabLineSel   ctermfg=White  ctermbg=DarkBlue  cterm=NONE
+
 " Font
 set guifont=Monospace\ 11
 
