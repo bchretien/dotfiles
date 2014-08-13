@@ -2,7 +2,12 @@
 .vimrc
 .vimrc.before
 .vimrc.bundles
-.zshrc.local
-.zprofile.local
-.gitconfig.local
 gmail.dat
+.*.local
+.mpd/mpd.db
+.mpd/mpd.log
+.mpd/mpd.pid
+.mpd/mpd.state
+.mpd/playlists/*
+.mpd/sticker.sql
+.ncmpcpp/artists/*
