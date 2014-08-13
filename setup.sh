@@ -45,7 +45,6 @@ dotdirs=`find . -maxdepth 1 -type d -and -name '.*' -and -not \( -path "./.git" 
 for i in $dotdirs; do
     # ./.dirname becomes .dirname
     ii=${i#./}
-    echo $ii
     if [ ! -d "`pwd`/$ii" ]; then
         ln -sf `pwd`/$ii $HOME/$ii
 
