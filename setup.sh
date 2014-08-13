@@ -9,6 +9,9 @@ if ! `test x$(basename $(pwd)) = x.dotfiles`; then
     exit 1
 fi
 
+# Default variables
+install_vim=true
+
 git submodule init
 git submodule update --recursive
 
@@ -40,15 +43,20 @@ done
 # Directories starting with . (except . and .git)
 dotdirs=`find . -maxdepth 1 -type d -and -name '.*' -and -not \( -path "./.git" -o -path "." \)`
 for i in $dotdirs; do
-    # ./.filename becomes .filename
+    # ./.dirname becomes .dirname
     ii=${i#./}
-    ln -sf `pwd`/$ii $HOME/$ii
+    echo $ii
+    if [ ! -d "`pwd`/$ii" ]; then
+        ln -sf `pwd`/$ii $HOME/$ii
+
+        # TODO: else ask the user if he wants to remove the directory to replace it
+    fi
 done
 
 # Directories in config
-configdirs=`find ./config -mindepth 1 -type f`
-for i in $configdirs; do
-    # ./config/dir/filename becomes onfig/dir/filename
+config_dirs=`find ./config -mindepth 1 -type f -and -not -name '*.ini'`
+for i in $config_dirs; do
+    # ./config/dir/filename becomes config/dir/filename
     ii=${i#./}
 
     # Create parent directories if needed
@@ -58,24 +66,41 @@ for i in $configdirs; do
     ln -sf `pwd`/$ii $HOME/.$ii
 done
 
-# Install spf13-vim
-if [[ -L ~/.vimrc ]] && [[ "$(readlink ~/.vimrc)" = "$HOME/.spf13-vim-3/.vimrc" ]]; then
-    echo "Updating spf13-vim..."
-    vim +BundleInstall! +BundleClean +qall
-else
-    echo "Installing spf13-vim..."
-    cd spf13-vim
-    ./bootstrap.sh
-    cd ..
+# For ini files in config
+config_inifiles=`find ./config -maxdepth 1 -type f -and -name '*.ini'`
+for i in $config_inifiles; do
+    ii=${i#./}
+    new_name=${ii%.ini}
+
+    # Copy ini file if does not already exist
+    if [ ! -f $new_name ]; then
+        cp $i $new_name
+    fi
+
+    # Create link if target file does not exist
+    if [ ! -f $new_name ]; then
+      ln -sf `pwd`/$new_name $HOME/.$new_name
+    fi
+done
+
+if [ "$install_vim" = true ]; then
+    # Install spf13-vim
+    if [[ -L ~/.vimrc ]] && [[ "$(readlink ~/.vimrc)" = "$HOME/.spf13-vim-3/.vimrc" ]]; then
+      echo "Updating spf13-vim..."
+      vim +BundleInstall! +BundleClean +qall
+    else
+      echo "Installing spf13-vim..."
+      cd spf13-vim
+      ./bootstrap.sh
+      cd ..
+    fi
+
+    # Compile YouCompleteMe for vim
+    ./compile_youcompleteme.sh
+
+    # Add custom snippets
+    ln -sf `pwd`/custom_snippets $HOME/.vim/bundle/vim-snippets/
 fi
-
-# Compile YouCompleteMe for vim
-./compile_youcompleteme.sh
-
-# Add custom snippets
-ln -sf `pwd`/custom_snippets $HOME/.vim/bundle/vim-snippets/
-
-ln -sf `pwd`/.emacs.d ~
 
 # Create directories if necessary
 mkdir ~/.ssh 2> /dev/null || true
