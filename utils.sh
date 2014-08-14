@@ -46,3 +46,15 @@ function list_package_files {
     echo 'apt-file list ' $1
   fi
 }
+
+# Function from http://stackoverflow.com/a/9271229/1043187
+check_process() {
+  [ "$1" = "" ]  && return 0
+  [ `pgrep -n $1` ] && return 1 || return 0
+}
+
+# Run a process if it was not already launched
+run_process() {
+  check_process $1
+  [ $? -eq 0 ] && $1&
+}
