@@ -20,6 +20,17 @@ export MAIL=$HOME/Mail
 export EDITOR='vim'
 export MAIL="/var/mail/$USER"
 
+# Find the first available terminal
+term_arr=("termite" "urxvt" "terminator" "gnome-terminal" "xterm")
+for t in "${term_arr[@]}"
+do
+  if command -v $t >/dev/null; then
+    # This is used by i3-sensible-terminal
+    export TERMINAL=$t
+    break
+  fi
+done
+
 # Terminal (vim + tmux)
 export TERM=xterm-256color
 

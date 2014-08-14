@@ -1,3 +1,6 @@
+# Load .Xresources (if any)
+[[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
+
 # run local .zprofile
 source ~/.zprofile.local
 
