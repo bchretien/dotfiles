@@ -33,6 +33,9 @@ done
 
 # Terminal (vim + tmux)
 export TERM=xterm-256color
+if [ "$TMUX" != "" ]; then
+  export TERM=screen-256color
+fi
 
 apt_pref='apt-get'
 

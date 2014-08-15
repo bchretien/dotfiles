@@ -56,5 +56,10 @@ check_process() {
 # Run a process if it was not already launched
 run_process() {
   check_process $1
-  [ $? -eq 0 ] && $1&
+  [ $? -eq 0 ] && $@ &
+}
+
+exec_process() {
+  check_process $1
+  [ $? -eq 0 ] && exec $@ &
 }
