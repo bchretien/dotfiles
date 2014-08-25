@@ -69,7 +69,7 @@ foreground = #dcdccc
 foreground_bold = #ffffff
 #foreground_dim = #888888
 background = #000000
-#cursor = #dcdccc
+cursor = #00dc00
 
 # if unset, will reverse foreground and background
 highlight = #2f2f2f
