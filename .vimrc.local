@@ -6,12 +6,22 @@ hi TabLine      ctermfg=White  ctermbg=DarkGray  cterm=NONE
 hi TabLineFill  ctermfg=White  ctermbg=Black     cterm=NONE
 hi TabLineSel   ctermfg=White  ctermbg=DarkBlue  cterm=NONE
 
+" Color of matching braces
+hi MatchParen   ctermfg=Yellow ctermbg=Black     cterm=bold
+
 " Font
 set guifont=Monospace\ 11
 
 " Font (patched for airline)
 let g:airline_powerline_fonts = 1
 let g:airline_theme="murmur"
+
+" Fix mouse in vim under tmux
+set mouse+=a
+if &term =~ '^screen'
+    " tmux knows the extended mouse mode
+    set ttymouse=xterm2
+endif
 
 " No spell checking
 set nospell
