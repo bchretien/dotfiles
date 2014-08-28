@@ -1,3 +1,6 @@
+" This must be first, because it changes other options as side effect
+set nocompatible
+
 " Color scheme
 colorscheme molokai
 
@@ -30,6 +33,15 @@ set relativenumber
 set number
 set linebreak
 set wrap
+set virtualedit=block
+set hidden
+set nobackup
+set noswapfile
+
+" Folding
+set foldmethod=syntax
+set foldenable
+set foldlevel=100
 
 " Ignored packages
 UnBundle 'PIV'
@@ -68,6 +80,16 @@ set listchars=tab:>-,trail:~,extends:>,precedes:<
 
 " Force saving files that require root permission with w!!
 cmap w!! w !sudo tee > /dev/null %
+
+" Navigation for tabs
+nnoremap th  :tabfirst<CR>
+nnoremap tj  :tabprev<CR>
+nnoremap tk  :tabnext<CR>
+nnoremap tl  :tablast<CR>
+nnoremap tt  :tabedit<Space>
+nnoremap tm  :tabm<Space>
+nnoremap tn  :tabnew<CR>
+nnoremap td  :tabclose<CR>
 
 " Fix spellchecking color
 hi clear SpellBad
@@ -253,6 +275,9 @@ endfunction
 " Start the find and replace command across the entire file
 vmap <leader>z <Esc>:%s/<c-r>=GetVisual()<cr>/
 
+" If doing a diff. Upon writing changes to file, automatically update the
+" differences
+autocmd BufWritePost * if &diff == 1 | diffupdate | endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" cmake.vim
@@ -317,13 +342,24 @@ let g:easy_align_delimiters = {
 \ '}': { 'pattern': '}', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
 \ '\': { 'pattern': '\\', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
 \ '<': { 'pattern': '<', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
-\ 'd': { 'pattern': ' \(\S\+\s*[;=]\)\@=', 'left_margin': 0, 'right_margin': 0}
+\ 'd': { 'pattern': ' \(\S\+\s*[;=]\)\@=', 'left_margin': 0, 'right_margin': 0},
+\ '#': { 'pattern': '#', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 }
 \ }
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" LeaderF
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:Lf_WildIgnore = {
+      \ 'dir': ['.svn','.git', '.hg', '*build*'],
+      \ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]']
+      \}
+
+let g:Lf_MruFileExclude = ['*.so']
+let g:Lf_NeedCacheTime = 0.5
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" ListToggle
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 let g:lt_location_list_toggle_map = '<leader>ll'
 let g:lt_quickfix_list_toggle_map = '<leader>ql'
 
@@ -335,6 +371,11 @@ let g:lt_quickfix_list_toggle_map = '<leader>ql'
 
 " <TAB>: completion.
 "inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" NERDTree
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:NERDTREEChDirMode = 0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" numbers.vim
