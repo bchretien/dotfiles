@@ -45,8 +45,8 @@ Bundle 'cmaureir/snipmate-snippets-cuda'
 "Bundle 'jalcine/cmake.vim'
 
 " Extended session management for Vim
-Bundle 'xolox/vim-misc'
-Bundle 'xolox/vim-session'
+"Bundle 'xolox/vim-misc'
+"Bundle 'xolox/vim-session'
 
 " Silver searcher
 Bundle 'rking/ag.vim'
@@ -74,3 +74,6 @@ Bundle 'yssl/QFEnter'
 
 " Better tab names
 Bundle 'mkitt/tabline.vim'
+
+" tmux airline support
+"Bundle 'edkolev/tmuxline.vim'

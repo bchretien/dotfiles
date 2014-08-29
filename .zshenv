@@ -34,7 +34,11 @@ done
 # Terminal (vim + tmux)
 export TERM=xterm-256color
 if [ "$TMUX" != "" ]; then
+  # Fix term type
   export TERM=screen-256color
+
+  # Fix ctrl+S in tmux with vim
+  stty stop undef
 fi
 
 apt_pref='apt-get'
