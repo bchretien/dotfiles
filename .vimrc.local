@@ -12,6 +12,13 @@ hi TabLineSel   ctermfg=White  ctermbg=DarkBlue  cterm=NONE
 " Color of matching braces
 hi MatchParen   ctermfg=Yellow ctermbg=Black     cterm=bold
 
+" Color of a selected block
+hi Visual ctermbg=238
+
+" Optimization
+set lazyredraw
+set viminfo=<0,'0,/50,:100,h,f0,s0
+
 " Font
 set guifont=Monospace\ 11
 
@@ -39,7 +46,7 @@ set nobackup
 set noswapfile
 
 " Folding
-set foldmethod=syntax
+set foldmethod=manual
 set foldenable
 set foldlevel=100
 
@@ -168,6 +175,9 @@ set shiftwidth=2
 " g0:  do not indent public,private...
 " (0:  align function arguments
 set cino=N0,g0,(0
+
+" Default Vim completion should not look for all include files (slow)
+set complete-=i
 
 " Add comment on newline when dealing with doxygen comments
 au FileType c,cpp,cuda setlocal formatoptions+=r
@@ -424,7 +434,7 @@ let g:UltiSnipsSnippetDirectories=["UltiSnips", "custom_snippets"]
 "" Vim-CtrlSpace
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:airline_exclude_preview = 1
-let g:ctrlspace_use_tabline = 0
+let g:ctrlspace_use_tabline = 1
 let g:ctrlspace_use_mouse_and_arrows_in_term = 1
 hi CtrlSpaceSelected term=reverse ctermfg=187 ctermbg=23 cterm=bold
 hi CtrlSpaceNormal term=NONE ctermfg=244 ctermbg=232 cterm=NONE
