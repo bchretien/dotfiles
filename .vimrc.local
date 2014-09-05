@@ -204,25 +204,27 @@ function! CppNoTemplateIndent()
   let l:pindent = indent(l:pline_num)
   "template<typename U,
   "<--- here
-  if l:pline =~# '^\s*template\s*[<]\=\s*[a-zA-Z_ ,\t]*$'
+  if l:pline =~# '^\s*template\s*[<]\=\s*[0-9a-zA-Z_ ,\t]*$'
     let l:retv = l:pindent + &shiftwidth
   "template <typename U, typename V>
   "<--- here
-  elseif l:pline =~# '^\s*template\s*<[a-zA-Z_ ,\t]*>\s*$'
+  elseif l:pline =~# '^\s*template\s*<[0-9a-zA-Z_ ,\t]*>\s*$'
     let l:retv = l:pindent
-  elseif l:pline =~# '^\s*[a-zA-Z_]*\s*<[a-zA-Z_ ,\t]*>\s*$'
-    let l:retv = l:pindent
+  " Foo<Bar>
+  "<--- here
+  elseif l:pline =~# '^\s*[0-9a-zA-Z_]*\s*<[0-9a-zA-Z_ ,\t]*>\s*$'
+    let l:retv = l:pindent + &shiftwidth
   elseif l:pline =~# '^\s*typename\s*.*,\s*$'
     let l:retv = l:pindent
   " Foo<Bar<int,double> >
   "<--- here
-  elseif l:pline =~# '^\s*[a-zA-Z ,\t:]*\s*<\s*[a-zA-Z ,\t:&]*\s*<\s*[a-zA-Z ,\t:&]*\s*>\s*>\s*[a-zA-Z ,\t:&]*\s*$'
-    let l:retv = l:pindent
+  elseif l:pline =~# '^\s*[0-9a-zA-Z ,\t:]*\s*<\s*[0-9a-zA-Z ,\t:&]*\s*<\s*[0-9a-zA-Z ,\t:&]*\s*>\s*>\s*[0-9a-zA-Z ,\t:&]*\s*$'
+    let l:retv = l:pindent + &shiftwidth
   "  typename U>
   "<--- here
-  elseif l:pline =~# '^\s*[a-zA-Z ,\t]*\s*>\s*$'
+  elseif l:pline =~# '^\s*[0-9a-zA-Z ,\t]*\s*>\s*$'
     let l:retv = l:pindent - &shiftwidth
-  elseif l:cline =~# '^[a-zA-Z_ ,\t]*>\s*$'
+  elseif l:cline =~# '^[0-9a-zA-Z_ ,\t]*>\s*$'
     let l:retv = l:pindent - &shiftwidth
   "elseif l:pline =~# '^\s*namespace.*'
   "  let l:retv = 0
