@@ -18,4 +18,4 @@
 	url = https://github.com/bchretien/Gdbinit
 [submodule ".i3"]
 	path = .i3
-	url = git@github.com:bchretien/i3-config.git
+	url = https://github.com/bchretien/i3-config.git
