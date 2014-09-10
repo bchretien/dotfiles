@@ -3,8 +3,10 @@ source $HOME/.dotfiles/utils.sh
 # Default battery (used by i3blocks)
 export BATTERY_ID=BAT1
 
-# Load .Xresources (if any)
-[[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
+if [ -n "$DISPLAY" ]; then
+  # Load .Xresources (if any)
+  [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
+fi
 
 # run local .zprofile
 source ~/.zprofile.local
