@@ -179,6 +179,20 @@ set cino=N0,g0,(0
 " Default Vim completion should not look for all include files (slow)
 set complete-=i
 
+" Automatically open, but do not go to (if there are errors) the quickfix /
+" location list window, or close it when is has become empty.
+"
+" Note: Must allow nesting of autocmds to enable any customizations for quickfix
+" buffers.
+" Note: Normally, :cwindow jumps to the quickfix window if the command opens it
+" (but not if it's already open). However, as part of the autocmd, this doesn't
+" seem to happen.
+autocmd QuickFixCmdPost [^l]* nested cwindow
+autocmd QuickFixCmdPost    l* nested lwindow
+
+" Move quickfix window to bottom
+autocmd FileType qf wincmd J
+
 " Add comment on newline when dealing with doxygen comments
 au FileType c,cpp,cuda setlocal formatoptions+=r
 au FileType c,cpp,cuda setlocal formatoptions+=c
@@ -284,8 +298,11 @@ function! GetVisual() range
   return escaped_selection
 endfunction
 
-" Start the find and replace command across the entire file
-vmap <leader>z <Esc>:%s/<c-r>=GetVisual()<cr>/
+" Start the find and replace command from the cursor position to the end of
+" the file
+vmap <leader>z <Esc>:,$s/<c-r>=GetVisual()<cr>/
+" Start the find and replace command across the whole file
+vmap <leader>zz <Esc>:%s/<c-r>=GetVisual()<cr>/
 
 " If doing a diff. Upon writing changes to file, automatically update the
 " differences
@@ -306,11 +323,17 @@ let g:cmake_inject_flags = {}
 " Stay in the root directory of the project
 let g:ctrlp_working_path_mode = 'r'
 
+" Disable case sensitivity
+let g:ctrlp_mruf_case_sensitive = 0
+
 " Ignore build directories
-if exists("g:ctrl_user_command")
-  unlet g:ctrlp_user_command
-endif
-set wildignore+=**/*build*/*
+let g:ctrlp_user_command = {
+  \ 'types': {
+    \ 1: ['.git', 'cd %s && git ls-files --cached --exclude-standard --others | grep -v "build"'],
+    \ 2: ['.hg', 'hg --cwd %s locate -I . | grep -v "build"'],
+    \ },
+  \ 'fallback': 'find %s -type f'
+  \ }
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" DoxygenToolkit.vim
@@ -357,6 +380,17 @@ let g:easy_align_delimiters = {
 \ 'd': { 'pattern': ' \(\S\+\s*[;=]\)\@=', 'left_margin': 0, 'right_margin': 0},
 \ '#': { 'pattern': '#', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 }
 \ }
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" EasyMotion
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Disable default mappings
+let g:EasyMotion_do_mapping = 0
+
+let g:EasyMotion_smartcase = 1
+
+nmap <Leader>w <Plug>(easymotion-bd-w)
+nmap <Leader>s <Plug>(easymotion-s2)
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" LeaderF
