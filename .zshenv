@@ -50,6 +50,21 @@ export PYTHONSTARTUP=$HOME/.pythonrc.py
 alias m="make -j8"
 alias v="valgrind --tool=memcheck --track-origins=yes  --show-reachable=yes --error-limit=no"
 
+# Enable GCC coloring (GCC >= 4.9)
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# Report CPU usage for commands running longer than 10 seconds
+REPORTTIME=10
+
+# Watch people logging on the machine (except the current user)
+watch=(notme)
+
+
+# If glances installed
+if type "glances" > /dev/null; then
+  alias glances="glances -b --process-short-name --disable-process-extended -1"
+fi
+
 # Use local .zshenv
 if [ -f ~/.zshenv.local ]; then
     source ~/.zshenv.local
