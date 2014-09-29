@@ -3,7 +3,12 @@ snippet ns "namespace .. (namespace)" !
 namespace${1/.+/ /m}${1:`!p snip.rv = snip.basename or "name"`}
 {
 	${VISUAL}${0:${VISUAL/(.*)/(?1::\/* code *\/)/}}
-} // end of namespace $1
+} // end of `!p
+if not t[1]:
+  snip.rv = "unnamed namespace"
+else:
+  snip.rv = "namespace %s" % t[1]
+`
 endsnippet
 
 # include guard
