@@ -41,14 +41,20 @@ for i in $dotlinks; do
 done
 
 # Directories starting with . (except . and .git)
-dotdirs=`find . -maxdepth 1 -type d -and -name '.*' -and -not \( -path "./.git" -o -path "." \)`
+dotdirs=`find . -maxdepth 1 -type d \
+         -and -name '.*' \
+         -and -not \( -path "./.git" -o -path "." -o -path "./.gnupg" \)`
 for i in $dotdirs; do
     # ./.dirname becomes .dirname
     ii=${i#./}
+    echo "Linking ~/$ii"
     if [ ! -d "`pwd`/$ii" ]; then
         ln -sf `pwd`/$ii $HOME/$ii
+        echo "... done!"
 
         # TODO: else ask the user if he wants to remove the directory to replace it
+    else
+        echo "... already exists!"
     fi
 done
 
@@ -103,7 +109,19 @@ fi
 
 # Create directories if necessary
 mkdir ~/.ssh 2> /dev/null || true
-mkdir ~/.gnupg 2> /dev/null || true
+#mkdir ~/.gnupg 2> /dev/null || true
+
+# Treat gnupg separately
+gnupgfiles=`find .gnupg -maxdepth 1 -type f`
+for i in $gnupgfiles; do
+    # ./filename becomes filename
+    ii=${i#./}
+
+    if [ ! -f "$HOME/$ii" ]; then
+      echo "Linking $ii"
+      ln -sf `pwd`/$ii $HOME/$ii
+    fi
+done
 
 echo "Symbolic links have been created successfully"
 
