@@ -11,3 +11,4 @@ gmail.dat
 .mpd/playlists/*
 .mpd/sticker.sql
 .ncmpcpp/artists/*
+.tmux/plugins/*

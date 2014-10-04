@@ -48,7 +48,7 @@ for i in $dotdirs; do
     # ./.dirname becomes .dirname
     ii=${i#./}
     echo "Linking ~/$ii"
-    if [ ! -d "`pwd`/$ii" ]; then
+    if [ ! -d "$HOME/$ii" ]; then
         ln -sf `pwd`/$ii $HOME/$ii
         echo "... done!"
 
