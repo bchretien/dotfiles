@@ -50,3 +50,10 @@ report.inbox.sort=urgency-,due-,tags+,project+,description+
 
 # Set default command to gtd view
 default.command=gtd
+
+# Calendar
+weekstart=Monday
+
+# Holidays
+include /usr/share/doc/task/rc/holidays.fr-FR.rc
+calendar.holidays=sparse

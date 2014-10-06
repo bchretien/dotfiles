@@ -27,6 +27,7 @@ Required:
 Supported:
 * conky
 * gpg
+* task
 * tmux
 * vim
 * zsh
