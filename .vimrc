@@ -1,4 +1,4 @@
-" vim: set sw=4 ts=4 sts=4 et tw=78 foldmarker={{{,}}} foldlevel=0 foldmethod=marker spell:
+" vim: set sw=2 ts=2 sts=2 et tw=78 foldmarker={{{,}}} foldlevel=0 foldmethod=marker spell:
 "
 " Some of the settings come from spf13-vim: https://github.com/spf13/spf13-vim
 "
@@ -115,14 +115,6 @@
 " VIM UI {{{
 
   " Colors {{{
-    if filereadable(expand("~/.vim/plugged/vim-colors-solarized/colors/solarized.vim"))
-      let g:solarized_termcolors=256
-      let g:solarized_termtrans=1
-      let g:solarized_contrast="normal"
-      let g:solarized_visibility="normal"
-      color solarized " Load a colorscheme
-    endif
-
     " FIXME: check for the theme
     colorscheme molokai
 
