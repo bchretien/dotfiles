@@ -1,11 +1,11 @@
-" vim: set sw=2 ts=2 sts=2 et tw=78 foldmarker={{{,}}} foldlevel=0 foldmethod=marker spell:
+" vim: set sw=2 ts=2 sts=2 et tw=78 foldmarker={{{,}}} foldlevel=0 foldmethod=marker spell: ft=vim
 
 " Start adding Plugs
 call plug#begin('~/.vim/plugged')
 
 " Edition plugins {{{
   " Silver searcher
-  Plug 'rking/ag.vim'
+  Plug 'rking/ag.vim', { 'on': 'Ag'}
 
   " Fuzzy file, buffer, mru, tag, etc finder
   Plug 'kien/ctrlp.vim'
@@ -18,6 +18,12 @@ call plug#begin('~/.vim/plugged')
 
   " Display your undo history in a graph
   Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
+
+  " Provide a completion function for Unicode glyphs
+  Plug 'chrisbra/unicode.vim'
+
+  " Auto-close feature for parentheses, brackets etc.
+  Plug 'Townk/vim-autoclose'
 
   " Vim global plugin for dragging virtual blocks
   Plug 'atweiden/vim-dragvisuals'
@@ -34,8 +40,8 @@ call plug#begin('~/.vim/plugged')
   " True Sublime Text style multiple selections for Vim
   Plug 'terryma/vim-multiple-cursors'
 
-  " Qargs utily command
-  Plug 'henrik/vim-qargs'
+  " Qargs utility command
+  Plug 'henrik/vim-qargs', { 'on': 'Qargs' }
 
   " Quoting/parenthesizing made simple
   Plug 'tpope/vim-surround'
@@ -45,17 +51,19 @@ call plug#begin('~/.vim/plugged')
 " }}}
 
 " Project plugins {{{
+  " Filesystem explorer
+  Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+
   " Vim Workspace Controller
   Plug 'szw/vim-ctrlspace'
 
-  " Filesystem explorer
-  Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+  " Change Vim working directory to the project root
+  Plug 'airblade/vim-rooter'
 " }}}
 
 " Development plugins {{{
   " DoxygenToolkit: Doxygen support
   Plug 'vim-scripts/DoxygenToolkit.vim'
-
   " gitk for Vim
   Plug 'gregsexton/gitv', { 'on': 'Gitv' }
 
@@ -69,7 +77,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'sirver/ultisnips'
 
   " Formatting with clang-format
-  " Depends on: vimproc.vim,  vim-operator-user
+  " Requires: vimproc.vim,  vim-operator-user
   Plug 'rhysd/vim-clang-format', { 'for': ['c', 'cpp', 'objc'] }
 
   " Enhanced syntax highlighting for C++
@@ -81,6 +89,9 @@ call plug#begin('~/.vim/plugged')
   " Git wrapper
   Plug 'tpope/vim-fugitive'
 
+  " Show a VCS diff using Vim's sign column
+  Plug 'mhinz/vim-signify'
+
   " UltiSnips: snippets.
   Plug 'honza/vim-snippets'
 
@@ -89,11 +100,20 @@ call plug#begin('~/.vim/plugged')
 " }}}
 
 " Display plugins {{{
+  " Make gvim-only colorschemes work transparently in terminal Vim
+  Plug 'godlygeek/csapprox'
+
   " Better tab names
   Plug 'mkitt/tabline.vim'
 
   " Lean & mean status/tabline
   Plug 'bling/vim-airline'
+
+  " css/less/sass/html color preview for Vim
+  Plug 'gorodinskiy/vim-coloresque', { 'for': ['css', 'html'] }
+
+  " Plugin for visually displaying indent levels in code
+  Plug 'nathanaelkane/vim-indent-guides'
 
   " Fancy start screen
   Plug 'mhinz/vim-startify'
@@ -108,9 +128,24 @@ call plug#begin('~/.vim/plugged')
 
   " Liquid support
   Plug 'tpope/vim-liquid'
+
+  " Interface to Web API
+  " Required by: gist-vim
+  Plug 'mattn/webapi-vim'
 " }}}
 
 " Miscellaneous plugins {{{
+  " LaTeX support
+  Plug 'LaTeX-Box-Team/LaTeX-Box'
+
+  " Some utility functions for VIM
+  " FIXME: does any plugin depend on that?
+  Plug 'tomtom/tlib_vim'
+
+  " Interpret a file by function and cache file automatically
+  " FIXME: does any plugin depend on that?
+  Plug 'MarcWeber/vim-addon-mw-utils'
+
   " Markdown support
   Plug 'tpope/vim-markdown'
 
@@ -128,6 +163,7 @@ call plug#begin('~/.vim/plugged')
 
 " Wrapper plugins {{{
   " Gist wrapper
+  " Requires: webapi-vim
   Plug 'mattn/gist-vim'
 
   " Taskwarrior wrapper
@@ -142,11 +178,6 @@ call plug#begin('~/.vim/plugged')
 "Plug 'atweiden/vim-hudigraphs'
 "Plug 'tpope/vim-obsession'
 
-Plug 'LaTeX-Box-Team/LaTeX-Box'
-Plug 'chrisbra/unicode.vim'
-
-"Plug 'Yggdroot/LeaderF'
-
 " CUDA snippets and syntax highlighting
 Plug 'cmaureir/snipmate-snippets-cuda'
 
@@ -156,15 +187,8 @@ Plug 'osyo-manga/vim-over'
 " Incorporates the functionality of CMake into Vim
 "Plug 'jalcine/cmake.vim'
 
-" Extended session management for Vim
-"Plug 'xolox/vim-misc'
-"Plug 'xolox/vim-session'
-
 " quickly display quickfix list/location list
 Plug 'Valloric/ListToggle'
-
-" Change Vim working directory to the project root
-Plug 'airblade/vim-rooter'
 
 " Automatic resizing of windows
 "Plug 'roman/golden-ratio'
@@ -175,40 +199,18 @@ Plug 'yssl/QFEnter'
 " tmux airline support
 "Plug 'edkolev/tmuxline.vim'
 
-Plug 'MarcWeber/vim-addon-mw-utils'
-Plug 'tomtom/tlib_vim'
-Plug 'mileszs/ack.vim', { 'on': 'Ack' }
 Plug 'altercation/vim-colors-solarized'
 Plug 'spf13/vim-colors'
-Plug 'spf13/vim-autoclose'
-"Plug 'matchit.zip'
 Plug 'bling/vim-bufferline'
-Plug 'godlygeek/csapprox'
-"Plug 'jistr/vim-nerdtree-tabs'
 Plug 'flazz/vim-colorschemes'
-Plug 'nathanaelkane/vim-indent-guides'
 Plug 'vim-scripts/restore_view.vim'
-Plug 'mhinz/vim-signify'
-"Plug 'tpope/vim-abolish.git'
-"Plug 'justinmk/vim-sneak'
 Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-indent'
-Plug 'mattn/webapi-vim'
-"Plug 'godlygeek/tabular'
 Plug 'klen/python-mode'
 Plug 'python.vim'
 Plug 'python_match.vim'
 Plug 'pythoncomplete'
-"Plug 'groenewege/vim-less'
-"Plug 'briancollins/vim-jst'
-"Plug 'kchmck/vim-coffee-script'
-"Plug 'hail2u/vim-css3-syntax'
-Plug 'gorodinskiy/vim-coloresque'
-"Plug 'tpope/vim-haml'
 Plug 'spf13/vim-preview'
-"Plug 'tpope/vim-cucumber'
-"Plug 'quentindecock/vim-cucumber-align-pipes'
-Plug 'Puppet-Syntax-Highlighting'
 
 " Load local plugin file (if it exists)
 " This provides a way to have user-specific plugins without needing
