@@ -1,82 +1,447 @@
-" Load plugins
-source ~/.vimrc.plugins
+" vim: set sw=4 ts=4 sts=4 et tw=78 foldmarker={{{,}}} foldlevel=0 foldmethod=marker spell:
+"
+" Some of the settings come from spf13-vim: https://github.com/spf13/spf13-vim
+"
 
-" This must be first, because it changes other options as side effect
-set nocompatible
+" Environment {{{
+  " This must be first, because it changes other options as side effect
+  set nocompatible
 
-" Color scheme
-colorscheme molokai
+  " Identify platform {{{
+    silent function! OSX()
+      return has('macunix')
+    endfunction
+    silent function! LINUX()
+      return has('unix') && !has('macunix') && !has('win32unix')
+    endfunction
+    silent function! WINDOWS()
+      return (has('win16') || has('win32') || has('win64'))
+    endfunction
+  " }}}
+" }}}
 
-" Color of the tabline
-hi TabLine      ctermfg=White  ctermbg=DarkGray  cterm=NONE
-hi TabLineFill  ctermfg=White  ctermbg=Black     cterm=NONE
-hi TabLineSel   ctermfg=White  ctermbg=DarkBlue  cterm=NONE
+" Use before config if available {{{
+  if filereadable(expand("~/.vimrc.before"))
+    source ~/.vimrc.before
+  endif
+" }}}
 
-" Color of matching braces
-hi MatchParen   ctermfg=Yellow ctermbg=Black     cterm=bold
+" Use plugins config {{{
+  if filereadable(expand("~/.vimrc.plugins"))
+    source ~/.vimrc.plugins
+  endif
+" }}}
 
-" Color of a selected block
-hi Visual ctermbg=238
+" General {{{
 
-" Optimization
-set lazyredraw
-set viminfo=<0,'0,/50,:100,h,f0,s0
+  set background=dark " Assume a dark background
 
-" Font
-set guifont=Monospace\ 11
+  filetype plugin indent on " Automatically detect file types.
+  syntax on " Syntax highlighting
+  set mouse=a " Automatically enable mouse usage
+  set mousehide " Hide the mouse cursor while typing
+  scriptencoding utf-8
 
-" Font (patched for airline)
-let g:airline_powerline_fonts = 1
-let g:airline_theme="murmur"
+  " Enable modelines
+  set modeline
 
-" Fix mouse in vim under tmux
-set mouse+=a
-if &term =~ '^screen'
+  " Fix mouse in vim under tmux
+  if &term =~ '^screen'
     " tmux knows the extended mouse mode
     set ttymouse=xterm2
-endif
+  endif
 
-" No spell checking
-set nospell
+  " System clipboard support
+  if has('clipboard')
+    if has('unnamedplus') " When possible use + register for copy-paste
+      set clipboard=unnamed,unnamedplus
+    else " On mac and Windows, use * register for copy-paste
+      set clipboard=unnamed
+    endif
+  endif
 
-set relativenumber
-set number
-set linebreak
-set wrap
-set virtualedit=block
-set hidden
-set nobackup
-set noswapfile
+  "set autowrite " Automatically write a file when leaving a modified buffer
+  set shortmess+=filmnrxoOtT " Abbrev. of messages (avoids 'hit enter')
+  set viewoptions=folds,options,cursor,unix,slash " Better Unix / Windows compatibility
+  set virtualedit=block " Allow virtual editing in Visual block mode
+  set history=1000 " Store a ton of history (default is 20)
+  set nospell " Spell checking off
+  set hidden " Allow buffer switching without saving
 
-" Folding
-set foldmethod=manual
-set foldenable
-set foldlevel=100
+  set iskeyword-=. " '.' is an end of word designator
+  set iskeyword-=# " '#' is an end of word designator
+  set iskeyword-=- " '-' is an end of word designator
 
-set clipboard+=unnamedplus
+  " Instead of reverting the cursor to the last position in the buffer, we
+  " set it to the first line when editing a git commit message
+  au FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
 
-" Enable/disable GUI features
-set guioptions+=a " autoselect
-set guioptions+=c " console dialogs
-set guioptions-=m " menu bar
-set guioptions-=T " toolbar
-set guioptions-=l " left-hand scrollbar
-set guioptions-=L
-set guioptions-=r " right-hand scrollbar
-set guioptions-=R
-set guioptions-=b " bottom scrollbar
+  " spf13-vim: restore cursor to file position in previous editing session
+  function! ResCur()
+    if line("'\"") <= line("$")
+      normal! g`"
+      return 1
+    endif
+  endfunction
+  augroup resCur
+    autocmd!
+    autocmd BufWinEnter * call ResCur()
+  augroup END
 
-" Disable all blinking:
-set guicursor+=a:blinkon0
 
-set modeline
-set switchbuf=usetab
+  if exists('autochdir')
+    " Do not automatically changed the working directory
+    set noautochdir
+  endif
 
-" Searching starts after you enter the string
-set incsearch
+  " Setting up the directories {{{
+    set noswapfile " disable swap files
+    set nobackup " disable backups
+    if has('persistent_undo')
+      set undofile " Undo file
+      set undolevels=1000 " Maximum number of changes that can be undone
+      set undoreload=10000 " Maximum number lines to save for undo on a buffer reload
+    endif
 
-" Turns on search highlighting
-set hlsearch
+    " Add exclusions to mkview and loadview
+    " eg: *.*, svn-commit.tmp
+    "let g:skipview_files = [
+    "      \ '\[example pattern\]'
+    "      \ ]
+  " }}}
+
+" }}}
+
+" VIM UI {{{
+
+  " Colors {{{
+    if filereadable(expand("~/.vim/plugged/vim-colors-solarized/colors/solarized.vim"))
+      let g:solarized_termcolors=256
+      let g:solarized_termtrans=1
+      let g:solarized_contrast="normal"
+      let g:solarized_visibility="normal"
+      color solarized " Load a colorscheme
+    endif
+
+    " FIXME: check for the theme
+    colorscheme molokai
+
+    " Color of the tabline
+    hi TabLine      ctermfg=White  ctermbg=DarkGray  cterm=NONE
+    hi TabLineFill  ctermfg=White  ctermbg=Black     cterm=NONE
+    hi TabLineSel   ctermfg=White  ctermbg=DarkBlue  cterm=NONE
+
+    " Color of matching braces
+    hi MatchParen   ctermfg=Yellow ctermbg=Black     cterm=bold
+
+    " Color of a selected block
+    hi Visual       ctermbg=238
+  " }}}
+
+  " Font
+  set guifont=Monospace\ 11
+
+  set tabpagemax=15 " Only show 15 tabs
+  set showmode " Display the current mode
+
+  set cursorline " Highlight current line
+
+  highlight clear SignColumn " SignColumn should match background
+  highlight clear LineNr " Current line number row will have same background color in relative mode
+  "highlight clear CursorLineNr " Remove highlight color from current line number
+
+  if has('cmdline_info')
+    set ruler " Show the ruler
+    set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " A ruler on steroids
+    set showcmd " Show partial commands in status line and
+                " Selected characters/lines in visual mode
+  endif
+
+  if has('statusline')
+    set laststatus=2
+
+    " Broken down into easily includeable segments
+    set statusline=%<%f\ " Filename
+    set statusline+=%w%h%m%r " Options
+    set statusline+=%{fugitive#statusline()} " Git Hotness
+    set statusline+=\ [%{&ff}/%Y] " Filetype
+    set statusline+=\ [%{getcwd()}] " Current dir
+    set statusline+=%=%-14.(%l,%c%V%)\ %p%% " Right aligned file nav info
+  endif
+
+  set backspace=indent,eol,start " Backspace for dummies
+  set linespace=0 " No extra spaces between rows
+  set number " Line numbers on
+  set relativenumber " Relative line numbers on
+  set showmatch " Show matching brackets/parenthesis
+  set incsearch " Find as you type search
+  set hlsearch " Highlight search terms
+  set winminheight=0 " Windows can be 0 line high
+  set ignorecase " Case insensitive search
+  set smartcase " Case sensitive when uc present
+  set wildmenu " Show list instead of just completing
+  set wildmode=list:longest,full " Command <Tab> completion, list matches, then longest common part, then all.
+  set whichwrap=b,s,h,l,<,>,[,] " Backspace and cursor keys wrap too
+  set scrolljump=5 " Lines to scroll when cursor leaves screen
+  set scrolloff=3 " Minimum lines to keep above and below cursor
+  set list
+  set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
+
+  set linebreak
+  set wrap
+
+  " Disable colorcolumn (use vim-lengthmatters instead)
+  set colorcolumn=
+
+  " Folding
+  set foldmethod=manual
+  set foldenable
+  set foldlevel=100
+
+  " Optimization
+  set lazyredraw
+
+  " Syntax coloring lines that are too long really slows Vim down
+  set synmaxcol=200
+
+  " Enable/disable GUI features
+  set guioptions+=a " autoselect
+  set guioptions+=c " console dialogs
+  set guioptions-=m " menu bar
+  set guioptions-=T " toolbar
+  set guioptions-=l " left-hand scrollbar
+  set guioptions-=L
+  set guioptions-=r " right-hand scrollbar
+  set guioptions-=R
+  set guioptions-=b " bottom scrollbar
+
+  " Disable all blinking:
+  set guicursor+=a:blinkon0
+
+  " FIXME: useful?
+  set switchbuf=usetab
+" }}}
+
+" Key (re)Mappings {{{
+  let mapleader = ','
+  let maplocalleader = '_'
+
+  " Wrapped lines goes down/up to next row, rather than next line in file.
+  noremap j gj
+  noremap k gk
+
+  " Yank from the cursor to the end of the line, to be consistent with C and D.
+  nnoremap Y y$
+
+  " Code folding options
+  nmap <leader>f0 :set foldlevel=0<CR>
+  nmap <leader>f1 :set foldlevel=1<CR>
+  nmap <leader>f2 :set foldlevel=2<CR>
+  nmap <leader>f3 :set foldlevel=3<CR>
+  nmap <leader>f4 :set foldlevel=4<CR>
+  nmap <leader>f5 :set foldlevel=5<CR>
+  nmap <leader>f6 :set foldlevel=6<CR>
+  nmap <leader>f7 :set foldlevel=7<CR>
+  nmap <leader>f8 :set foldlevel=8<CR>
+  nmap <leader>f9 :set foldlevel=9<CR>
+
+  " To clear search highlighting rather than toggle it on and off
+  nmap <silent> <leader>/ :nohlsearch<CR>
+
+  " Find merge conflict markers
+  map <leader>fc /\v^[<\|=>]{7}( .*\|$)<CR>
+
+  " Shortcuts
+  " Change Working Directory to that of the current file
+  cmap cwd lcd %:p:h
+  cmap cd. lcd %:p:h
+
+  " Visual shifting (does not exit Visual mode)
+  vnoremap < <gv
+  vnoremap > >gv
+
+  " Allow using the repeat operator with a visual selection (!)
+  " http://stackoverflow.com/a/8064607/127816
+  vnoremap . :normal .<CR>
+
+  " Force saving files that require root permission with w!!
+  cmap w!! w !sudo tee % >/dev/null
+
+  " Map <Leader>ff to display all lines with keyword under cursor
+  " and ask which one to jump to
+  nmap <Leader>ff [I:let nr = input("Which one: ")<Bar>exe "normal " . nr ."[\t"<CR>
+
+  " Easier horizontal scrolling
+  map zl zL
+  map zh zH
+
+  " Easier formatting
+  nnoremap <silent> <leader>q gwip
+" }}}
+
+" Plugins {{{
+
+  " Airline {{{
+    " Font (patched for airline)
+    let g:airline_powerline_fonts = 1
+    let g:airline_theme="murmur"
+  " }}}
+
+  " Ctags {{{
+    " Note: with Git hooks available in these dotfiles, using "git ctags" will
+    " generate tags in .git/tags
+    set tags=./.git/tags;$HOME/.vim/tags/*.tags
+
+    " Make tags placed in .git/tags file available in all levels of a repository
+    let gitroot = substitute(system('git rev-parse --show-toplevel'), '[\n\r]', '', 'g')
+    if gitroot != ''
+      let &tags = &tags . ',' . gitroot . '/.git/tags'
+    endif
+  " }}}
+
+  " ctrlp.vim {{{
+    " Stay in the root directory of the project
+    let g:ctrlp_working_path_mode = 'r'
+
+    " Disable case sensitivity
+    let g:ctrlp_mruf_case_sensitive = 0
+
+    " Ignore build directories
+    let g:ctrlp_user_command = {
+          \ 'types': {
+          \ 1: ['.git', 'cd %s && git ls-files --cached --exclude-standard --others | grep -v "build"'],
+          \ 2: ['.hg', 'hg --cwd %s locate -I . | grep -v "build"'],
+          \ },
+          \ 'fallback': 'find %s -type f'
+          \ }
+  " }}}
+
+  " DoxygenToolkit.vim {{{
+    if isdirectory(expand("~/.vim/plugged/DoxygenToolkit.vim"))
+      " Use C++ here for /// doxygen doc, else /** */ is used.
+      let g:DoxygenToolkit_commentType = "C++"
+      " Leading character used for @brief, @param...
+      let g:DoxygenToolkit_versionString = "\\"
+      " Comment block with ,d
+      nmap <Leader>d :Dox<Enter>
+
+      let g:DoxygenToolkit_briefTag_pre="\\brief "
+      let g:DoxygenToolkit_paramTag_pre="\\param "
+      let g:DoxygenToolkit_templateParamTag_pre="\\tparam "
+      let g:DoxygenToolkit_throwTag_pre="\\throw "
+      let g:DoxygenToolkit_returnTag="\\return "
+      let g:DoxygenToolkit_blockHeader=""
+      let g:DoxygenToolkit_blockFooter=""
+      let g:DoxygenToolkit_authorName=$FULLNAME
+      "let g:DoxygenToolkit_licenseTag=
+    endif
+  " }}}
+
+  " EasyAlign {{{
+    if isdirectory(expand("~/.vim/plugged/vim-easy-align"))
+      " Start interactive EasyAlign in visual mode
+      vmap <Enter> <Plug>(EasyAlign)
+
+      " Start interactive EasyAlign with a Vim movement
+      nmap <Leader>a <Plug>(EasyAlign)
+
+      let g:easy_align_delimiters = {
+      \ ' ': { 'pattern': ' ', 'left_margin': 0, 'right_margin': 0, 'stick_to_left': 0 },
+      \ '=': { 'pattern': '===\|<=>\|\(&&\|||\|<<\|>>\)=\|=\~[#?]\?\|=>\|[:+/*!%^=><&|.-]\?=[#?]\?',
+      \ 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ ':': { 'pattern': ':', 'left_margin': 0, 'right_margin': 1, 'stick_to_left': 1 },
+      \ ',': { 'pattern': ',', 'left_margin': 0, 'right_margin': 1, 'stick_to_left': 1 },
+      \ '|': { 'pattern': '|', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ '.': { 'pattern': '\.', 'left_margin': 0, 'right_margin': 0, 'stick_to_left': 0 },
+      \ '&': { 'pattern': '\\\@<!&\|\\\\', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ '{': { 'pattern': '(\@<!{', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ '}': { 'pattern': '}', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
+      \ '\': { 'pattern': '\\', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
+      \ '<': { 'pattern': '<', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
+      \ 'd': { 'pattern': ' \(\S\+\s*[;=]\)\@=', 'left_margin': 0, 'right_margin': 0},
+      \ '#': { 'pattern': '#', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 }
+      \ }
+    endif
+  " }}}
+
+  " EasyMotion {{{
+    if isdirectory(expand("~/.vim/plugged/vim-easymotion"))
+      " Disable default mappings
+      let g:EasyMotion_do_mapping = 0
+
+      let g:EasyMotion_smartcase = 1
+
+      nmap <Leader>w <Plug>(easymotion-bd-w)
+      nmap <Leader>s <Plug>(easymotion-s2)
+    endif
+  " }}}
+
+  " NerdTree {{{
+    if isdirectory(expand("~/.vim/plugged/nerdtree"))
+      map  <C-e>      <plug>NERDTreeTabsToggle<CR>
+      map  <leader>e  :NERDTreeFind<CR>
+      nmap <leader>nt :NERDTreeFind<CR>
+      let NERDTreeShowBookmarks=1
+      let NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$']
+      let NERDTreeChDirMode=0
+      let NERDTreeQuitOnOpen=1
+      let NERDTreeMouseMode=2
+      let NERDTreeShowHidden=1
+      let NERDTreeKeepTreeInNewTab=1
+      let g:nerdtree_tabs_open_on_gui_startup=0
+    endif
+  " }}}
+
+  " Startify {{{
+    " Call fortune and cowsay (if present)
+    let g:startify_custom_header =
+      \ map(split(system('cowsay -f "$(ls /usr/share/cows/ | sort -R | head -1)" "$(fortune -s)"'), '\n'), '" ". v:val') + ['','']
+
+    " Skip list
+    let g:startify_skiplist = [
+      \ '^/tmp'
+      \ ]
+
+    " Number of files
+    let g:startify_files_number = 5
+  " }}}
+
+  " UltiSnips {{{
+    " Trigger configuration.
+    let g:UltiSnipsExpandTrigger="<tab>"
+    let g:UltiSnipsJumpForwardTrigger="<tab>"
+    let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
+    " If you want :UltiSnipsEdit to split your window.
+    let g:UltiSnipsEditSplit="vertical"
+
+    " Custom snippets
+    let g:UltiSnipsSnippetsDir = "~/.vim/plugged/vim-snippets/custom_snippets"
+    let g:UltiSnipsSnippetDirectories=["UltiSnips", "custom_snippets"]
+
+    " Prevent UltiSnips from stealing ctrl-k.
+    augroup VimStartup
+      autocmd!
+      autocmd VimEnter * sil! iunmap <c-k>
+    augroup end
+
+    " Use ctrl-b instead.
+    let g:UltiSnipsJumpBackwardTrigger = "<c-b>"
+  " }}}
+
+  " Vim-CtrlSpace {{{
+    let g:airline_exclude_preview = 1
+    let g:ctrlspace_use_tabline = 1
+    let g:ctrlspace_use_mouse_and_arrows_in_term = 1
+    hi CtrlSpaceSelected term=reverse ctermfg=187  ctermbg=23   cterm=bold
+    hi CtrlSpaceNormal   term=NONE    ctermfg=244  ctermbg=232  cterm=NONE
+    hi CtrlSpaceFound                 ctermfg=220  ctermbg=NONE cterm=bold
+  " }}}
+
+" }}}
+
+" Optimization
+set viminfo=<0,'0,/150,:100,h,f0,s0
 
 " Remove indent guides
 let g:indent_guides_enable_on_vim_startup = 0
@@ -84,8 +449,6 @@ let g:indent_guides_enable_on_vim_startup = 0
 " Set hidden character list that can de display with set list
 set listchars=tab:>-,trail:~,extends:>,precedes:<
 
-" Force saving files that require root permission with w!!
-cmap w!! w !sudo tee > /dev/null %
 
 " Navigation for tabs
 nnoremap th  :tabfirst<CR>
@@ -114,12 +477,6 @@ au BufNewFile,BufRead *.cu,*.cuh set ft=cu
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" Damian Conway's OSCON 2013 tricks
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-"====[ Make the 81st column stand out ]====
-set colorcolumn=
-highlight ColorColumn ctermbg=blue
-call matchadd('ColorColumn', '\%81v', 100)
-
 
 "====[ Highlight the match in red ]====
 " This rewires n and N to do the highlighing
@@ -157,12 +514,6 @@ let g:DVB_TrimWS = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" Miscellaneous development
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" ctags support
-" Note: with Git hooks available in these dotfiles, using "git ctags" will
-" generate tags in .git/tags
-set noautochdir
-set tags=./.git/tags;$HOME/.vim/tags/*.tags
 
 " Doxygen syntax highlighting
 let g:load_doxygen_syntax=1
@@ -317,92 +668,6 @@ let g:cmake_build_type = "RelWithDebInfo"
 let g:cmake_inject_flags = {}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" ctrlp.vim
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Stay in the root directory of the project
-let g:ctrlp_working_path_mode = 'r'
-
-" Disable case sensitivity
-let g:ctrlp_mruf_case_sensitive = 0
-
-" Ignore build directories
-let g:ctrlp_user_command = {
-  \ 'types': {
-    \ 1: ['.git', 'cd %s && git ls-files --cached --exclude-standard --others | grep -v "build"'],
-    \ 2: ['.hg', 'hg --cwd %s locate -I . | grep -v "build"'],
-    \ },
-  \ 'fallback': 'find %s -type f'
-  \ }
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" DoxygenToolkit.vim
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Use C++ here for /// doxygen doc, else /** */ is used.
-let g:DoxygenToolkit_commentType = "C++"
-" Leading character used for @brief, @param...
-let g:DoxygenToolkit_versionString = "\\"
-" Comment block with ,d
-nmap <Leader>d :Dox<Enter>
-
-let g:DoxygenToolkit_briefTag_pre="\\brief "
-let g:DoxygenToolkit_paramTag_pre="\\param "
-let g:DoxygenToolkit_templateParamTag_pre="\\tparam "
-let g:DoxygenToolkit_throwTag_pre="\\throw "
-let g:DoxygenToolkit_returnTag="\\return "
-let g:DoxygenToolkit_blockHeader=""
-let g:DoxygenToolkit_blockFooter=""
-let g:DoxygenToolkit_authorName=$FULLNAME
-"let g:DoxygenToolkit_licenseTag=
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" EasyAlign
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Start interactive EasyAlign in visual mode
-vmap <Enter> <Plug>(EasyAlign)
-
-" Start interactive EasyAlign with a Vim movement
-nmap <Leader>a <Plug>(EasyAlign)
-
-let g:easy_align_delimiters = {
-\ ' ': { 'pattern': ' ', 'left_margin': 0, 'right_margin': 0, 'stick_to_left': 0 },
-\ '=': { 'pattern': '===\|<=>\|\(&&\|||\|<<\|>>\)=\|=\~[#?]\?\|=>\|[:+/*!%^=><&|.-]\?=[#?]\?',
-\ 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
-\ ':': { 'pattern': ':', 'left_margin': 0, 'right_margin': 1, 'stick_to_left': 1 },
-\ ',': { 'pattern': ',', 'left_margin': 0, 'right_margin': 1, 'stick_to_left': 1 },
-\ '|': { 'pattern': '|', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
-\ '.': { 'pattern': '\.', 'left_margin': 0, 'right_margin': 0, 'stick_to_left': 0 },
-\ '&': { 'pattern': '\\\@<!&\|\\\\', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
-\ '{': { 'pattern': '(\@<!{', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
-\ '}': { 'pattern': '}', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
-\ '\': { 'pattern': '\\', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
-\ '<': { 'pattern': '<', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
-\ 'd': { 'pattern': ' \(\S\+\s*[;=]\)\@=', 'left_margin': 0, 'right_margin': 0},
-\ '#': { 'pattern': '#', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 }
-\ }
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" EasyMotion
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Disable default mappings
-let g:EasyMotion_do_mapping = 0
-
-let g:EasyMotion_smartcase = 1
-
-nmap <Leader>w <Plug>(easymotion-bd-w)
-nmap <Leader>s <Plug>(easymotion-s2)
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" LeaderF
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:Lf_WildIgnore = {
-      \ 'dir': ['.svn','.git', '.hg', '*build*'],
-      \ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]']
-      \}
-
-let g:Lf_MruFileExclude = ['*.so']
-let g:Lf_NeedCacheTime = 0.5
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" ListToggle
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:lt_location_list_toggle_map = '<leader>ll'
@@ -418,30 +683,10 @@ let g:lt_quickfix_list_toggle_map = '<leader>ql'
 "inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" NERDTree
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:NERDTREEChDirMode = 0
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" numbers.vim
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Disable
 let g:enable_numbers = 0
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" Startify
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Call fortune and cowsay (if present)
-let g:startify_custom_header =
-      \ map(split(system('cowsay -f "$(ls /usr/share/cows/ | sort -R | head -1)" "$(fortune -s)"'), '\n'), '" ". v:val') + ['','']
-
-" Skip list
-let g:startify_skiplist = [
-      \ '^/tmp'
-      \ ]
-
-" Number of files
-let g:startify_files_number = 5
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" Syntastic
@@ -451,29 +696,24 @@ highlight link SyntasticWarning airline_warning
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" UltiSnips
+"" vim-clang-format
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Trigger configuration.
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+" llvm, google, chromium, mozilla
+let g:clang_format#code_style='llvm'
 
-" If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="vertical"
-
-" Custom snippets
-let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/custom_snippets"
-let g:UltiSnipsSnippetDirectories=["UltiSnips", "custom_snippets"]
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" Vim-CtrlSpace
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:airline_exclude_preview = 1
-let g:ctrlspace_use_tabline = 1
-let g:ctrlspace_use_mouse_and_arrows_in_term = 1
-hi CtrlSpaceSelected term=reverse ctermfg=187 ctermbg=23 cterm=bold
-hi CtrlSpaceNormal term=NONE ctermfg=244 ctermbg=232 cterm=NONE
-hi CtrlSpaceFound ctermfg=220 ctermbg=NONE cterm=bold
+let g:clang_format#style_options = {
+            \ "AccessModifierOffset" : -2,
+            \ "AlignTrailingComments" : "false",
+            \ "AllowShortFunctionsOnASingleLine" : "false",
+            \ "AllowShortIfStatementsOnASingleLine" : "true",
+            \ "AlwaysBreakTemplateDeclarations" : "true",
+            \ "CommentPragmas" : "",
+            \ "PointerAlignment" : "Left",
+            \ "SpaceBeforeParens" : "Always",
+            \ "SpacesBeforeTrailingComments" : 1,
+            \ "Standard" : "C++03",
+            \ "NamespaceIndentation" : "All",
+            \ "BreakBeforeBraces" : "Allman"}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" vim-multiple-cursors
