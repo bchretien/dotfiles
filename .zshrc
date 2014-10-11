@@ -41,7 +41,7 @@ DISABLE_CORRECTION="true"
 DISABLE_AUTO_UPDATE="true"
 
 # Plugins to be loaded
-plugins=(git github screen dev-profile keychain archlinux battery ssh-agent autojump history-substring-search)
+plugins=(git github screen dev-profile keychain archlinux battery ssh-agent autojump history-substring-search taskwarrior)
 
 setopt autocd
 
