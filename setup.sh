@@ -89,22 +89,23 @@ for i in $config_inifiles; do
 done
 
 if [ "$install_vim" = true ]; then
-    # Install spf13-vim
-    if [[ -L ~/.vimrc ]] && [[ "$(readlink ~/.vimrc)" = "$HOME/.spf13-vim-3/.vimrc" ]]; then
-      echo "Updating spf13-vim..."
-      vim +BundleInstall! +BundleClean +qall
-    else
-      echo "Installing spf13-vim..."
-      cd spf13-vim
-      ./bootstrap.sh
-      cd ..
+    # If plug.vim is not installed
+    if [[ ! -f ~/.vim/autoload/plug.vim ]]; then
+      echo "Downloading plug.vim..."
+
+      mkdir -p ~/.vim/autoload
+      curl -fLo ~/.vim/autoload/plug.vim \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     fi
+
+    echo "Installing plugins..."
+    vim +PlugInstall
 
     # Compile YouCompleteMe for vim
     ./compile_youcompleteme.sh
 
     # Add custom snippets
-    ln -sf `pwd`/custom_snippets $HOME/.vim/bundle/vim-snippets/
+    ln -sf `pwd`/custom_snippets $HOME/.vim/plugged/vim-snippets/
 fi
 
 # Create directories if necessary

@@ -1,3 +1,6 @@
+" Load plugins
+source ~/.vimrc.plugins
+
 " This must be first, because it changes other options as side effect
 set nocompatible
 
@@ -49,10 +52,6 @@ set noswapfile
 set foldmethod=manual
 set foldenable
 set foldlevel=100
-
-" Ignored packages
-UnBundle 'PIV'
-UnBundle 'clang_complete'
 
 set clipboard+=unnamedplus
 

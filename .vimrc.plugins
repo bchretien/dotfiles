@@ -1,0 +1,155 @@
+" Start adding Plugs
+call plug#begin('~/.vim/plugged')
+
+Plug 'majutsushi/tagbar'
+"Plug 'myusuf3/numbers.vim'
+"Plug 'atweiden/vim-betterdigraphs'
+"Plug 'atweiden/vim-hudigraphs'
+"Plug 'tpope/vim-obsession'
+"
+Plug 'szw/vim-ctrlspace'
+Plug 'junegunn/vim-easy-align'
+Plug 'LaTeX-Box-Team/LaTeX-Box'
+Plug 'atweiden/vim-dragvisuals'
+Plug 'chrisbra/unicode.vim'
+Plug 'maxbrunsfeld/vim-yankstack'
+
+" Web
+Plug 'tpope/vim-liquid'
+Plug 'othree/html5.vim'
+
+" DoxygenToolkit: Doxygen support.
+Plug 'vim-scripts/DoxygenToolkit.vim'
+
+" vim-cpp-enhanced-highlight: Enhanced syntax highlighting for C++
+Plug 'octol/vim-cpp-enhanced-highlight'
+
+" YouCompleteMe
+Plug 'Valloric/YouCompleteMe'
+" UltiSnips: engine.
+Plug 'sirver/ultisnips'
+" UltiSnips: snippets.
+Plug 'honza/vim-snippets'
+
+"Plug 'Yggdroot/LeaderF'
+
+" SuperTab: Perform all vim insert mode completions with Tab
+Plug 'ervandew/supertab'
+
+" CUDA snippets and syntax highlighting
+Plug 'cmaureir/snipmate-snippets-cuda'
+
+" over.vim: replace preview
+Plug 'osyo-manga/vim-over'
+
+" vim-multiple-cursors: True Sublime Text style multiple selections for Vim
+Plug 'terryma/vim-multiple-cursors'
+
+" Incorporates the functionality of CMake into Vim
+"Plug 'jalcine/cmake.vim'
+
+" Extended session management for Vim
+"Plug 'xolox/vim-misc'
+"Plug 'xolox/vim-session'
+
+" Silver searcher
+Plug 'rking/ag.vim'
+
+" Qargs utily command
+Plug 'henrik/vim-qargs'
+
+" gitk for Vim
+Plug 'gregsexton/gitv'
+
+" fancy start screen
+Plug 'mhinz/vim-startify'
+
+" quickly display quickfix list/location list
+Plug 'Valloric/ListToggle'
+
+" Change Vim working directory to the project root
+Plug 'airblade/vim-rooter'
+
+" Automatic resizing of windows
+"Plug 'roman/golden-ratio'
+
+" Open a quickfix item in a window you choose
+Plug 'yssl/QFEnter'
+
+" Better tab names
+Plug 'mkitt/tabline.vim'
+
+" tmux airline support
+"Plug 'edkolev/tmuxline.vim'
+
+" Asynchronous build and test dispatcher
+Plug 'tpope/vim-dispatch'
+
+" Taskwarrior support
+Plug 'farseer90718/vim-taskwarrior'
+
+" Highlight the part of a line that doesn't fit into textwidth
+Plug 'whatyouhide/vim-lengthmatters'
+
+" vim-clang-format and its dependencies
+Plug 'kana/vim-operator-user'
+Plug 'Shougo/vimproc.vim'
+Plug 'rhysd/vim-clang-format'
+
+
+
+
+
+" My Plugs
+Plug 'gmarik/vundle'
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
+Plug 'mileszs/ack.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'altercation/vim-colors-solarized'
+Plug 'spf13/vim-colors'
+Plug 'tpope/vim-surround'
+Plug 'spf13/vim-autoclose'
+Plug 'kien/ctrlp.vim'
+Plug 'matchit.zip'
+Plug 'bling/vim-airline'
+Plug 'bling/vim-bufferline'
+Plug 'Lokaltog/vim-easymotion'
+Plug 'godlygeek/csapprox'
+"Plug 'jistr/vim-nerdtree-tabs'
+Plug 'flazz/vim-colorschemes'
+Plug 'mbbill/undotree'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'vim-scripts/restore_view.vim'
+Plug 'mhinz/vim-signify'
+"Plug 'tpope/vim-abolish.git'
+"Plug 'justinmk/vim-sneak'
+Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-textobj-indent'
+Plug 'scrooloose/syntastic'
+Plug 'tpope/vim-fugitive'
+Plug 'mattn/webapi-vim'
+Plug 'mattn/gist-vim'
+Plug 'scrooloose/nerdcommenter'
+"Plug 'godlygeek/tabular'
+Plug 'klen/python-mode'
+Plug 'python.vim'
+Plug 'python_match.vim'
+Plug 'pythoncomplete'
+Plug 'elzr/vim-json'
+"Plug 'groenewege/vim-less'
+Plug 'pangloss/vim-javascript'
+"Plug 'briancollins/vim-jst'
+"Plug 'kchmck/vim-coffee-script'
+Plug 'amirh/HTML-AutoCloseTag'
+"Plug 'hail2u/vim-css3-syntax'
+Plug 'gorodinskiy/vim-coloresque'
+"Plug 'tpope/vim-haml'
+Plug 'tpope/vim-markdown'
+Plug 'spf13/vim-preview'
+"Plug 'tpope/vim-cucumber'
+"Plug 'quentindecock/vim-cucumber-align-pipes'
+Plug 'Puppet-Syntax-Highlighting'
+
+" Stop adding Plugs
+call plug#end()
