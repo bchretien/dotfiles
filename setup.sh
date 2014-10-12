@@ -88,6 +88,15 @@ for i in $config_inifiles; do
     fi
 done
 
+# ~/bin directory with useful scripts
+echo "Linking ~/bin"
+if [ ! -d "$HOME/bin" ]; then
+  ln -sf `pwd`/bin $HOME/bin
+  echo "... done!"
+else
+  echo "... already exists!"
+fi
+
 if [ "$install_vim" = true ]; then
     # If plug.vim is not installed
     if [[ ! -f ~/.vim/autoload/plug.vim ]]; then
@@ -100,9 +109,6 @@ if [ "$install_vim" = true ]; then
 
     echo "Installing plugins..."
     vim +PlugInstall
-
-    # Compile YouCompleteMe for vim
-    ./compile_youcompleteme.sh
 
     # Add custom snippets
     ln -sf `pwd`/custom_snippets $HOME/.vim/plugged/vim-snippets/
