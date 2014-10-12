@@ -11,8 +11,7 @@ visualizer_output_name = "fifo"
 visualizer_type = "wave" (spectrum/wave)
 
 # Playlist
-song_columns_list_format = "(3f)[black]{n} (40)[default]{t|f} (25)[red]{a} (30)[blue]{b} (4f)[black]{l}"
-#"$L(9)[black]{l} (20)[red]{a} (30)[blue]{b} $L(20)[default]{t}"
+song_columns_list_format = "(20)[yellow]{a} (3f)[blue]{n} (40)[white]{t|f} (15)[blue]{b} (4f)[black]{l}"
 now_playing_prefix = "$b"
 now_playing_suffix = "$/b"
 playlist_display_mode = "columns" (classic/columns)
@@ -28,9 +27,9 @@ song_library_format = "{%n > }{%t}|{%f}"
 # Bars
 song_status_format = "{%a - }{%t - }{%b}"
 #"$8%t $1• $2%a $1•{ $5%b $1• }$7%y$1"
-progressbar_look = "-• "
-titles_visibility = "no"
-header_visibility = "no"
+progressbar_look = "-⇢ "
+titles_visibility = "yes"
+header_visibility = "yes"
 statusbar_visibility = "yes"
 #now_playing_prefix = "?"
 
@@ -57,5 +56,5 @@ visualizer_color = "cyan"
 song_window_title_format = "MPD: {%a > }{%t}{ [%b{ Disc %d}]}|{%f}"
 search_engine_display_mode = "columns" (classic/columns)
 follow_now_playing_lyrics = "yes"
-display_screens_numbers_on_start = "no"
+#display_screens_numbers_on_start = "no"
 # vim: set ts=2 sw=2 tw=0 :

@@ -1,4 +1,4 @@
-" vim: set sw=2 ts=2 sts=2 et tw=78 foldmarker={{{,}}} foldlevel=0 foldmethod=marker spell:
+" vim: set sw=2 ts=2 sts=2 et tw=78 foldmarker={{{,}}} foldlevel=0 foldmethod=marker spell: ft=vim
 "
 " Some of the settings come from spf13-vim: https://github.com/spf13/spf13-vim
 "
