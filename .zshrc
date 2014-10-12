@@ -41,9 +41,15 @@ DISABLE_CORRECTION="true"
 DISABLE_AUTO_UPDATE="true"
 
 # Plugins to be loaded
-plugins=(git github screen dev-profile keychain archlinux battery ssh-agent autojump history-substring-search taskwarrior)
+plugins=(archlinux \
+         autojump dirhistory history-substring-search \
+         git git-extras \
+         profile ssh-agent taskwarrior web-search)
 
 setopt autocd
+
+# Don't print job information (e.g. fork pids)
+set +m
 
 # Unset shared history
 unsetopt share_history
