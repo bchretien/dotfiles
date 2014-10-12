@@ -21,6 +21,8 @@ ZSH_2000_GIT_DIRTY_FG='black'
 ZSH_2000_GIT_DIRTY_BG='yellow'
 ZSH_2000_GIT_CLEAN_FG='white'
 ZSH_2000_GIT_CLEAN_BG='green'
+ZSH_2000_TIME_FG='white'
+ZSH_2000_TIME_BG='black'
 
 prompt_segment() {
   local bg fg
@@ -99,7 +101,7 @@ prompt_status() {
 }
 
 prompt_time() {
-  prompt_segment_right white black '%D{%H:%M:%S} '
+  prompt_segment_right ${ZSH_2000_TIME_BG} ${ZSH_2000_TIME_FG} '%D{%H:%M:%S} '
 }
 
 prompt_rvm() {
