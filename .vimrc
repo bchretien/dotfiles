@@ -76,6 +76,13 @@
   " set it to the first line when editing a git commit message
   au FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
 
+  " Splitting style
+  set splitbelow
+  set splitright
+
+  " Keep the window height when windows are opened or closed
+  set winfixheight
+
   " spf13-vim: restore cursor to file position in previous editing session
   function! ResCur()
     if line("'\"") <= line("$")
@@ -88,11 +95,12 @@
     autocmd BufWinEnter * call ResCur()
   augroup END
 
-
   if exists('autochdir')
     " Do not automatically changed the working directory
     set noautochdir
   endif
+
+  set title titlestring=Vim:\ %F
 
   " Setting up the directories {{{
     set noswapfile " disable swap files
@@ -269,6 +277,10 @@
 
   " Easier formatting
   nnoremap <silent> <leader>q gwip
+
+  " Navigate the location list
+  nmap <Leader>n :lnext<Enter>
+  nmap <Leader>p :lprevious<Enter>
 " }}}
 
 " Plugins {{{
@@ -368,6 +380,39 @@
     endif
   " }}}
 
+  " neocomplete {{{
+    " Disable AutoComplPop.
+    let g:acp_enableAtStartup = 0
+    " AutoComplPop like behavior.
+    let g:neocomplete#enable_auto_select = 1
+    let g:neocomplete#enable_refresh_always = 1
+    " Use neocomplete.
+    let g:neocomplete#enable_at_startup = 1
+    " Use smartcase.
+    let g:neocomplete#enable_smart_case = 1
+    let g:neocomplete#auto_completion_start_length = 1
+
+    " Set minimum syntax keyword length.
+    let g:neocomplete#sources#syntax#min_keyword_length = 3
+    let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+    let g:neocomplete#use_vimproc=1
+
+    " Define dictionary.
+    let g:neocomplete#sources#dictionary#dictionaries = {
+          \ 'default' : ''
+          \ }
+
+    let g:neocomplete#enable_omni_fallback = 0
+
+    if !exists('g:neocomplete#force_omni_input_patterns')
+      let g:neocomplete#force_omni_input_patterns = {}
+    endif
+    let g:neocomplete#force_omni_input_patterns.c =
+          \ '[^.[:digit:] *\t]\%(\.\|->\)\%(\h\w*\)\?'
+    let g:neocomplete#force_omni_input_patterns.cpp =
+          \ '[^.[:digit:] *\t]\%(\.\|->\)\%(\h\w*\)\?\|\h\w*::\%(\h\w*\)\?'
+  " }}}
+
   " NerdTree {{{
     if isdirectory(expand("~/.vim/plugged/nerdtree"))
       map  <C-e>      <plug>NERDTreeTabsToggle<CR>
@@ -381,6 +426,13 @@
       let NERDTreeShowHidden=1
       let NERDTreeKeepTreeInNewTab=1
       let g:nerdtree_tabs_open_on_gui_startup=0
+    endif
+  " }}}
+
+  " QuickRun {{{
+    if isdirectory(expand("~/.vim/plugged/vim-quickrun"))
+      noremap  <leader>r :QuickRun<CR>
+      vnoremap <leader>r :QuickRun<CR>
     endif
   " }}}
 
@@ -398,11 +450,17 @@
     let g:startify_files_number = 5
   " }}}
 
+  " SuperTab {{{
+    let g:SuperTabDefaultCompletionType = '<Tab>'
+    let g:SuperTabBackward = '<C-S-Tab>'
+  " }}}
+
   " UltiSnips {{{
     " Trigger configuration.
     let g:UltiSnipsExpandTrigger="<tab>"
     let g:UltiSnipsJumpForwardTrigger="<tab>"
     let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+    let g:UltiSnipsListSnippets="<c-tab>"
 
     " If you want :UltiSnipsEdit to split your window.
     let g:UltiSnipsEditSplit="vertical"
@@ -430,6 +488,61 @@
     hi CtrlSpaceFound                 ctermfg=220  ctermbg=NONE cterm=bold
   " }}}
 
+  " vim-marching {{{
+    let g:marching_enable_neocomplete = 1
+    let g:marching_enable_auto_select = 1
+    let g:marching_backend = "clang_command"
+    "let g:marching_clang_command_option="-std=c++11"
+
+    " Load include paths:
+    "  - Standard library
+    "  - Boost
+    "  - Eigen 3
+    let g:marching_include_paths = filter(
+          \ split(glob('/usr/include/c++/*'), '\n') +
+          \ split(glob('/usr/include/c++/*/*/bits'), '\n') +
+          \ split(glob('/usr/include/boost/*'), '\n') +
+          \ split(glob('/usr/include/eigen3'), '\n'),
+          \ 'isdirectory(v:val)')
+
+    "imap <buffer> <C-x><C-o> <Plug>(marching_start_omni_complete)
+    "imap <buffer> <C-x><C-x><C-o> <Plug>(marching_force_start_omni_complete)
+  " }}}
+
+  " vim-snowdrop {{{
+    let g:snowdrop#libclang_path = "/usr/lib"
+    let g:snowdrop#libclang_file = "libclang.so"
+    "let g:snowdrop#include_paths = {
+          "\ "cpp" : [
+          "\ "/usr/include",
+          "\ "/usr/include/boost",
+          "\ "/usr/include/eigen3"
+          "\ ]}
+  " }}}
+
+" }}}
+
+" Toolbox {{{
+  " Write file, call emacs for indenting, then reload
+  " To use this:
+  " :call EmacsIndent()
+  function! EmacsIndent()
+    let l:filename = expand("%:p")
+    w
+    echom system("emacs -batch " . l:filename . " --eval '(indent-region (point-min) (point-max) nil)' -f save-buffer -kill")
+    edit!
+    redraw
+  endfunction
+
+  " Write mapped keys to a new buffer
+  function! Map()
+    redir @a
+    silent map
+    silent map!
+    redir END
+    new
+    put! a
+  endfunction
 " }}}
 
 " Optimization
@@ -592,17 +705,6 @@ if has("autocmd")
   autocmd BufEnter *.{cc,cxx,cpp,cu,h,hh,hpp,hxx,cuh} setlocal indentexpr=CppNoTemplateIndent()
 endif
 
-" Write file, call emacs for indenting, then reload
-" To use this:
-" :call EmacsIndent()
-function! EmacsIndent()
-  let l:filename = expand("%:p")
-  w
-  echom system("emacs -batch " . l:filename . " --eval '(indent-region (point-min) (point-max) nil)' -f save-buffer -kill")
-  edit!
-  redraw
-endfunction
-
 " See: http://stackoverflow.com/a/6171215/1043187
 " Escape special characters in a string for exact matching.
 " This is useful to copying strings from the file to the search tool
@@ -664,15 +766,6 @@ let g:cmake_inject_flags = {}
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:lt_location_list_toggle_map = '<leader>ll'
 let g:lt_quickfix_list_toggle_map = '<leader>ql'
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" Neocomplete
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Disable AutoComplPop.
-"let g:acp_enableAtStartup = 0
-
-" <TAB>: completion.
-"inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" numbers.vim
@@ -743,48 +836,3 @@ endw
 
 " Work around the ambiguity with escape sequences
 set ttimeout ttimeoutlen=50
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" YouCompleteMe
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Change the default key-binding of YCM to <C-TAB> and <C-S-TAB>
-" to make it compatible with UltiSnips
-let g:ycm_key_list_select_completion=['<C-TAB>', '<Down>']
-let g:ycm_key_list_previous_completion=['<C-S-TAB>', '<Up>']
-
-let g:ycm_key_detailed_diagnostics = '<leader>c'
-
-" See: http://0x3f.org/blog/make-youcompleteme-ultisnips-compatible/
-" Set the default action of SuperTab to triggering <C-TAB>
-"let g:SuperTabDefaultCompletionType = '<C-Tab>'
-let g:SuperTabBackward = '<C-S-Tab>'
-
-let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-
-" Use tags that can be generated with 'git ctags'
-let g:ycm_collect_identifiers_from_tags_files = 1
-
-" Enable/disable diagnostics UI
-let g:ycm_show_diagnostics_ui = 1
-let g:ycm_enable_diagnostic_highlighting = 1
-let g:ycm_enable_diagnostic_signs = 1
-let g:ycm_add_preview_to_completeopt = 0
-set completeopt=menu
-
-set splitbelow
-set splitright
-set winfixheight
-
-let g:ycm_always_populate_location_list = 1
-
-let g:ycm_autoclose_preview_window_after_completion = 0
-let g:ycm_autoclose_preview_window_after_insertion = 0
-let g:ycm_max_diagnostics_to_display = 4
-let g:ycm_filepath_completion_use_working_dir = 1
-let g:ycm_cache_omnifunc = 1
-
-" Turn YCM off?
-let g:ycm_auto_trigger = 1
-
-nmap <Leader>n :lnext<Enter>
-nmap <Leader>p :lprevious<Enter>

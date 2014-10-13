@@ -64,8 +64,12 @@ call plug#begin('~/.vim/plugged')
 " Development plugins {{{
   " DoxygenToolkit: Doxygen support
   Plug 'vim-scripts/DoxygenToolkit.vim'
+
   " gitk for Vim
   Plug 'gregsexton/gitv', { 'on': 'Gitv' }
+
+  " neo-completion with cache
+  Plug 'Shougo/neocomplete.vim'
 
   " Commenter plugin
   Plug 'scrooloose/nerdcommenter'
@@ -75,13 +79,6 @@ call plug#begin('~/.vim/plugged')
 
   " UltiSnips: engine.
   Plug 'sirver/ultisnips'
-
-  " Formatting with clang-format
-  " Requires: vimproc.vim,  vim-operator-user
-  Plug 'rhysd/vim-clang-format', { 'for': ['c', 'cpp', 'objc'] }
-
-  " Enhanced syntax highlighting for C++
-  Plug 'octol/vim-cpp-enhanced-highlight'
 
   " Asynchronous build and test dispatcher
   Plug 'tpope/vim-dispatch'
@@ -95,8 +92,27 @@ call plug#begin('~/.vim/plugged')
   " UltiSnips: snippets.
   Plug 'honza/vim-snippets'
 
-  " YouCompleteMe
-  Plug 'Valloric/YouCompleteMe'
+  " C/C++ {{{
+    " Formatting with clang-format
+    " Requires: vimproc.vim,  vim-operator-user
+    Plug 'rhysd/vim-clang-format', { 'for': ['c', 'cpp', 'objc'] }
+
+    " Enhanced syntax highlighting for C++
+    Plug 'octol/vim-cpp-enhanced-highlight'
+
+    " Async clang code completion
+    " Requires: clang, vimproc.vim 
+    Plug 'osyo-manga/vim-marching'
+
+    " libclang in Vim
+    " Requires: clang
+    Plug 'osyo-manga/vim-snowdrop'
+  " }}}
+
+  " Python {{{
+    " Using the jedi autocompletion library
+    Plug 'davidhalter/jedi-vim'
+  " }}}
 " }}}
 
 " Display plugins {{{
@@ -110,13 +126,21 @@ call plug#begin('~/.vim/plugged')
   Plug 'bling/vim-airline'
 
   " css/less/sass/html color preview for Vim
-  Plug 'gorodinskiy/vim-coloresque', { 'for': ['css', 'html'] }
+  Plug 'gorodinskiy/vim-coloresque', { 'for': ['css', 'html', 'vim'] }
 
   " Plugin for visually displaying indent levels in code
   Plug 'nathanaelkane/vim-indent-guides'
 
   " Fancy start screen
   Plug 'mhinz/vim-startify'
+
+  " Color schemes {{{
+    " Add molokai color scheme
+    Plug 'tomasr/molokai'
+
+    " Add solarized color scheme
+    Plug 'altercation/vim-colors-solarized'
+  " }}}
 " }}}
 
 " Web plugins {{{
@@ -157,8 +181,11 @@ call plug#begin('~/.vim/plugged')
   Plug 'kana/vim-operator-user'
 
   " Interactive command execution in Vim
-  " Required by: vim
+  " Required by: vim-clang-format, vim-marching
   Plug 'Shougo/vimproc.vim', { 'do': 'make'}
+
+  " Run a command and show its result quickly
+  Plug 'thinca/vim-quickrun', { 'on': 'QuickRun' }
 " }}}
 
 " Wrapper plugins {{{
@@ -199,10 +226,7 @@ Plug 'yssl/QFEnter'
 " tmux airline support
 "Plug 'edkolev/tmuxline.vim'
 
-Plug 'altercation/vim-colors-solarized'
-Plug 'spf13/vim-colors'
 Plug 'bling/vim-bufferline'
-Plug 'flazz/vim-colorschemes'
 Plug 'vim-scripts/restore_view.vim'
 Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-indent'
