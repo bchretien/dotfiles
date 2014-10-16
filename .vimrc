@@ -103,13 +103,14 @@
   set title titlestring=Vim:\ %F
 
   " Setting up the directories {{{
-    set noswapfile " disable swap files
-    set nobackup " disable backups
-    if has('persistent_undo')
-      set undofile " Undo file
-      set undolevels=1000 " Maximum number of changes that can be undone
-      set undoreload=10000 " Maximum number lines to save for undo on a buffer reload
-    endif
+  set noswapfile " disable swap files
+  set nobackup " disable backups
+  if has('persistent_undo')
+    set undolevels=1000 " Maximum number of changes that can be undone
+    set undoreload=10000 " Maximum number lines to save for undo on a buffer reload
+    set undodir=~/.vimundo/
+    set undofile " Undo file
+  endif
 
     " Add exclusions to mkview and loadview
     " eg: *.*, svn-commit.tmp
@@ -378,6 +379,14 @@
       nmap <Leader>w <Plug>(easymotion-bd-w)
       nmap <Leader>s <Plug>(easymotion-s2)
     endif
+  " }}}
+
+  " github-issues.vim {{{
+    " github-issues will use upstream issues (if repo is fork)
+    let g:github_upstream_issues = 1
+
+    " omnicomplete will not be populated until it is triggered
+    let g:gissues_lazy_load = 1
   " }}}
 
   " neocomplete {{{
