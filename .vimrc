@@ -124,8 +124,14 @@
 " VIM UI {{{
 
   " Colors {{{
+    " Enable 256 colors
+    if $TERM == "xterm-256color"
+      set t_Co=256
+    endif
+
     " FIXME: check for the theme
-    colorscheme molokai
+    " Schemes: hybrid, jellybeans, lizard256, lucius, LuciusDarkLowContrast, molokai, smyck
+    colorscheme hybrid
 
     " Color of the tabline
     hi TabLine      ctermfg=White  ctermbg=DarkGray  cterm=NONE
@@ -133,10 +139,19 @@
     hi TabLineSel   ctermfg=White  ctermbg=DarkBlue  cterm=NONE
 
     " Color of matching braces
-    hi MatchParen   ctermfg=Yellow ctermbg=Black     cterm=bold
+    "hi MatchParen   ctermfg=Yellow ctermbg=Black     cterm=bold
 
     " Color of a selected block
-    hi Visual       ctermbg=238
+    "hi Visual       ctermbg=238
+
+    " Fix spellchecking color
+    hi clear SpellBad
+    hi SpellBad cterm=underline ctermfg=red
+
+    highlight clear SignColumn " SignColumn should match background
+    highlight clear LineNr " Current line number row will have same background color in relative mode
+    "highlight clear CursorLineNr " Remove highlight color from current line number
+
   " }}}
 
   " Font
@@ -146,10 +161,6 @@
   set showmode " Display the current mode
 
   set cursorline " Highlight current line
-
-  highlight clear SignColumn " SignColumn should match background
-  highlight clear LineNr " Current line number row will have same background color in relative mode
-  "highlight clear CursorLineNr " Remove highlight color from current line number
 
   if has('cmdline_info')
     set ruler " Show the ruler
@@ -282,6 +293,28 @@
   " Navigate the location list
   nmap <Leader>n :lnext<Enter>
   nmap <Leader>p :lprevious<Enter>
+
+  " Exit insert mode with Ctrl+C without skipping InsertLeave event
+  inoremap <C-c> <Esc>
+
+  " Navigation
+  nnoremap j gj
+  nnoremap k gk
+  xnoremap j gj
+  xnoremap k gk
+
+  " Navigation for tabs
+  nnoremap th  :tabfirst<CR>
+  nnoremap tj  :tabprev<CR>
+  nnoremap tk  :tabnext<CR>
+  nnoremap tl  :tablast<CR>
+  nnoremap tt  :tabedit<Space>
+  nnoremap tm  :tabm<Space>
+  nnoremap tn  :tabnew<CR>
+  nnoremap td  :tabclose<CR>
+
+  nnoremap <Leader>k :cnext<CR>
+  nnoremap <Leader>j :cprev<CR>
 " }}}
 
 " Plugins {{{
@@ -364,7 +397,9 @@
       \ '\': { 'pattern': '\\', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
       \ '<': { 'pattern': '<', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
       \ 'd': { 'pattern': ' \(\S\+\s*[;=]\)\@=', 'left_margin': 0, 'right_margin': 0},
-      \ '#': { 'pattern': '#', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 }
+      \ '#': { 'pattern': '#', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ '[': { 'pattern': '(\@<![', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ ']': { 'pattern': ']', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
       \ }
     endif
   " }}}
@@ -389,6 +424,31 @@
     let g:gissues_lazy_load = 1
   " }}}
 
+  " haskellmode-vim {{{
+    let g:haddock_browser="$BROWSER"
+  " }}}
+
+  " jedi.vim {{{
+    let g:pymode_rope = 0
+    let g:jedi#popup_on_dot = 1
+    let g:jedi#popup_select_first = 0
+    let g:jedi#auto_initialization = 1
+    let g:jedi#show_call_signatures = 1
+    let g:jedi#rename_command = "<leader>R"
+    let g:jedi#use_tabs_not_buffers = 0
+
+    " Neocomplete-related fixes
+    autocmd FileType python setlocal omnifunc=jedi#completions
+    let g:jedi#completions_enabled = 0
+    let g:jedi#auto_vim_configuration = 0
+  " }}}
+
+  " neco-ghc {{{
+    autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
+    let g:necoghc_enable_detailed_browse = 1
+    let g:necoghc_debug = 1
+  " }}}
+
   " neocomplete {{{
     " Disable AutoComplPop.
     let g:acp_enableAtStartup = 0
@@ -406,6 +466,9 @@
     let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
     let g:neocomplete#use_vimproc=1
 
+    " Fix neco-ghc errors
+    let g:neocomplete#force_overwrite_completefunc = 1
+
     " Define dictionary.
     let g:neocomplete#sources#dictionary#dictionaries = {
           \ 'default' : ''
@@ -420,6 +483,10 @@
           \ '[^.[:digit:] *\t]\%(\.\|->\)\%(\h\w*\)\?'
     let g:neocomplete#force_omni_input_patterns.cpp =
           \ '[^.[:digit:] *\t]\%(\.\|->\)\%(\h\w*\)\?\|\h\w*::\%(\h\w*\)\?'
+
+    " Jedi support
+    let g:neocomplete#force_omni_input_patterns.python =
+          \ '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
   " }}}
 
   " NerdTree {{{
@@ -436,6 +503,15 @@
       let NERDTreeKeepTreeInNewTab=1
       let g:nerdtree_tabs_open_on_gui_startup=0
     endif
+  " }}}
+
+  " python-mode {{{
+    " Use QuickRun for that
+    let g:pymode_run = 1
+
+    " Python-mode can be quite slow
+    let g:pymode_rope_complete_on_dot = 0
+    let g:pymode_rope_lookup_project = 0
   " }}}
 
   " QuickRun {{{
@@ -464,6 +540,12 @@
     let g:SuperTabBackward = '<C-S-Tab>'
   " }}}
 
+  " Syntastic {{{
+    highlight link SyntasticError   ErrMsg
+    highlight link SyntasticWarning airline_warning
+    let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+  " }}}
+
   " UltiSnips {{{
     " Trigger configuration.
     let g:UltiSnipsExpandTrigger="<tab>"
@@ -485,7 +567,64 @@
     augroup end
 
     " Use ctrl-b instead.
-    let g:UltiSnipsJumpBackwardTrigger = "<c-b>"
+    "let g:UltiSnipsJumpBackwardTrigger = "<c-b>"
+  " }}}
+
+  " Unite {{{
+    " General options
+    let g:unite_enable_start_insert = 1
+    let g:unite_data_directory = expand("~/.unite")
+    let g:unite_source_history_yank_enable = 1
+
+    call unite#custom#profile('default', 'context', {
+          \ 'winheight': 10,
+          \ 'direction': 'botright',
+          \ 'prompt': '» ',
+          \ })
+
+    " File
+    let g:unite_source_file_ignore_pattern =
+          \'^\%(/\|\a\+:/\)$\|\~$\|\.\%(o|exe|dll|bak|sw[po]\)$'
+
+    " Search
+    if executable('ag')
+      let g:unite_source_grep_command = 'ag'
+      let g:unite_source_grep_default_opts = '--line-numbers --nocolor --nogroup ' .
+            \ '--hidden --ignore ''.hg'' --ignore ''.svn'' --ignore ''.git'' ' .
+            \ '--ignore ''.bzr'' ' .
+            \ '--ignore ''*build*'' '
+      let g:unite_source_grep_recursive_opt = ''
+    endif
+
+    " Mappings {{{
+      nnoremap [unite] <Nop>
+      nmap ' <SID>[unite]
+
+      nnoremap <SID>[unite]u :<C-u>Unite
+      nnoremap <SID>[unite]' :<C-u>Unite buffer file<CR>
+      nnoremap <SID>[unite]b :<C-u>Unite buffer<CR>
+      nnoremap <SID>[unite]f :<C-u>Unite file<CR>
+      "nnoremap <SID>[unite]H :<C-u>Unite help<CR>
+      "nnoremap <SID>[unite]t :<C-u>Unite tag<CR>
+      "nnoremap <SID>[unite]T :<C-u>Unite -immediately -no-start-insert tag:<C-r>=expand('<cword>')<CR><CR>
+      nnoremap <SID>[unite]w :<C-u>Unite tab<CR>
+      nnoremap <SID>[unite]m :<C-u>Unite file_mru<CR>
+      nnoremap <SID>[unite]o :<C-u>Unite outline<CR>
+      nnoremap <SID>[unite]q :<C-u>Unite qf -no-quit<CR>
+      "nnoremap <SID>[unite]M :<C-u>Unite mark<CR>
+      nnoremap <SID>[unite]r :<C-u>Unite register<CR>
+      nnoremap <SID>[unite]g :<C-u>Unite grep -no-quit -direction=botright -buffer-name=grep-buffer<CR>
+
+      " Ag search
+      nnoremap <Leader>/ :Unite grep -no-quit<CR><CR>
+
+      " File search, CtrlP style
+      nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert file_rec/async:!<CR>
+    " }}}
+
+    " Plugins {{{
+      nnoremap <SID>[unite]c :<C-u>Unite -no-quit colorscheme<CR>
+    " }}}
   " }}}
 
   " Vim-CtrlSpace {{{
@@ -495,6 +634,14 @@
     hi CtrlSpaceSelected term=reverse ctermfg=187  ctermbg=23   cterm=bold
     hi CtrlSpaceNormal   term=NONE    ctermfg=244  ctermbg=232  cterm=NONE
     hi CtrlSpaceFound                 ctermfg=220  ctermbg=NONE cterm=bold
+  " }}}
+
+  " vim-lengthmatters {{{
+  let g:lengthmatters_excluded = ['unite', 
+        \ 'tagbar', 'startify', 'gundo', 
+        \ 'vimshell', 'w3m', 'nerdtree',
+        \ 'help', 'qf', 'gfimarkdown']
+
   " }}}
 
   " vim-marching {{{
@@ -563,20 +710,24 @@ let g:indent_guides_enable_on_vim_startup = 0
 " Set hidden character list that can de display with set list
 set listchars=tab:>-,trail:~,extends:>,precedes:<
 
+" Protect large files from sourcing and other overhead.
+" Files become read only
+if !exists("my_auto_commands_loaded")
+  let my_auto_commands_loaded = 1
+  " Large files are > 10M
+  " Set options:
+  " eventignore+=FileType (no syntax highlighting etc
+  " assumes FileType always on)
+  " noswapfile (save copy of file)
+  " bufhidden=unload (save memory when other file is viewed)
+  " buftype=nowritefile (is read-only)
+  " undolevels=-1 (no undo possible)
+  let g:LargeFile = 1024 * 1024 * 10
+  augroup LargeFile
+    autocmd BufReadPre * let f=expand("<afile>") | if getfsize(f) > g:LargeFile | set eventignore+=FileType | setlocal noswapfile bufhidden=unload buftype=nowrite undolevels=-1 | else | set eventignore-=FileType | endif
+  augroup END
+endif
 
-" Navigation for tabs
-nnoremap th  :tabfirst<CR>
-nnoremap tj  :tabprev<CR>
-nnoremap tk  :tabnext<CR>
-nnoremap tl  :tablast<CR>
-nnoremap tt  :tabedit<Space>
-nnoremap tm  :tabm<Space>
-nnoremap tn  :tabnew<CR>
-nnoremap td  :tabclose<CR>
-
-" Fix spellchecking color
-hi clear SpellBad
-hi SpellBad cterm=underline ctermfg=red
 
 "====[ Automatically reload .vimrc when updated ]====
 " See: http://superuser.com/questions/132029/how-do-you-reload-your-vimrc-file-without-restarting-vim
@@ -663,10 +814,6 @@ au FileType c,cpp,cuda setlocal formatoptions+=c
 au FileType c,cpp,cuda setlocal formatoptions+=o
 au FileType c,cpp,cuda setlocal comments-=://
 au FileType c,cpp,cuda setlocal comments+=:///
-
-" Python-mode can be quite slow
-let g:pymode_rope_complete_on_dot = 0
-let g:pymode_rope_lookup_project = 0
 
 " Do not indent template in C++
 function! CppNoTemplateIndent()
@@ -781,13 +928,6 @@ let g:lt_quickfix_list_toggle_map = '<leader>ql'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Disable
 let g:enable_numbers = 0
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" Syntastic
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-highlight link SyntasticError ErrMsg
-highlight link SyntasticWarning airline_warning
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" vim-clang-format

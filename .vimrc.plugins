@@ -4,16 +4,14 @@
 call plug#begin('~/.vim/plugged')
 
 " Edition plugins {{{
-  " Silver searcher
-  Plug 'rking/ag.vim', { 'on': 'Ag'}
 
-  " Fuzzy file, buffer, mru, tag, etc finder
-  Plug 'kien/ctrlp.vim'
+  " Open a quickfix item in a window you choose
+  Plug 'yssl/QFEnter'
 
-  " Perform all vim insert mode completions with Tab
+  " Perform all your Vim insert mode completions with Tab
   Plug 'ervandew/supertab'
 
-  " Syntax checking hacks for vim
+  " Syntax checking hacks for Vim
   Plug 'scrooloose/syntastic'
 
   " Display your undo history in a graph
@@ -62,8 +60,14 @@ call plug#begin('~/.vim/plugged')
 " }}}
 
 " Development plugins {{{
+  " Incorporates the functionality of CMake into Vim
+  "Plug 'jalcine/cmake.vim', { 'on': ['CMakeCreateProject', 'CMakeBuild'] }
+
   " DoxygenToolkit: Doxygen support
   Plug 'vim-scripts/DoxygenToolkit.vim'
+
+  " GitHub issue integration in Vim
+  Plug 'jaxbot/github-issues.vim'
 
   " gitk for Vim
   Plug 'gregsexton/gitv', { 'on': 'Gitv' }
@@ -85,6 +89,9 @@ call plug#begin('~/.vim/plugged')
 
   " Git wrapper
   Plug 'tpope/vim-fugitive'
+
+  " Vim plugin for previewing markup files (markdown, rdoc, textile, html)
+  Plug 'greyblake/vim-preview', { 'on': 'Preview' }
 
   " Show a VCS diff using Vim's sign column
   Plug 'mhinz/vim-signify'
@@ -108,19 +115,48 @@ call plug#begin('~/.vim/plugged')
     " Requires: clang
     Plug 'osyo-manga/vim-snowdrop'
   " }}}
+  
+  " Haskell {{{
+    " A collection of vimscripts for Haskell development.
+    Plug 'dag/vim2hs'
+
+    " Happy Haskell programming on Vim, powered by ghc-mod
+    Plug 'eagletmt/ghcmod-vim'
+
+    " An unpacked copy of the haskellmode vimball
+    "Plug 'lukerandall/haskellmode-vim'
+
+    " A completion plugin for Haskell, using ghc-mod
+    Plug 'eagletmt/neco-ghc'
+  " }}}
 
   " Python {{{
     " Using the jedi autocompletion library
-    Plug 'davidhalter/jedi-vim'
+    Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
+
+    " Enhanced version of the original python.vim for Python programming language. 
+    Plug 'python.vim'
+
+    " Extend the % motion and define g%, [%, and ]% motions for Python files
+    Plug 'python_match.vim'
+
+    " PyLint, Rope, Pydoc, breakpoints from box.
+    Plug 'klen/python-mode', { 'for': ['py'] }
   " }}}
 " }}}
 
 " Display plugins {{{
+  " Super simple vim plugin to show the list of buffers in the command bar
+  Plug 'bling/vim-bufferline'
+
   " Make gvim-only colorschemes work transparently in terminal Vim
   Plug 'godlygeek/csapprox'
 
   " Better tab names
   Plug 'mkitt/tabline.vim'
+
+  " tmux airline support
+  "Plug 'edkolev/tmuxline.vim'
 
   " Lean & mean status/tabline
   Plug 'bling/vim-airline'
@@ -141,6 +177,17 @@ call plug#begin('~/.vim/plugged')
     " Add solarized color scheme
     Plug 'altercation/vim-colors-solarized'
   " }}}
+" }}}
+
+" Unite {{{
+  " Unite and create user interfaces
+  Plug 'Shougo/unite.vim'
+
+  " Unite plugin to switch between colorschemes
+  Plug 'ujihisa/unite-colorscheme'
+
+  " Unite plugin providing outline view for a buffer
+  Plug 'Shougo/unite-outline'
 " }}}
 
 " Web plugins {{{
@@ -205,36 +252,15 @@ call plug#begin('~/.vim/plugged')
 "Plug 'atweiden/vim-hudigraphs'
 "Plug 'tpope/vim-obsession'
 
-" CUDA snippets and syntax highlighting
-Plug 'cmaureir/snipmate-snippets-cuda'
-
-" over.vim: replace preview
-Plug 'osyo-manga/vim-over'
-
-" Incorporates the functionality of CMake into Vim
-"Plug 'jalcine/cmake.vim'
-
 " quickly display quickfix list/location list
 Plug 'Valloric/ListToggle'
 
 " Automatic resizing of windows
 "Plug 'roman/golden-ratio'
 
-" Open a quickfix item in a window you choose
-Plug 'yssl/QFEnter'
-
-" tmux airline support
-"Plug 'edkolev/tmuxline.vim'
-
-Plug 'bling/vim-bufferline'
 Plug 'vim-scripts/restore_view.vim'
 Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-indent'
-Plug 'klen/python-mode'
-Plug 'python.vim'
-Plug 'python_match.vim'
-Plug 'pythoncomplete'
-Plug 'spf13/vim-preview'
 
 " Load local plugin file (if it exists)
 " This provides a way to have user-specific plugins without needing
