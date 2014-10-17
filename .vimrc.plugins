@@ -38,9 +38,6 @@ call plug#begin('~/.vim/plugged')
   " True Sublime Text style multiple selections for Vim
   Plug 'terryma/vim-multiple-cursors'
 
-  " Qargs utility command
-  Plug 'henrik/vim-qargs', { 'on': 'Qargs' }
-
   " Quoting/parenthesizing made simple
   Plug 'tpope/vim-surround'
 
@@ -188,6 +185,9 @@ call plug#begin('~/.vim/plugged')
 
   " Unite plugin providing outline view for a buffer
   Plug 'Shougo/unite-outline'
+
+  " Perform replacement in quickfix
+  Plug 'thinca/vim-qfreplace'
 " }}}
 
 " Web plugins {{{
