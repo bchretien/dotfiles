@@ -236,7 +236,7 @@
 
 " Key (re)Mappings {{{
   let mapleader = ','
-  let maplocalleader = '_'
+  let maplocalleader = ';'
 
   " Wrapped lines goes down/up to next row, rather than next line in file.
   noremap j gj
@@ -289,6 +289,7 @@
 
   " Easier formatting
   nnoremap <silent> <leader>q gwip
+  vnoremap <silent> <leader>q gw
 
   " Navigate the location list
   nmap <Leader>n :lnext<Enter>
@@ -489,22 +490,6 @@
           \ '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
   " }}}
 
-  " NerdTree {{{
-    if isdirectory(expand("~/.vim/plugged/nerdtree"))
-      map  <C-e>      <plug>NERDTreeTabsToggle<CR>
-      map  <leader>e  :NERDTreeFind<CR>
-      nmap <leader>nt :NERDTreeFind<CR>
-      let NERDTreeShowBookmarks=1
-      let NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$']
-      let NERDTreeChDirMode=0
-      let NERDTreeQuitOnOpen=1
-      let NERDTreeMouseMode=2
-      let NERDTreeShowHidden=1
-      let NERDTreeKeepTreeInNewTab=1
-      let g:nerdtree_tabs_open_on_gui_startup=0
-    endif
-  " }}}
-
   " python-mode {{{
     " Use QuickRun for that
     let g:pymode_run = 1
@@ -608,7 +593,7 @@
       "nnoremap <SID>[unite]t :<C-u>Unite tag<CR>
       "nnoremap <SID>[unite]T :<C-u>Unite -immediately -no-start-insert tag:<C-r>=expand('<cword>')<CR><CR>
       nnoremap <SID>[unite]w :<C-u>Unite tab<CR>
-      nnoremap <SID>[unite]m :<C-u>Unite file_mru<CR>
+      "nnoremap <SID>[unite]m :<C-u>Unite file_mru<CR>
       nnoremap <SID>[unite]o :<C-u>Unite outline<CR>
       nnoremap <SID>[unite]q :<C-u>Unite qf -no-quit<CR>
       "nnoremap <SID>[unite]M :<C-u>Unite mark<CR>
@@ -634,6 +619,10 @@
     hi CtrlSpaceSelected term=reverse ctermfg=187  ctermbg=23   cterm=bold
     hi CtrlSpaceNormal   term=NONE    ctermfg=244  ctermbg=232  cterm=NONE
     hi CtrlSpaceFound                 ctermfg=220  ctermbg=NONE cterm=bold
+  " }}}
+
+  " vim-latex {{{
+    let g:latex_build_dir = './build'
   " }}}
 
   " vim-lengthmatters {{{
@@ -676,6 +665,10 @@
           "\ ]}
   " }}}
 
+  " tagbar {{{
+    nmap <Leader>t :TagbarToggle<CR>
+  " }}}
+
 " }}}
 
 " Toolbox {{{
@@ -699,6 +692,24 @@
     new
     put! a
   endfunction
+
+  " Sort space-separated words on a line
+  vnoremap <F2> d:execute 'normal i' . join(sort(split(getreg('"'))), ' ')<CR>
+
+  " Zoom / Restore window.
+  function! s:ZoomToggle() abort
+      if exists('t:zoomed') && t:zoomed
+          execute t:zoom_winrestcmd
+          let t:zoomed = 0
+      else
+          let t:zoom_winrestcmd = winrestcmd()
+          resize
+          vertical resize
+          let t:zoomed = 1
+      endif
+  endfunction
+  command! ZoomToggle call s:ZoomToggle()
+  nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
 " }}}
 
 " Optimization
