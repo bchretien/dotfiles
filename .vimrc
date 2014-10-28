@@ -309,13 +309,17 @@
   nnoremap tj  :tabprev<CR>
   nnoremap tk  :tabnext<CR>
   nnoremap tl  :tablast<CR>
-  nnoremap tt  :tabedit<Space>
   nnoremap tm  :tabm<Space>
   nnoremap tn  :tabnew<CR>
   nnoremap td  :tabclose<CR>
 
+  nnoremap tt  :tabnext<CR>
+
   nnoremap <Leader>k :cnext<CR>
   nnoremap <Leader>j :cprev<CR>
+
+  "This unsets the "last search pattern" register by hitting return
+  nnoremap <CR> :noh<CR><CR>
 " }}}
 
 " Plugins {{{
@@ -324,6 +328,10 @@
     " Font (patched for airline)
     let g:airline_powerline_fonts = 1
     let g:airline_theme="murmur"
+
+    let g:airline#extensions#whitespace#enabled = 0
+
+    let g:airline_section_c = '%F'
   " }}}
 
   " Ctags {{{
@@ -567,6 +575,9 @@
           \ 'prompt': '» ',
           \ })
 
+    " Ignore build directories
+    call unite#custom#source('file_rec,file_rec/async', 'ignore_pattern', '\(build\)')
+
     " File
     let g:unite_source_file_ignore_pattern =
           \'^\%(/\|\a\+:/\)$\|\~$\|\.\%(o|exe|dll|bak|sw[po]\)$'
@@ -600,15 +611,22 @@
       nnoremap <SID>[unite]r :<C-u>Unite register<CR>
       nnoremap <SID>[unite]g :<C-u>Unite grep -no-quit -direction=botright -buffer-name=grep-buffer<CR>
 
-      " Ag search
+      " Grep-like search
       nnoremap <Leader>/ :Unite grep -no-quit<CR><CR>
 
       " File search, CtrlP style
-      nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert file_rec/async:!<CR>
+      nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert -default-action=open file_rec/async:!<CR>
     " }}}
 
     " Plugins {{{
       nnoremap <SID>[unite]c :<C-u>Unite -no-quit colorscheme<CR>
+
+      " vimfiler
+      let g:vimfiler_as_default_explorer = 1
+      let g:vimfiler_safe_mode_by_default = 0
+      let g:vimfiler_split_action = "split"
+      let g:vimfiler_split_rule = "topleft"
+      nmap <leader>e :VimFilerExplorer -project -split -invisible -no-quit<CR>
     " }}}
   " }}}
 

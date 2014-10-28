@@ -46,9 +46,6 @@ call plug#begin('~/.vim/plugged')
 " }}}
 
 " Project plugins {{{
-  " Filesystem explorer
-  Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-
   " Vim Workspace Controller
   Plug 'szw/vim-ctrlspace'
 
@@ -186,6 +183,9 @@ call plug#begin('~/.vim/plugged')
   " Unite plugin providing outline view for a buffer
   Plug 'Shougo/unite-outline'
 
+  " Powerful file explorer with Unite support.
+  Plug 'Shougo/vimfiler.vim', { 'on': ['VimFiler', 'VimFilerExplorer'] }
+
   " Perform replacement in quickfix
   Plug 'thinca/vim-qfreplace'
 " }}}
@@ -206,8 +206,11 @@ call plug#begin('~/.vim/plugged')
 " }}}
 
 " Miscellaneous plugins {{{
+  " Modeline generator
+  Plug 'vim-scripts/Modeliner', { 'on': 'Modeliner' }
+
   " LaTeX support
-  Plug 'LaTeX-Box-Team/LaTeX-Box'
+  Plug 'lervag/vim-latex'
 
   " Some utility functions for VIM
   " FIXME: does any plugin depend on that?
