@@ -47,7 +47,8 @@ color2 = "green"
 main_window_highlight_color = "yellow"
 progressbar_color = "yellow"
 statusbar_color = "white"
-active_column_color = "yellow"
+active_column_color = "blue"
+active_window_border = "blue"
 visualizer_color = "blue"
 
 # Others
