@@ -199,6 +199,14 @@
   set list
   set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
 
+  set completeopt+=menuone
+  set completeopt-=preview
+
+  " Default Vim completion should not look for all include files (slow)
+  set complete-=i
+  " Default Vim completion should not look for all tags (slow)
+  set complete-=t
+
   set linebreak
   set wrap
 
@@ -332,6 +340,28 @@
     let g:airline#extensions#whitespace#enabled = 0
 
     let g:airline_section_c = '%F'
+  " }}}
+
+  " clang_complete {{{
+    " Use the library rather than the executable
+    let g:clang_use_library=1
+    let g:clang_library_path = "/usr/lib"
+
+    " Limit memory use
+    let g:clang_memory_percent=70
+
+    " Snippets
+    let g:clang_snippets=1
+    let g:clang_snippets_engine='ultisnips'
+    let g:clang_conceal_snippets=1
+
+    let g:clang_periodic_quickfix=1
+    let g:clang_hl_errors=1
+
+    let g:clang_user_options='|| exit 0'
+    let g:clang_complete_auto = 0
+    let g:clang_auto_select = 0
+    let g:clang_complete_copen = 1
   " }}}
 
   " Ctags {{{
@@ -819,9 +849,6 @@ set shiftwidth=2
 " g0:  do not indent public,private...
 " (0:  align function arguments
 set cino=N0,g0,(0
-
-" Default Vim completion should not look for all include files (slow)
-set complete-=i
 
 " Automatically open, but do not go to (if there are errors) the quickfix /
 " location list window, or close it when is has become empty.

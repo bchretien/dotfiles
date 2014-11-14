@@ -94,6 +94,9 @@ call plug#begin('~/.vim/plugged')
   Plug 'honza/vim-snippets'
 
   " C/C++ {{{
+    " Use clang for completing C/C++ code
+    Plug 'Rip-Rip/clang_complete', { 'do': 'make install'}
+
     " Formatting with clang-format
     " Requires: vimproc.vim,  vim-operator-user
     Plug 'rhysd/vim-clang-format', { 'for': ['c', 'cpp', 'objc'] }
