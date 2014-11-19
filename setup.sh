@@ -25,7 +25,10 @@ for i in $inifiles; do
 done
 
 # Files starting with .
-dotfiles=`find . -maxdepth 1 -type f -and -name '.*' -and -not -name '*.ini'`
+dotfiles=`find . -maxdepth 1 -type f -and -name '.*' \
+          -and -not -name '*.ini' \
+          -and -not -name '*.gitmodules' \
+          -and -not -name '*.gitignore'`
 for i in $dotfiles; do
     # ./.filename becomes .filename
     ii=${i#./}
