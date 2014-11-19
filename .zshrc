@@ -1,20 +1,7 @@
 # -*- mode: sh -*-
-#
-# This file is sourced only for interactive shells. It
-# should contain commands to set up aliases, functions,
-# options, key bindings, etc.
-#
-# Global Order: zshenv, zprofile, zshrc, zlogin
 
 # Path to your oh-my-zsh configuration.
-export ZSH=$HOME/.dotfiles/oh-my-zsh
-export ZSH_CUSTOM=$HOME/.dotfiles/oh-my-zsh-custom
-
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
-ZSH_THEME="fino-light"
+export ZSH=$HOME/.dotfiles/.zprezto
 
 # My aliases
 alias make='nocorrect make'
@@ -36,23 +23,15 @@ export ALTERNATE_EDITOR="" # Should start emacs --daemon if emacsclient runs wit
 alias e='emacsclient -t'
 alias ec='emacsclient -c'
 
-# oh-my-zsh options
-DISABLE_CORRECTION="true"
-DISABLE_AUTO_UPDATE="true"
-
-# Plugins to be loaded
-plugins=(archlinux \
-         autojump dirhistory history-substring-search \
-         git git-extras \
-         profile ssh-agent taskwarrior web-search)
-
 setopt autocd
 
 # Don't print job information (e.g. fork pids)
 set +m
 
+#autoload zmv
+
 # Unset shared history
-unsetopt share_history
+#unsetopt share_history
 
 if [ -f /etc/zsh_command_not_found ]; then
     . /etc/zsh_command_not_found
@@ -62,4 +41,13 @@ if [ -f ~/.zshrc.local ]; then
     source ~/.zshrc.local
 fi
 
-source $ZSH/oh-my-zsh.sh
+# Source Prezto.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
+
+
+# Bindings
+bindkey "^A" beginning-of-line
+bindkey "^E" end-of-line
+bindkey "^R" history-incremental-search-backward

@@ -1,6 +1,3 @@
-[submodule "oh-my-zsh"]
-	path = oh-my-zsh
-	url = https://github.com/robbyrussell/oh-my-zsh
 [submodule ".git_template"]
 	path = .git_template
 	url = https://github.com/bchretien/git_template
@@ -19,3 +16,6 @@
 [submodule ".tmux/plugins/tpm"]
 	path = .tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm
+[submodule ".zprezto"]
+	path = .zprezto
+	url = https://github.com/bchretien/prezto.git
