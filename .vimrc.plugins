@@ -4,6 +4,8 @@
 call plug#begin('~/.vim/plugged')
 
 " Edition plugins {{{
+  " Improved incremental searching
+  Plug 'haya14busa/incsearch.vim'
 
   " Open a quickfix item in a window you choose
   Plug 'yssl/QFEnter'
@@ -36,7 +38,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'whatyouhide/vim-lengthmatters'
 
   " True Sublime Text style multiple selections for Vim
-  Plug 'terryma/vim-multiple-cursors'
+  Plug 'kristijanhusak/vim-multiple-cursors'
 
   " Quoting/parenthesizing made simple
   Plug 'tpope/vim-surround'
@@ -214,6 +216,9 @@ call plug#begin('~/.vim/plugged')
 
   " LaTeX support
   Plug 'lervag/vim-latex'
+
+  " Find out where maps are defined
+  Plug 'vim-scripts/listmaps.vim', { 'on': 'Listmaps' }
 
   " Some utility functions for VIM
   " FIXME: does any plugin depend on that?

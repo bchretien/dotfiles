@@ -350,18 +350,28 @@
     " Limit memory use
     let g:clang_memory_percent=70
 
+    let g:clang_make_default_keymappings = 0
+
     " Snippets
-    let g:clang_snippets=1
-    let g:clang_snippets_engine='ultisnips'
-    let g:clang_conceal_snippets=1
+    let g:clang_snippets = 1
+    let g:clang_snippets_engine = 'ultisnips'
+    let g:clang_conceal_snippets = 1
 
-    let g:clang_periodic_quickfix=1
-    let g:clang_hl_errors=1
+    let g:clang_periodic_quickfix = 0
+    let g:clang_hl_errors = 0
 
-    let g:clang_user_options='|| exit 0'
+    let g:clang_close_preview = 1
     let g:clang_complete_auto = 0
     let g:clang_auto_select = 0
     let g:clang_complete_copen = 1
+
+    augroup myvimrc
+        au!
+        au BufRead,BufNewFile *.cc,*.cpp,*.cxx,*.cu,*.hh,*.hxx,*.hpp,*.cuh 
+          \ if &omnifunc != "ClangComplete" |
+          \ echo "WARNING: omnifunc is not net to ClangComplete!" |
+          \ endif
+    augroup END
   " }}}
 
   " Ctags {{{
@@ -467,6 +477,14 @@
     let g:haddock_browser="$BROWSER"
   " }}}
 
+  " incsearch {{{
+    let g:incsearch#auto_nohlsearch = 1
+
+    map /  <Plug>(incsearch-forward)
+    map ?  <Plug>(incsearch-backward)
+    map g/ <Plug>(incsearch-stay)
+  " }}}
+
   " jedi.vim {{{
     let g:pymode_rope = 0
     let g:jedi#popup_on_dot = 1
@@ -492,18 +510,21 @@
     " Disable AutoComplPop.
     let g:acp_enableAtStartup = 0
     " AutoComplPop like behavior.
-    let g:neocomplete#enable_auto_select = 1
-    let g:neocomplete#enable_refresh_always = 1
+    let g:neocomplete#enable_auto_select = 0
+    let g:neocomplete#enable_refresh_always = 0
     " Use neocomplete.
     let g:neocomplete#enable_at_startup = 1
     " Use smartcase.
     let g:neocomplete#enable_smart_case = 1
-    let g:neocomplete#auto_completion_start_length = 1
+    let g:neocomplete#auto_completion_start_length = 3
+
+    let g:neocomplete#enable_prefetch = 1
+    let g:neocomplete#skip_auto_completion_time = "0.1"
 
     " Set minimum syntax keyword length.
     let g:neocomplete#sources#syntax#min_keyword_length = 3
     let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
-    let g:neocomplete#use_vimproc=1
+    let g:neocomplete#use_vimproc = 1
 
     " Fix neco-ghc errors
     let g:neocomplete#force_overwrite_completefunc = 1
@@ -539,15 +560,15 @@
 
   " QuickRun {{{
     if isdirectory(expand("~/.vim/plugged/vim-quickrun"))
-      noremap  <leader>r :QuickRun<CR>
-      vnoremap <leader>r :QuickRun<CR>
+      noremap  <leader>r :QuickRun -runner vimproc -buffer/running_mark "Running..."<CR>
+      vnoremap <leader>r :QuickRun -runner vimproc -buffer/running_mark "Running..."<CR>
     endif
   " }}}
 
   " Startify {{{
     " Call fortune and cowsay (if present)
     let g:startify_custom_header =
-      \ map(split(system('cowsay -f "$(ls /usr/share/cows/ | sort -R | head -1)" "$(fortune -s)"'), '\n'), '" ". v:val') + ['','']
+      \ map(split(system('cowsay -f "$(ls /usr/share/cows/ | grep -vE "sod|kiss|surg|tele" | sort -R | head -1)" "$(fortune -s)"'), '\n'), '" ". v:val') + ['','']
 
     " Skip list
     let g:startify_skiplist = [
@@ -607,18 +628,28 @@
 
     " Ignore build directories
     call unite#custom#source('file_rec,file_rec/async', 'ignore_pattern', '\(build\)')
+    call unite#custom#source('grep', 'ignore_pattern', '\(build\)')
 
     " File
     let g:unite_source_file_ignore_pattern =
-          \'^\%(/\|\a\+:/\)$\|\~$\|\.\%(o|exe|dll|bak|sw[po]\)$'
+          \'tmp\|^\%(/\|\a\+:/\)$\|\~$\|\.\%(o|exe|dll|bak|sw[po]\)$'
 
     " Search
-    if executable('ag')
+    let g:unite_source_grep_max_candidates = 500
+
+    " platinum_searcher
+    if executable('pt')
+      let g:unite_source_grep_command = 'pt'
+      let g:unite_source_grep_default_opts = '--nocolor --nogroup -i ' .
+            \ '--ignore ''*build*'' --ignore ''.svg'' '
+      let g:unite_source_grep_recursive_opt = ''
+      let g:unite_source_grep_encoding = 'utf-8'
+    " silver_searcher
+    elseif executable('ag')
       let g:unite_source_grep_command = 'ag'
-      let g:unite_source_grep_default_opts = '--line-numbers --nocolor --nogroup ' .
+      let g:unite_source_grep_default_opts = '-f --line-numbers --nocolor --nogroup -i --column ' .
             \ '--hidden --ignore ''.hg'' --ignore ''.svn'' --ignore ''.git'' ' .
-            \ '--ignore ''.bzr'' ' .
-            \ '--ignore ''*build*'' '
+            \ '--ignore ''bzr'' --ignore ''.svg''  '
       let g:unite_source_grep_recursive_opt = ''
     endif
 
@@ -643,6 +674,7 @@
 
       " Grep-like search
       nnoremap <Leader>/ :Unite grep -no-quit<CR><CR>
+      vnoremap <Leader>/ y:Unite grep -no-quit<CR><CR><C-R>=escape(@", '\\.*$^[]')<CR><CR>
 
       " File search, CtrlP style
       nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert -default-action=open file_rec/async:!<CR>
@@ -677,30 +709,63 @@
   let g:lengthmatters_excluded = ['unite', 
         \ 'tagbar', 'startify', 'gundo', 
         \ 'vimshell', 'w3m', 'nerdtree',
-        \ 'help', 'qf', 'gfimarkdown']
+        \ 'help', 'qf', 'gfimarkdown', 'log']
 
   " }}}
 
   " vim-marching {{{
-    let g:marching_enable_neocomplete = 1
-    let g:marching_enable_auto_select = 1
-    let g:marching_backend = "clang_command"
-    "let g:marching_clang_command_option="-std=c++11"
+    if isdirectory(expand("~/.vim/plugged/vim-marching"))
+      let g:marching_enable_neocomplete = 1
+      let g:marching_enable_auto_select = 1
+      let g:marching_backend = "clang_command"
+      "let g:marching_clang_command_option="-std=c++11"
+      let g:marching_wait_time = 0.5
+      let g:marching_enable_refresh_always = 0
 
-    " Load include paths:
-    "  - Standard library
-    "  - Boost
-    "  - Eigen 3
-    let g:marching_include_paths = filter(
-          \ split(glob('/usr/include/c++/*'), '\n') +
-          \ split(glob('/usr/include/c++/*/*/bits'), '\n') +
-          \ split(glob('/usr/include/boost/*'), '\n') +
-          \ split(glob('/usr/include/eigen3'), '\n'),
-          \ 'isdirectory(v:val)')
+      set updatetime=200
 
-    "imap <buffer> <C-x><C-o> <Plug>(marching_start_omni_complete)
-    "imap <buffer> <C-x><C-x><C-o> <Plug>(marching_force_start_omni_complete)
+      " Load include paths:
+      "  - Standard library
+      "  - Boost
+      "  - Eigen 3
+      let g:marching_include_paths = filter(
+            \ split(glob('/usr/include/c++/*'), '\n') +
+            \ split(glob('/usr/include/c++/*/*/bits'), '\n') +
+            \ split(glob('/usr/include/boost/*'), '\n') +
+            \ split(glob('/usr/include/eigen3'), '\n'),
+            \ 'isdirectory(v:val)')
+
+      "imap <buffer> <C-x><C-o> <Plug>(marching_start_omni_complete)
+      "imap <buffer> <C-x><C-x><C-o> <Plug>(marching_force_start_omni_complete)
+    endif
   " }}}
+
+  " vim-multiple-cursors {{{
+    " Redefine mapping
+    let g:multi_cursor_use_default_mapping=0
+    let g:multi_cursor_start_key='<C-n>'
+    let g:multi_cursor_next_key='<C-n>'
+    let g:multi_cursor_prev_key='<C-p>'
+    let g:multi_cursor_skip_key='<C-x>'
+    let g:multi_cursor_quit_key='<Esc>'
+
+    if isdirectory(expand("~/.vim/plugged/neocomplete.vim"))
+      " Called once right before you start selecting multiple cursors
+      function! Multiple_cursors_before()
+        if exists(':NeoCompleteLock')==2
+          exe 'NeoCompleteLock'
+        endif
+      endfunction
+
+      " Called once only when the multiple selection is canceled (default <Esc>)
+      function! Multiple_cursors_after()
+        if exists(':NeoCompleteUnlock')==2
+          exe 'NeoCompleteUnlock'
+        endif
+      endfunction
+    endif
+  " }}}
+
 
   " vim-snowdrop {{{
     let g:snowdrop#libclang_path = "/usr/lib"
@@ -760,6 +825,21 @@
   nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
 " }}}
 
+" Filetypes {{{
+  " PKGBUILD support
+  au BufRead,BufNewFile PKGBUILD  set filetype=sh
+
+  " Automatically reload .vimrc when updated
+  " See: http://superuser.com/questions/132029/how-do-you-reload-your-vimrc-file-without-restarting-vim
+  augroup myvimrc
+      au!
+      au BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
+  augroup END
+
+  " CUDA support
+  au BufNewFile,BufRead *.cu,*.cuh set ft=cpp
+" }}}
+
 " Optimization
 set viminfo=<0,'0,/150,:100,h,f0,s0
 
@@ -787,37 +867,26 @@ if !exists("my_auto_commands_loaded")
   augroup END
 endif
 
-
-"====[ Automatically reload .vimrc when updated ]====
-" See: http://superuser.com/questions/132029/how-do-you-reload-your-vimrc-file-without-restarting-vim
-augroup myvimrc
-    au!
-    au BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
-augroup END
-
-"====[ Add CUDA support ]====
-au BufNewFile,BufRead *.cu,*.cuh set ft=cu
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" Damian Conway's OSCON 2013 tricks
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 "====[ Highlight the match in red ]====
 " This rewires n and N to do the highlighing
-nnoremap <silent> n   n:call HLNext(0.1)<cr>
-nnoremap <silent> N   N:call HLNext(0.1)<cr>
+"nnoremap <silent> n   n:call HLNext(0.1)<cr>
+"nnoremap <silent> N   N:call HLNext(0.1)<cr>
 
-function! HLNext (blinktime)
-    highlight WhiteOnRed ctermfg=white ctermbg=red
-    let [bufnum, lnum, col, off] = getpos('.')
-    let matchlen = strlen(matchstr(strpart(getline('.'),col-1),@/))
-    let target_pat = '\c\%#'.@/
-    let ring = matchadd('WhiteOnRed', target_pat, 101)
-    redraw
-    exec 'sleep ' . float2nr(a:blinktime * 1000) . 'm'
-    call matchdelete(ring)
-    redraw
-endfunction
+"function! HLNext (blinktime)
+    "highlight WhiteOnRed ctermfg=white ctermbg=red
+    "let [bufnum, lnum, col, off] = getpos('.')
+    "let matchlen = strlen(matchstr(strpart(getline('.'),col-1),@/))
+    "let target_pat = '\c\%#'.@/
+    "let ring = matchadd('WhiteOnRed', target_pat, 101)
+    "redraw
+    "exec 'sleep ' . float2nr(a:blinktime * 1000) . 'm'
+    "call matchdelete(ring)
+    "redraw
+"endfunction
 
 
 "====[ Make CTRL-K list diagraphs before each digraph entry ]====
@@ -826,11 +895,11 @@ endfunction
 "inoremap <expr>  <C-Z>   HUDG_GetDigraph()
 
 "====[ Move/duplicate blocks of code ]====
-vmap  <expr>  D        DVB_Duplicate()
 vmap  <expr>  h        DVB_Drag('left')
 vmap  <expr>  l        DVB_Drag('right')
 vmap  <expr>  j        DVB_Drag('down')
 vmap  <expr>  k        DVB_Drag('up')
+vmap  <expr>  D        DVB_Duplicate()
 
 " Remove any introduced trailing whitespace after moving...
 let g:DVB_TrimWS = 1
@@ -844,6 +913,8 @@ let g:load_doxygen_syntax=1
 
 " Default number of spaces for indent
 set shiftwidth=2
+set expandtab
+set tabstop=2
 
 " N-s: do not indent C++ namespaces
 " g0:  do not indent public,private...
@@ -934,21 +1005,21 @@ endfunction
 " This function passed the visual block through a string escape function
 " Based on this - http://stackoverflow.com/questions/676600/vim-replace-selected-text/677918#677918
 function! GetVisual() range
-" Save the current register and clipboard
+  " Save the current register and clipboard
   let reg_save = getreg('"')
   let regtype_save = getregtype('"')
   let cb_save = &clipboard
   set clipboard&
 
-" Put the current visual selection in the " register
+  " Put the current visual selection in the " register
   normal! ""gvy
   let selection = getreg('"')
 
-" Put the saved registers and clipboards back
+  " Put the saved registers and clipboards back
   call setreg('"', reg_save, regtype_save)
   let &clipboard = cb_save
 
-"Escape any special characters in the selection
+  "Escape any special characters in the selection
   let escaped_selection = EscapeString(selection)
 
   return escaped_selection
@@ -1004,17 +1075,6 @@ let g:clang_format#style_options = {
             \ "Standard" : "C++03",
             \ "NamespaceIndentation" : "All",
             \ "BreakBeforeBraces" : "Allman"}
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" vim-multiple-cursors
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Redefine mapping
-let g:multi_cursor_use_default_mapping=0
-let g:multi_cursor_start_key='<C-n>'
-let g:multi_cursor_next_key='<C-n>'
-let g:multi_cursor_prev_key='<C-p>'
-let g:multi_cursor_skip_key='<C-x>'
-let g:multi_cursor_quit_key='<Esc>'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" vim-signify
