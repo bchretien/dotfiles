@@ -53,7 +53,7 @@ endsnippet
 
 # Boost shared_ptr
 snippet sha "boost::shared_ptr<T>"
-boost::shared_ptr<${1:T}> $0
+boost::shared_ptr<${1:${VISUAL/([.^\n]+)/(?1::T)/}}>$0
 endsnippet
 
 # For loops
