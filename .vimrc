@@ -635,21 +635,15 @@
           \'tmp\|^\%(/\|\a\+:/\)$\|\~$\|\.\%(o|exe|dll|bak|sw[po]\)$'
 
     " Search
-    let g:unite_source_grep_max_candidates = 500
+    let g:unite_source_grep_max_candidates = 1000
+    let g:unite_source_find_max_candidates = 1000
 
-    " platinum_searcher
-    if executable('pt')
-      let g:unite_source_grep_command = 'pt'
-      let g:unite_source_grep_default_opts = '--nocolor --nogroup -i ' .
-            \ '--ignore ''*build*'' --ignore ''.svg'' '
-      let g:unite_source_grep_recursive_opt = ''
-      let g:unite_source_grep_encoding = 'utf-8'
     " silver_searcher
-    elseif executable('ag')
+    if executable('ag')
       let g:unite_source_grep_command = 'ag'
-      let g:unite_source_grep_default_opts = '-f --line-numbers --nocolor --nogroup -i --column ' .
-            \ '--hidden --ignore ''.hg'' --ignore ''.svn'' --ignore ''.git'' ' .
-            \ '--ignore ''bzr'' --ignore ''.svg''  '
+      let g:unite_source_grep_default_opts = '-f --line-numbers --nocolor --nogroup -i ' .
+            \ '--hidden --ignore ".hg" --ignore ".svn" --ignore ".git" ' .
+            \ '--ignore "bzr" --ignore ".svg"  '
       let g:unite_source_grep_recursive_opt = ''
     endif
 
@@ -673,11 +667,13 @@
       nnoremap <SID>[unite]g :<C-u>Unite grep -no-quit -direction=botright -buffer-name=grep-buffer<CR>
 
       " Grep-like search
-      nnoremap <Leader>/ :Unite grep -no-quit<CR><CR>
-      vnoremap <Leader>/ y:Unite grep -no-quit<CR><CR><C-R>=escape(@", '\\.*$^[]')<CR><CR>
+      nnoremap <Leader>/  :Unite grep -no-quit<CR><CR>
+      nnoremap <Leader>// :Unite grep -no-quit<CR>
+      vnoremap <Leader>/  y:Unite grep -no-quit<CR><CR><C-R>=escape(@", '\\.*$^[]')<CR><CR>
 
       " File search, CtrlP style
       nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert -default-action=open file_rec/async:!<CR>
+      nnoremap <C-p>p :<C-u>Unite -buffer-name=files -start-insert -default-action=open file_rec/async:
     " }}}
 
     " Plugins {{{
