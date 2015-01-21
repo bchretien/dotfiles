@@ -396,8 +396,8 @@
     " Ignore build directories
     let g:ctrlp_user_command = {
           \ 'types': {
-          \ 1: ['.git', 'cd %s && git ls-files --cached --exclude-standard --others | grep -v "build"'],
-          \ 2: ['.hg', 'hg --cwd %s locate -I . | grep -v "build"'],
+          \ 1: ['.git', 'cd %s && git ls-files --cached --exclude-standard --others'],
+          \ 2: ['.hg', 'hg --cwd %s locate -I .'],
           \ },
           \ 'fallback': 'find %s -type f'
           \ }
@@ -617,7 +617,7 @@
   " Unite {{{
     " General options
     let g:unite_enable_start_insert = 1
-    let g:unite_data_directory = expand("~/.unite")
+    let g:unite_data_directory = expand("~/.vim/unite")
     let g:unite_source_history_yank_enable = 1
 
     call unite#custom#profile('default', 'context', {
@@ -627,8 +627,8 @@
           \ })
 
     " Ignore build directories
-    call unite#custom#source('file_rec,file_rec/async', 'ignore_pattern', '\(build\)')
-    call unite#custom#source('grep', 'ignore_pattern', '\(build\)')
+    call unite#custom#source('file_rec,file_rec/async', 'ignore_pattern', '\/build')
+    call unite#custom#source('grep', 'ignore_pattern', '\/build')
 
     " File
     let g:unite_source_file_ignore_pattern =
