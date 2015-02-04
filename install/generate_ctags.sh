@@ -5,7 +5,7 @@
 #  - other user-defined folders (args)
 # See: http://stackoverflow.com/questions/2825464/generating-a-reasonable-ctags-database-for-boost
 
-source ./utils.sh
+source ./lib/utils.sh
 
 mkdir -p ~/.vim/tags
 

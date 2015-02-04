@@ -1,5 +1,5 @@
 #!/bin/sh
-source ./utils.sh
+source ./lib/utils.sh
 
 cd ~/.spf13-vim-3/.vim/bundle/YouCompleteMe/third_party/ycmd
 

@@ -1,21 +1,24 @@
-[submodule ".git_template"]
-	path = .git_template
+[submodule "git_template"]
+	path = git_template
 	url = https://github.com/bchretien/git_template
-[submodule ".conky-themes"]
-	path = .conky-themes
+[submodule "conky-themes"]
+	path = conky-themes
 	url = https://github.com/bchretien/conky-themes
-[submodule ".fonts"]
-	path = .fonts
+[submodule "fonts"]
+	path = fonts
 	url = https://github.com/Lokaltog/powerline-fonts
 [submodule "dotgdb"]
 	path = dotgdb
 	url = https://github.com/bchretien/Gdbinit
-[submodule ".i3"]
-	path = .i3
+[submodule "i3"]
+	path = i3
 	url = https://github.com/bchretien/i3-config.git
-[submodule ".tmux/plugins/tpm"]
-	path = .tmux/plugins/tpm
+[submodule "tmux/plugins/tpm"]
+	path = tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm
-[submodule ".zprezto"]
-	path = .zprezto
+[submodule "zprezto"]
+	path = zprezto
 	url = https://github.com/bchretien/prezto.git
+[submodule "dotbot"]
+	path = dotbot
+	url = https://github.com/anishathalye/dotbot

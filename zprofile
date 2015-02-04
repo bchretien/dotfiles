@@ -1,4 +1,4 @@
-source $HOME/.dotfiles/utils.sh
+source $HOME/.dotfiles/lib/utils.sh
 
 # Default battery (used by i3blocks)
 export BATTERY_ID=BAT1
