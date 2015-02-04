@@ -1,57 +1,56 @@
 - clean: ['~', '~/.config']
 
 - link:
-  ~/.Xresources: Xresources
-  ~/.dotfiles: ''
-  ~/.emacs.d: emacs.d/
-  ~/.emacs: emacs
-  ~/.fonts: fonts/
-  ~/.gdb: gdb/
-  ~/.gdbinit: gdbinit
-  ~/.git_template: git_template/
-  ~/.gitconfig: gitconfig
-  ~/.gnupg: gnupg/
-  ~/.hgrc: hgrc
-  ~/.i3: i3/
-  ~/.latexmkrc: latexmkrc
-  ~/.mpd: mpd/
-  ~/.ncmpcpp: ncmpcpp/
-  ~/.screenrc: screenrc
-  ~/.themes: themes/
-  ~/.taskrc: taskrc
-  ~/.tmux.conf: tmux.conf
-  ~/.tmux: tmux/
-  ~/.vim: vim/
-  ~/.vimrc: vimrc
-  ~/.xbindkeysrc: xbindkeysrc
-  ~/.zprezto: zprezto/
-  ~/.zsh: zsh/
-  ~/.zshrc: zshrc
-  # Special case: ~/.config
-  ~/.config/fontconfig:
-    create: true
-    path: config/fontconfig/
-  ~/.config/glances:
-    create: true
-    path: config/glances/
-  ~/.config/qutebrowser:
-    create: true
-    path: config/qutebrowser/
-  ~/.config/ranger:
-    create: true
-    path: config/ranger/
-  ~/.config/termite:
-    create: true
-    path: config/termite/
-  # Vim:
-  ~/.vim/autoload/plug.vim:
-    create: true
-    path: vim/autoload/plug.vim
-  ~/.vim/plugged/vim-snippets/custom_snippets:
-    create: true
-    path: custom_snippets/
+    ~/.Xresources: Xresources
+    ~/.dotfiles: ''
+    ~/.emacs.d: emacs.d/
+    ~/.emacs: emacs
+    ~/.fonts: fonts/
+    ~/.gdb: gdb/
+    ~/.gdbinit: gdbinit
+    ~/.git_template: git_template/
+    ~/.gitconfig: gitconfig
+    ~/.gnupg: gnupg/
+    ~/.hgrc: hgrc
+    ~/.i3: i3/
+    ~/.latexmkrc: latexmkrc
+    ~/.mpd: mpd/
+    ~/.ncmpcpp: ncmpcpp/
+    ~/.screenrc: screenrc
+    ~/.themes: themes/
+    ~/.taskrc: taskrc
+    ~/.tmux.conf: tmux.conf
+    ~/.tmux: tmux/
+    ~/.vim: vim/
+    ~/.vimrc: vimrc
+    ~/.xbindkeysrc: xbindkeysrc
+    ~/.zprezto: zprezto/
+    ~/.zshrc: zshrc
+    # Special case: ~/.config
+    ~/.config/fontconfig:
+      create: true
+      path: config/fontconfig/
+    ~/.config/glances:
+      create: true
+      path: config/glances/
+    ~/.config/qutebrowser:
+      create: true
+      path: config/qutebrowser/
+    ~/.config/ranger:
+      create: true
+      path: config/ranger/
+    ~/.config/termite:
+      create: true
+      path: config/termite/
+    # Vim:
+    ~/.vim/autoload/plug.vim:
+      create: true
+      path: vim/autoload/plug.vim
+    ~/.vim/plugged/vim-snippets/custom_snippets:
+      create: true
+      path: custom_snippets/
 
 - shell:
-  - git submodule update --init --recursive
-  - fc-cache -vf ~/.fonts # load fonts
-  - mkdir -p ~/.ssh 2> /dev/null
+    - git submodule update --init --recursive
+    - fc-cache -vf ~/.fonts # load fonts
+    - mkdir -p ~/.ssh 2> /dev/null
