@@ -19,3 +19,6 @@
 [submodule ".zprezto"]
 	path = .zprezto
 	url = https://github.com/bchretien/prezto.git
+[submodule "bin/mimi"]
+	path = bin/mimi
+	url = https://github.com/march-linux/mimi.git
