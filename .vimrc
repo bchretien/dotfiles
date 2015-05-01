@@ -531,6 +531,44 @@
     let g:jedi#auto_vim_configuration = 0
   " }}}
 
+  " lightline.vim {{{
+    if isdirectory(expand("~/.vim/plugged/lightline.vim"))
+      let g:lightline = {
+            \ 'colorscheme': 'murmur',
+            \ 'enable': {
+            \   'tabline': 1,
+            \   'statusline': 1,
+            \ },
+            \ 'active': {
+            \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
+            \   'right': [ [ 'syntastic', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
+            \ },
+            \ 'component': {
+            \   'readonly': '%{&filetype=="help"?"":&readonly?"":""}',
+            \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
+            \   'fugitive': '%{exists("*fugitive#head")? " ".fugitive#head():""}'
+            \ },
+            \ 'component_visible_condition': {
+            \   'readonly': '(&filetype!="help"&& &readonly)',
+            \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
+            \   'fugitive': '(exists("*fugitive#head") && ""!=fugitive#head())'
+            \ },
+            \ 'separator': { 'left': '', 'right': '' },
+            \ 'subseparator': { 'left': '', 'right': '' }
+            \ }
+
+      let g:lightline.tabline = {
+            \ 'left': [ [ 'tabs' ] ],
+            \ 'right': [ [ 'close' ] ] }
+
+      "let g:lightline.component_expand = {
+            "\ 'tabs': 'ctrlspace#tabline' }
+
+      "let g:lightline.component_type = {
+            "\ 'tabs': 'raw' }
+    endif
+  " }}}
+
   " neco-ghc {{{
     autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
     let g:necoghc_enable_detailed_browse = 1
