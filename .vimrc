@@ -129,20 +129,24 @@
       set t_Co=256
     endif
 
+    " Change cursor color
+    if &term =~ "xterm\\|rxvt\\|screen"
+      " cursor color in insert mode
+      let &t_SI = "\<Esc>]12;#118A3D\x7"
+      " else
+      let &t_EI = "\<Esc>]12;#115E8B\x7"
+      silent !echo -ne "\033]12;blue\007"
+      " reset cursor when vim exits
+      autocmd VimLeave * silent !echo -ne "\033]112\007"
+      " use \003]12;gray\007 for gnome-terminal
+    endif
+
     " FIXME: check for the theme
     " Schemes: hybrid, jellybeans, lizard256, lucius, LuciusDarkLowContrast, molokai, smyck
     colorscheme hybrid
 
-    " Color of the tabline
-    hi TabLine      ctermfg=White  ctermbg=DarkGray  cterm=NONE
-    hi TabLineFill  ctermfg=White  ctermbg=Black     cterm=NONE
-    hi TabLineSel   ctermfg=White  ctermbg=DarkBlue  cterm=NONE
-
-    " Color of matching braces
-    "hi MatchParen   ctermfg=Yellow ctermbg=Black     cterm=bold
-
-    " Color of a selected block
-    "hi Visual       ctermbg=238
+    " Fix cursor in search for hybrid
+    hi Cursor ctermfg=16 ctermbg=253
 
     " Fix spellchecking color
     hi clear SpellBad
