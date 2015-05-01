@@ -885,6 +885,38 @@
   endfunction
   command! ZoomToggle call s:ZoomToggle()
   nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
+
+  function! EpsilonCleaning(val)
+    exe '%s/\v([-]*[0-9]+.[0-9]+[e\+-]*[0-9]*)/\='
+      \ . 'str2float(submatch(0)) < str2float("'. a:val . '") ? "0" : submatch(0)/ge'
+  endfunction
+
+  function! StripTrailingWhitespace()
+    if !&binary && &filetype != 'diff'
+      normal mz
+      normal Hmy
+      %s/\s\+$//e
+      normal 'yz<CR>
+      normal `z
+    endif
+  endfunction
+
+  function! TrainingMode()
+    " Unbind the cursor keys in insert, normal and visual modes.
+    for prefix in ['i', 'n', 'v']
+      for key in ['<Up>', '<Down>', '<Left>', '<Right>']
+        exe prefix . "noremap " . key . " <Esc>:echo \"Be a man. Do the right thing. Use HJKL!\"<cr>"
+      endfor
+    endfor
+  endfunction
+
+  function! UndoTrainingMode()
+    for prefix in ['i', 'n', 'v']
+      for key in ['<Up>', '<Down>', '<Left>', '<Right>']
+        exe prefix . "unmap " . key
+      endfor
+    endfor
+  endfunction
 " }}}
 
 " Filetypes {{{
