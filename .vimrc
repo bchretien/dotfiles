@@ -108,8 +108,13 @@
   if has('persistent_undo')
     set undolevels=1000 " Maximum number of changes that can be undone
     set undoreload=10000 " Maximum number lines to save for undo on a buffer reload
-    set undodir=~/.vimundo/
+    set undodir=~/.vim/tmp/undo/
     set undofile " Undo file
+
+    " Make those folders automatically if they don't already exist.
+    if !isdirectory(expand(&undodir))
+        call mkdir(expand(&undodir), "p")
+    endif
   endif
 
     " Add exclusions to mkview and loadview
@@ -364,45 +369,55 @@
 " Plugins {{{
 
   " Airline {{{
-    " Font (patched for airline)
-    let g:airline_powerline_fonts = 1
-    let g:airline_theme="murmur"
+    if isdirectory(expand("~/.vim/plugged/airline"))
+      " Font (patched for airline)
+      let g:airline_powerline_fonts = 1
+      let g:airline_theme="murmur"
 
-    let g:airline#extensions#whitespace#enabled = 0
+      let g:airline#extensions#whitespace#enabled = 0
 
-    let g:airline_section_c = '%F'
+      let g:airline_section_c = '%F'
+
+      "let g:airline_symbols = get(g:, 'airline_symbols', {})
+      "let g:airline_symbols.space = "\ua0"
+    endif
   " }}}
 
   " clang_complete {{{
-    " Use the library rather than the executable
-    let g:clang_use_library=1
-    let g:clang_library_path = "/usr/lib"
+   if isdirectory(expand("~/.vim/plugged/clang_complete"))
+     " Use the library rather than the executable
+     let g:clang_use_library=1
+     let g:clang_library_path = "/usr/lib"
 
-    " Limit memory use
-    let g:clang_memory_percent=70
+     " Limit memory use
+     "let g:clang_memory_percent=30
 
-    let g:clang_make_default_keymappings = 0
+     "let g:clang_make_default_keymappings = 1
 
-    " Snippets
-    let g:clang_snippets = 1
-    let g:clang_snippets_engine = 'ultisnips'
-    let g:clang_conceal_snippets = 1
+     " Snippets
+     let g:clang_snippets = 1
+     let g:clang_snippets_engine = 'ultisnips'
+     let g:clang_conceal_snippets = 1
 
-    let g:clang_periodic_quickfix = 0
-    let g:clang_hl_errors = 0
+     let g:clang_periodic_quickfix = 0
+     let g:clang_hl_errors = 0
 
-    let g:clang_close_preview = 1
-    let g:clang_complete_auto = 0
-    let g:clang_auto_select = 0
-    let g:clang_complete_copen = 1
+     "let g:clang_user_options = '|| exit 0'
+     let g:clang_close_preview = 1
+     let g:clang_complete_auto = 0
+     let g:clang_auto_select = 0
+     let g:clang_complete_copen = 1
 
-    augroup myvimrc
-        au!
-        au BufRead,BufNewFile *.cc,*.cpp,*.cxx,*.cu,*.hh,*.hxx,*.hpp,*.cuh 
-          \ if &omnifunc != "ClangComplete" |
-          \ echo "WARNING: omnifunc is not net to ClangComplete!" |
-          \ endif
-    augroup END
+     let g:clang_default_keymappings = 0
+
+     augroup myvimrc
+         au!
+         au BufRead,BufNewFile *.cc,*.cpp,*.cxx,*.cu,*.hh,*.hxx,*.hpp,*.cuh 
+           \ if &omnifunc != "ClangComplete" |
+           \ echo "WARNING: omnifunc is not net to ClangComplete!" |
+           \ endif
+     augroup END
+   endif
   " }}}
 
   " Ctags {{{
@@ -637,7 +652,7 @@
   " Startify {{{
     " Call fortune and cowsay (if present)
     let g:startify_custom_header =
-      \ map(split(system('cowsay -f "$(ls /usr/share/cows/ | grep -vE "sod|kiss|surg|tele" | sort -R | head -1)" "$(fortune -s)"'), '\n'), '" ". v:val') + ['','']
+      \ map(split(system('cowsay -f "$(ls /usr/share/cows/ | grep -vE "head|sod|kiss|surg|tele" | sort -R | head -1)" "$(fortune -s)"'), '\n'), '" ". v:val') + ['','']
 
     " Skip list
     let g:startify_skiplist = [
@@ -683,6 +698,12 @@
     "let g:UltiSnipsJumpBackwardTrigger = "<c-b>"
   " }}}
 
+  " Undotree {{{
+    nnoremap <Leader>u :GundoToggle<cr>
+
+    let g:undotree_SplitWidth=40
+  " }}}
+
   " Unite {{{
     " General options
     let g:unite_enable_start_insert = 1
@@ -696,8 +717,13 @@
           \ })
 
     " Ignore build directories
-    call unite#custom#source('file_rec,file_rec/async', 'ignore_pattern', '\/build')
-    call unite#custom#source('grep', 'ignore_pattern', '\/build')
+    call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
+          \ 'ignore_pattern', join([
+          \ '\.git/',
+          \ '\/build',
+          \ '\target/',
+          \ 'node_modules/',
+          \ ], '\|'))
 
     " File
     let g:unite_source_file_ignore_pattern =
@@ -831,6 +857,10 @@
     endif
   " }}}
 
+  " vim-projectionist {{{
+    nnoremap <M-A> :A<CR>
+    nnoremap <M-Tab> :A<CR>
+  " }}}
 
   " vim-snowdrop {{{
     let g:snowdrop#libclang_path = "/usr/lib"
@@ -888,7 +918,7 @@
 
   function! EpsilonCleaning(val)
     exe '%s/\v([-]*[0-9]+.[0-9]+[e\+-]*[0-9]*)/\='
-      \ . 'str2float(submatch(0)) < str2float("'. a:val . '") ? "0" : submatch(0)/ge'
+      \ . 'abs(str2float(submatch(0))) < str2float("'. a:val . '") ? "0" : submatch(0)/ge'
   endfunction
 
   function! StripTrailingWhitespace()
@@ -932,6 +962,9 @@
 
   " CUDA support
   au BufNewFile,BufRead *.cu,*.cuh set ft=cpp
+
+  " Fix Python comments style for UltiSnips
+  au FileType python set comments=b:#
 " }}}
 
 " Optimization
@@ -1189,4 +1222,4 @@ while c <= 'z'
 endw
 
 " Work around the ambiguity with escape sequences
-set ttimeout ttimeoutlen=50
+set ttimeout timeoutlen=300 ttimeoutlen=50
