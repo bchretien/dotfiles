@@ -156,6 +156,7 @@
     highlight clear LineNr " Current line number row will have same background color in relative mode
     "highlight clear CursorLineNr " Remove highlight color from current line number
 
+    au BufRead,BufWinEnter * if &diff || (v:progname =~ "diff") | set nocursorline | endif
   " }}}
 
   " Font
