@@ -270,9 +270,6 @@
   nmap <leader>f8 :set foldlevel=8<CR>
   nmap <leader>f9 :set foldlevel=9<CR>
 
-  " To clear search highlighting rather than toggle it on and off
-  nmap <silent> <leader>/ :nohlsearch<CR>
-
   " Find merge conflict markers
   map <leader>fc /\v^[<\|=>]{7}( .*\|$)<CR>
 
@@ -311,6 +308,9 @@
   " Exit insert mode with Ctrl+C without skipping InsertLeave event
   inoremap <C-c> <Esc>
 
+  " Use jk as an <Esc> replacement
+  imap jk <Esc>
+
   " Navigation
   nnoremap j gj
   nnoremap k gk
@@ -333,6 +333,32 @@
 
   "This unsets the "last search pattern" register by hitting return
   nnoremap <CR> :noh<CR><CR>
+
+  " When the popup menu is opened, make the Enter key select the completion
+  " entry instead of creating a new line
+  inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+  " qq to record, Q to replay (plus disable Ex mode)
+  nmap Q @q
+
+  " <tab> / <s-tab> | Circular windows navigation
+  nnoremap <tab>   <c-w>w
+  nnoremap <S-tab> <c-w>W
+
+  " Start the find and replace command from the cursor position to the end of
+  " the file
+  vmap <leader>z <Esc>:,$s/<c-r>=GetVisual()<cr>/
+  " Start the find and replace command across the whole file
+  vmap <leader>zz <Esc>:%s/<c-r>=GetVisual()<cr>/
+
+  " Select pasted text
+  nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
+
+  " Sort space-separated words on a line
+  vnoremap <F2> d:execute 'normal i' . join(sort(split(getreg('"'))), ' ')<CR>
+
+  " Resize splits when the window is resized
+  au VimResized * :wincmd =
 " }}}
 
 " Plugins {{{
@@ -807,9 +833,6 @@
     put! a
   endfunction
 
-  " Sort space-separated words on a line
-  vnoremap <F2> d:execute 'normal i' . join(sort(split(getreg('"'))), ' ')<CR>
-
   " Zoom / Restore window.
   function! s:ZoomToggle() abort
       if exists('t:zoomed') && t:zoomed
@@ -1026,11 +1049,6 @@ function! GetVisual() range
   return escaped_selection
 endfunction
 
-" Start the find and replace command from the cursor position to the end of
-" the file
-vmap <leader>z <Esc>:,$s/<c-r>=GetVisual()<cr>/
-" Start the find and replace command across the whole file
-vmap <leader>zz <Esc>:%s/<c-r>=GetVisual()<cr>/
 
 " If doing a diff. Upon writing changes to file, automatically update the
 " differences
