@@ -346,10 +346,6 @@
   " qq to record, Q to replay (plus disable Ex mode)
   nmap Q @q
 
-  " <tab> / <s-tab> | Circular windows navigation
-  nnoremap <tab>   <c-w>w
-  nnoremap <S-tab> <c-w>W
-
   " Start the find and replace command from the cursor position to the end of
   " the file
   vmap <leader>z <Esc>:,$s/<c-r>=GetVisual()<cr>/
