@@ -1,7 +1,7 @@
 " vim: set sw=2 ts=2 sts=2 et tw=78 foldmarker={{{,}}} foldlevel=0 foldmethod=marker spell: ft=vim
 
 " Start adding Plugs
-call plug#begin('~/.vim/plugged')
+silent! if plug#begin('~/.vim/plugged')
 
 " Edition plugins {{{
   " Improved incremental searching
@@ -14,19 +14,17 @@ call plug#begin('~/.vim/plugged')
   Plug 'ervandew/supertab'
 
   " Syntax checking hacks for Vim
-  Plug 'scrooloose/syntastic'
+  "Plug 'scrooloose/syntastic'
 
   " Display your undo history in a graph
-  Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
+  "Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
+  Plug 'sjl/gundo.vim', { 'on': 'GundoToggle' }
 
   " Provide a completion function for Unicode glyphs
   Plug 'chrisbra/unicode.vim'
 
   " Auto-close feature for parentheses, brackets etc.
   Plug 'Townk/vim-autoclose'
-
-  " Vim global plugin for dragging virtual blocks
-  Plug 'atweiden/vim-dragvisuals'
 
   " Alignment plugin
   Plug 'junegunn/vim-easy-align', { 'on': ['<Plug>(EasyAlign)', 'EasyAlign'] }
@@ -57,13 +55,10 @@ call plug#begin('~/.vim/plugged')
 
 " Development plugins {{{
   " Incorporates the functionality of CMake into Vim
-  "Plug 'jalcine/cmake.vim', { 'on': ['CMakeCreateProject', 'CMakeBuild'] }
+  "Plug 'jalcine/cmake.vim', { 'on': ['CMakeCreateBuild', 'CMakeBuild'] }
 
   " DoxygenToolkit: Doxygen support
   Plug 'vim-scripts/DoxygenToolkit.vim'
-
-  " GitHub issue integration in Vim
-  Plug 'jaxbot/github-issues.vim'
 
   " gitk for Vim
   Plug 'gregsexton/gitv', { 'on': 'Gitv' }
@@ -89,6 +84,9 @@ call plug#begin('~/.vim/plugged')
   " Vim plugin for previewing markup files (markdown, rdoc, textile, html)
   Plug 'greyblake/vim-preview', { 'on': 'Preview' }
 
+  " Project configuration
+  Plug 'tpope/vim-projectionist', { 'for': ['c', 'cpp', 'objc'] }
+
   " Show a VCS diff using Vim's sign column
   Plug 'mhinz/vim-signify'
 
@@ -96,23 +94,12 @@ call plug#begin('~/.vim/plugged')
   Plug 'honza/vim-snippets'
 
   " C/C++ {{{
-    " Use clang for completing C/C++ code
-    Plug 'Rip-Rip/clang_complete', { 'do': 'make install'}
-
     " Formatting with clang-format
     " Requires: vimproc.vim,  vim-operator-user
     Plug 'rhysd/vim-clang-format', { 'for': ['c', 'cpp', 'objc'] }
 
     " Enhanced syntax highlighting for C++
     Plug 'octol/vim-cpp-enhanced-highlight'
-
-    " Async clang code completion
-    " Requires: clang, vimproc.vim 
-    Plug 'osyo-manga/vim-marching'
-
-    " libclang in Vim
-    " Requires: clang
-    Plug 'osyo-manga/vim-snowdrop'
   " }}}
   
   " Haskell {{{
@@ -145,33 +132,21 @@ call plug#begin('~/.vim/plugged')
 " }}}
 
 " Display plugins {{{
-  " Super simple vim plugin to show the list of buffers in the command bar
-  Plug 'bling/vim-bufferline'
-
   " Make gvim-only colorschemes work transparently in terminal Vim
   Plug 'godlygeek/csapprox'
 
-  " Better tab names
-  Plug 'mkitt/tabline.vim'
-
-  " tmux airline support
-  "Plug 'edkolev/tmuxline.vim'
-
-  " Lean & mean status/tabline
-  Plug 'bling/vim-airline'
+  " A light and configurable statusline/tabline for Vim
+  Plug 'itchyny/lightline.vim'
 
   " css/less/sass/html color preview for Vim
   Plug 'gorodinskiy/vim-coloresque', { 'for': ['css', 'html', 'vim'] }
-
-  " Plugin for visually displaying indent levels in code
-  Plug 'nathanaelkane/vim-indent-guides'
 
   " Fancy start screen
   Plug 'mhinz/vim-startify'
 
   " Color schemes {{{
-    " Add molokai color scheme
-    Plug 'tomasr/molokai'
+    Plug 'spf13/vim-colors'
+    Plug 'flazz/vim-colorschemes'
 
     " Add solarized color scheme
     Plug 'altercation/vim-colors-solarized'
@@ -211,11 +186,8 @@ call plug#begin('~/.vim/plugged')
 " }}}
 
 " Miscellaneous plugins {{{
-  " Modeline generator
-  Plug 'vim-scripts/Modeliner', { 'on': 'Modeliner' }
-
   " LaTeX support
-  Plug 'lervag/vim-latex'
+  Plug 'lervag/vimtex'
 
   " Find out where maps are defined
   Plug 'vim-scripts/listmaps.vim', { 'on': 'Listmaps' }
@@ -250,28 +222,7 @@ call plug#begin('~/.vim/plugged')
   " Gist wrapper
   " Requires: webapi-vim
   Plug 'mattn/gist-vim'
-
-  " Taskwarrior wrapper
-  Plug 'farseer90718/vim-taskwarrior'
 " }}}
-
-
-" TODO: following plugins need to be sorted...
-
-"Plug 'myusuf3/numbers.vim'
-"Plug 'atweiden/vim-betterdigraphs'
-"Plug 'atweiden/vim-hudigraphs'
-"Plug 'tpope/vim-obsession'
-
-" quickly display quickfix list/location list
-Plug 'Valloric/ListToggle'
-
-" Automatic resizing of windows
-"Plug 'roman/golden-ratio'
-
-Plug 'vim-scripts/restore_view.vim'
-Plug 'kana/vim-textobj-user'
-Plug 'kana/vim-textobj-indent'
 
 " Load local plugin file (if it exists)
 " This provides a way to have user-specific plugins without needing
@@ -282,3 +233,4 @@ endif
 
 " Stop adding Plugs
 call plug#end()
+endif
