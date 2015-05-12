@@ -6,6 +6,7 @@
     ~/.emacs.d: emacs.d/
     ~/.emacs: emacs
     ~/.fonts: fonts/
+    ~/.fzfrc: fzfrc
     ~/.gdb: gdb/
     ~/.gdbinit: gdbinit
     ~/.git_template: git_template/
@@ -23,6 +24,7 @@
     ~/.tmux: tmux/
     ~/.vim: vim/
     ~/.vimrc: vimrc
+    ~/.weechat: weechat/
     ~/.xbindkeysrc: xbindkeysrc
     ~/.zprezto: zprezto/
     ~/.zshrc: zshrc
