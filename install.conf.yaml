@@ -56,4 +56,9 @@
     - git submodule update --init --recursive
     - fc-cache -vf ~/.fonts # load fonts
     - mkdir -p ~/.ssh 2> /dev/null
-    - vim -N -u ~/.vimrc.plugins +PlugUpdate +PlugClean +qall # install Vim plugins
+    # Install vim plugins
+    -
+      command: vim -Nu ~/.vimrc.plugins +PlugUpdate +qall &> /dev/null
+      stdin: true
+      stdout: true
+      stderr: true
