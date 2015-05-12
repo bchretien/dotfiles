@@ -22,8 +22,8 @@
     ~/.taskrc: taskrc
     ~/.tmux.conf: tmux.conf
     ~/.tmux: tmux/
-    ~/.vim: vim/
     ~/.vimrc: vimrc
+    ~/.vimrc.plugins: vimrc.plugins
     ~/.weechat: weechat/
     ~/.xbindkeysrc: xbindkeysrc
     ~/.zprezto: zprezto/
@@ -48,7 +48,7 @@
     ~/.vim/autoload/plug.vim:
       create: true
       path: vim/autoload/plug.vim
-    ~/.vim/plugged/vim-snippets/custom_snippets:
+    ~/.vim/custom_snippets:
       create: true
       path: custom_snippets/
 
@@ -56,3 +56,4 @@
     - git submodule update --init --recursive
     - fc-cache -vf ~/.fonts # load fonts
     - mkdir -p ~/.ssh 2> /dev/null
+    - vim -N -u ~/.vimrc.plugins +PlugUpdate +PlugClean +qall # install Vim plugins

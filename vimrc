@@ -681,7 +681,7 @@
     let g:UltiSnipsEditSplit="vertical"
 
     " Custom snippets
-    let g:UltiSnipsSnippetsDir = "~/.vim/plugged/vim-snippets/custom_snippets"
+    let g:UltiSnipsSnippetsDir = "~/.vim/custom_snippets"
     let g:UltiSnipsSnippetDirectories=["UltiSnips", "custom_snippets"]
 
     " Prevent UltiSnips from stealing ctrl-k.
