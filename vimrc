@@ -108,8 +108,13 @@
   if has('persistent_undo')
     set undolevels=1000 " Maximum number of changes that can be undone
     set undoreload=10000 " Maximum number lines to save for undo on a buffer reload
-    set undodir=~/.vimundo/
+    set undodir=~/.vim/tmp/undo/
     set undofile " Undo file
+
+    " Make those folders automatically if they don't already exist.
+    if !isdirectory(expand(&undodir))
+        call mkdir(expand(&undodir), "p")
+    endif
   endif
 
     " Add exclusions to mkview and loadview
@@ -129,20 +134,24 @@
       set t_Co=256
     endif
 
+    " Change cursor color
+    if &term =~ "xterm\\|rxvt\\|screen"
+      " cursor color in insert mode
+      let &t_SI = "\<Esc>]12;#118A3D\x7"
+      " else
+      let &t_EI = "\<Esc>]12;#115E8B\x7"
+      silent !echo -ne "\033]12;blue\007"
+      " reset cursor when vim exits
+      autocmd VimLeave * silent !echo -ne "\033]112\007"
+      " use \003]12;gray\007 for gnome-terminal
+    endif
+
     " FIXME: check for the theme
     " Schemes: hybrid, jellybeans, lizard256, lucius, LuciusDarkLowContrast, molokai, smyck
     colorscheme hybrid
 
-    " Color of the tabline
-    hi TabLine      ctermfg=White  ctermbg=DarkGray  cterm=NONE
-    hi TabLineFill  ctermfg=White  ctermbg=Black     cterm=NONE
-    hi TabLineSel   ctermfg=White  ctermbg=DarkBlue  cterm=NONE
-
-    " Color of matching braces
-    "hi MatchParen   ctermfg=Yellow ctermbg=Black     cterm=bold
-
-    " Color of a selected block
-    "hi Visual       ctermbg=238
+    " Fix cursor in search for hybrid
+    hi Cursor ctermfg=16 ctermbg=253
 
     " Fix spellchecking color
     hi clear SpellBad
@@ -152,6 +161,7 @@
     highlight clear LineNr " Current line number row will have same background color in relative mode
     "highlight clear CursorLineNr " Remove highlight color from current line number
 
+    au BufRead,BufWinEnter * if &diff || (v:progname =~ "diff") | set nocursorline | endif
   " }}}
 
   " Font
@@ -265,9 +275,6 @@
   nmap <leader>f8 :set foldlevel=8<CR>
   nmap <leader>f9 :set foldlevel=9<CR>
 
-  " To clear search highlighting rather than toggle it on and off
-  nmap <silent> <leader>/ :nohlsearch<CR>
-
   " Find merge conflict markers
   map <leader>fc /\v^[<\|=>]{7}( .*\|$)<CR>
 
@@ -306,6 +313,9 @@
   " Exit insert mode with Ctrl+C without skipping InsertLeave event
   inoremap <C-c> <Esc>
 
+  " Use jk as an <Esc> replacement
+  imap jk <Esc>
+
   " Navigation
   nnoremap j gj
   nnoremap k gk
@@ -328,50 +338,82 @@
 
   "This unsets the "last search pattern" register by hitting return
   nnoremap <CR> :noh<CR><CR>
+
+  " When the popup menu is opened, make the Enter key select the completion
+  " entry instead of creating a new line
+  inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+  " qq to record, Q to replay (plus disable Ex mode)
+  nmap Q @q
+
+  " Start the find and replace command from the cursor position to the end of
+  " the file
+  vmap <leader>z <Esc>:,$s/<c-r>=GetVisual()<cr>/
+  " Start the find and replace command across the whole file
+  vmap <leader>zz <Esc>:%s/<c-r>=GetVisual()<cr>/
+
+  " Select pasted text
+  nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
+
+  " Sort space-separated words on a line
+  vnoremap <F2> d:execute 'normal i' . join(sort(split(getreg('"'))), ' ')<CR>
+
+  " Resize splits when the window is resized
+  au VimResized * :wincmd =
 " }}}
 
 " Plugins {{{
 
   " Airline {{{
-    " Font (patched for airline)
-    let g:airline_powerline_fonts = 1
-    let g:airline_theme="murmur"
+    if isdirectory(expand("~/.vim/plugged/airline"))
+      " Font (patched for airline)
+      let g:airline_powerline_fonts = 1
+      let g:airline_theme="murmur"
 
-    let g:airline#extensions#whitespace#enabled = 0
+      let g:airline#extensions#whitespace#enabled = 0
 
-    let g:airline_section_c = '%F'
+      let g:airline_section_c = '%F'
+
+      "let g:airline_symbols = get(g:, 'airline_symbols', {})
+      "let g:airline_symbols.space = "\ua0"
+    endif
   " }}}
 
   " clang_complete {{{
-    " Use the library rather than the executable
-    let g:clang_use_library=1
-    let g:clang_library_path = "/usr/lib"
+   if isdirectory(expand("~/.vim/plugged/clang_complete"))
+     " Use the library rather than the executable
+     let g:clang_use_library=1
+     let g:clang_library_path = "/usr/lib"
 
-    " Limit memory use
-    let g:clang_memory_percent=70
+     " Limit memory use
+     "let g:clang_memory_percent=30
 
-    let g:clang_make_default_keymappings = 0
+     "let g:clang_make_default_keymappings = 1
 
-    " Snippets
-    let g:clang_snippets = 1
-    let g:clang_snippets_engine = 'ultisnips'
-    let g:clang_conceal_snippets = 1
+     " Snippets
+     let g:clang_snippets = 1
+     let g:clang_snippets_engine = 'ultisnips'
+     let g:clang_conceal_snippets = 1
 
-    let g:clang_periodic_quickfix = 0
-    let g:clang_hl_errors = 0
+     let g:clang_periodic_quickfix = 0
+     let g:clang_hl_errors = 0
 
-    let g:clang_close_preview = 1
-    let g:clang_complete_auto = 0
-    let g:clang_auto_select = 0
-    let g:clang_complete_copen = 1
+     "let g:clang_user_options = '|| exit 0'
+     let g:clang_close_preview = 1
+     let g:clang_complete_auto = 0
+     let g:clang_auto_select = 0
+     let g:clang_complete_copen = 1
 
-    augroup myvimrc
-        au!
-        au BufRead,BufNewFile *.cc,*.cpp,*.cxx,*.cu,*.hh,*.hxx,*.hpp,*.cuh 
-          \ if &omnifunc != "ClangComplete" |
-          \ echo "WARNING: omnifunc is not net to ClangComplete!" |
-          \ endif
-    augroup END
+     let g:clang_default_keymappings = 0
+
+     augroup myvimrc
+         au!
+         au BufRead,BufNewFile *.cc,*.cpp,*.cxx,*.cu,*.hh,*.hxx,*.hpp,*.cuh 
+           \ if &omnifunc != "ClangComplete" |
+           \ echo "WARNING: omnifunc is not net to ClangComplete!" |
+           \ endif
+     augroup END
+   endif
   " }}}
 
   " Ctags {{{
@@ -396,8 +438,8 @@
     " Ignore build directories
     let g:ctrlp_user_command = {
           \ 'types': {
-          \ 1: ['.git', 'cd %s && git ls-files --cached --exclude-standard --others | grep -v "build"'],
-          \ 2: ['.hg', 'hg --cwd %s locate -I . | grep -v "build"'],
+          \ 1: ['.git', 'cd %s && git ls-files --cached --exclude-standard --others'],
+          \ 2: ['.hg', 'hg --cwd %s locate -I .'],
           \ },
           \ 'fallback': 'find %s -type f'
           \ }
@@ -500,6 +542,44 @@
     let g:jedi#auto_vim_configuration = 0
   " }}}
 
+  " lightline.vim {{{
+    if isdirectory(expand("~/.vim/plugged/lightline.vim"))
+      let g:lightline = {
+            \ 'colorscheme': 'murmur',
+            \ 'enable': {
+            \   'tabline': 1,
+            \   'statusline': 1,
+            \ },
+            \ 'active': {
+            \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
+            \   'right': [ [ 'syntastic', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
+            \ },
+            \ 'component': {
+            \   'readonly': '%{&filetype=="help"?"":&readonly?"":""}',
+            \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
+            \   'fugitive': '%{exists("*fugitive#head")? " ".fugitive#head():""}'
+            \ },
+            \ 'component_visible_condition': {
+            \   'readonly': '(&filetype!="help"&& &readonly)',
+            \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
+            \   'fugitive': '(exists("*fugitive#head") && ""!=fugitive#head())'
+            \ },
+            \ 'separator': { 'left': '', 'right': '' },
+            \ 'subseparator': { 'left': '', 'right': '' }
+            \ }
+
+      let g:lightline.tabline = {
+            \ 'left': [ [ 'tabs' ] ],
+            \ 'right': [ [ 'close' ] ] }
+
+      "let g:lightline.component_expand = {
+            "\ 'tabs': 'ctrlspace#tabline' }
+
+      "let g:lightline.component_type = {
+            "\ 'tabs': 'raw' }
+    endif
+  " }}}
+
   " neco-ghc {{{
     autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
     let g:necoghc_enable_detailed_browse = 1
@@ -568,7 +648,7 @@
   " Startify {{{
     " Call fortune and cowsay (if present)
     let g:startify_custom_header =
-      \ map(split(system('cowsay -f "$(ls /usr/share/cows/ | grep -vE "sod|kiss|surg|tele" | sort -R | head -1)" "$(fortune -s)"'), '\n'), '" ". v:val') + ['','']
+      \ map(split(system('cowsay -f "$(ls /usr/share/cows/ | grep -vE "head|sod|kiss|surg|tele" | sort -R | head -1)" "$(fortune -s)"'), '\n'), '" ". v:val') + ['','']
 
     " Skip list
     let g:startify_skiplist = [
@@ -614,10 +694,16 @@
     "let g:UltiSnipsJumpBackwardTrigger = "<c-b>"
   " }}}
 
+  " Undotree {{{
+    nnoremap <Leader>u :GundoToggle<cr>
+
+    let g:undotree_SplitWidth=40
+  " }}}
+
   " Unite {{{
     " General options
     let g:unite_enable_start_insert = 1
-    let g:unite_data_directory = expand("~/.unite")
+    let g:unite_data_directory = expand("~/.vim/unite")
     let g:unite_source_history_yank_enable = 1
 
     call unite#custom#profile('default', 'context', {
@@ -627,8 +713,13 @@
           \ })
 
     " Ignore build directories
-    call unite#custom#source('file_rec,file_rec/async', 'ignore_pattern', '\(build\)')
-    call unite#custom#source('grep', 'ignore_pattern', '\(build\)')
+    call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
+          \ 'ignore_pattern', join([
+          \ '\.git/',
+          \ '\/build',
+          \ '\target/',
+          \ 'node_modules/',
+          \ ], '\|'))
 
     " File
     let g:unite_source_file_ignore_pattern =
@@ -762,6 +853,10 @@
     endif
   " }}}
 
+  " vim-projectionist {{{
+    nnoremap <M-A> :A<CR>
+    nnoremap <M-Tab> :A<CR>
+  " }}}
 
   " vim-snowdrop {{{
     let g:snowdrop#libclang_path = "/usr/lib"
@@ -802,9 +897,6 @@
     put! a
   endfunction
 
-  " Sort space-separated words on a line
-  vnoremap <F2> d:execute 'normal i' . join(sort(split(getreg('"'))), ' ')<CR>
-
   " Zoom / Restore window.
   function! s:ZoomToggle() abort
       if exists('t:zoomed') && t:zoomed
@@ -819,6 +911,38 @@
   endfunction
   command! ZoomToggle call s:ZoomToggle()
   nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
+
+  function! EpsilonCleaning(val)
+    exe '%s/\v([-]*[0-9]+.[0-9]+[e\+-]*[0-9]*)/\='
+      \ . 'abs(str2float(submatch(0))) < str2float("'. a:val . '") ? "0" : submatch(0)/ge'
+  endfunction
+
+  function! StripTrailingWhitespace()
+    if !&binary && &filetype != 'diff'
+      normal mz
+      normal Hmy
+      %s/\s\+$//e
+      normal 'yz<CR>
+      normal `z
+    endif
+  endfunction
+
+  function! TrainingMode()
+    " Unbind the cursor keys in insert, normal and visual modes.
+    for prefix in ['i', 'n', 'v']
+      for key in ['<Up>', '<Down>', '<Left>', '<Right>']
+        exe prefix . "noremap " . key . " <Esc>:echo \"Be a man. Do the right thing. Use HJKL!\"<cr>"
+      endfor
+    endfor
+  endfunction
+
+  function! UndoTrainingMode()
+    for prefix in ['i', 'n', 'v']
+      for key in ['<Up>', '<Down>', '<Left>', '<Right>']
+        exe prefix . "unmap " . key
+      endfor
+    endfor
+  endfunction
 " }}}
 
 " Filetypes {{{
@@ -834,6 +958,9 @@
 
   " CUDA support
   au BufNewFile,BufRead *.cu,*.cuh set ft=cpp
+
+  " Fix Python comments style for UltiSnips
+  au FileType python set comments=b:#
 " }}}
 
 " Optimization
@@ -1021,11 +1148,6 @@ function! GetVisual() range
   return escaped_selection
 endfunction
 
-" Start the find and replace command from the cursor position to the end of
-" the file
-vmap <leader>z <Esc>:,$s/<c-r>=GetVisual()<cr>/
-" Start the find and replace command across the whole file
-vmap <leader>zz <Esc>:%s/<c-r>=GetVisual()<cr>/
 
 " If doing a diff. Upon writing changes to file, automatically update the
 " differences
@@ -1096,4 +1218,4 @@ while c <= 'z'
 endw
 
 " Work around the ambiguity with escape sequences
-set ttimeout ttimeoutlen=50
+set ttimeout timeoutlen=300 ttimeoutlen=50

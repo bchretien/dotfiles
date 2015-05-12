@@ -52,13 +52,26 @@ $0
 endsnippet
 
 # Boost shared_ptr
-snippet sha "boost::shared_ptr<T>"
+snippet sha "boost::shared_ptr<T>" w
 boost::shared_ptr<${1:${VISUAL/([.^\n]+)/(?1::T)/}}>$0
+endsnippet
+
+# Static cast
+snippet sta "static_cast<T> (..)" w
+static_cast<${1:int}> (${2:${VISUAL}})$0
 endsnippet
 
 # For loops
 snippet for "for loop (for)"
 for (${1:int} ${2:i} = 0; $2 < ${3:count}; ${4:++$2})
+{
+	${VISUAL}${0}
+}
+endsnippet
+
+# For loops (size_t)
+snippet fors "for loop (size_t)"
+for (size_t ${1:i} = 0; $1 < ${2:count}; ${3:++$1})
 {
 	${VISUAL}${0}
 }

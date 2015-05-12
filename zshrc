@@ -37,6 +37,15 @@ if [ -f /etc/zsh_command_not_found ]; then
     . /etc/zsh_command_not_found
 fi
 
+# Add fzf support
+if [ -f /etc/profile.d/fzf.zsh ]; then
+    . /etc/profile.d/fzf.zsh
+fi
+
+if [ -f ~/.fzfrc ]; then
+    source ~/.fzfrc
+fi
+
 if [ -f ~/.zshrc.local ]; then
     source ~/.zshrc.local
 fi
