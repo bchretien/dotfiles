@@ -1,3 +1,6 @@
+#!/usr/bin/sh
+export FZF_DEFAULT_OPTS='-x'
+
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
 #   - Bypass fuzzy finder if there's only one match (--select-1)
 #   - Exit if there's no match (--exit-0)
@@ -22,9 +25,14 @@ fo() {
 
 # fshow - git commit browser (enter for show, ctrl-d for diff, ` toggles sort)
 fshow() {
+  git rev-parse --git-dir > /dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    return
+  fi
+
   local out shas sha q k
   while out=$(
-      git log --graph --color=always \
+      git log --all --graph --color=always \
           --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
       fzf --ansi --multi --no-sort --reverse --query="$q" --tiebreak=index \
           --print-query --expect=ctrl-d --toggle-sort=\`); do
