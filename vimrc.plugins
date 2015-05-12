@@ -109,9 +109,6 @@ silent! if plug#begin('~/.vim/plugged')
     " Happy Haskell programming on Vim, powered by ghc-mod
     Plug 'eagletmt/ghcmod-vim'
 
-    " An unpacked copy of the haskellmode vimball
-    "Plug 'lukerandall/haskellmode-vim'
-
     " A completion plugin for Haskell, using ghc-mod
     Plug 'eagletmt/neco-ghc'
   " }}}
@@ -136,7 +133,7 @@ silent! if plug#begin('~/.vim/plugged')
   Plug 'godlygeek/csapprox'
 
   " A light and configurable statusline/tabline for Vim
-  Plug 'itchyny/lightline.vim'
+  Plug 'bchretien/lightline.vim'
 
   " css/less/sass/html color preview for Vim
   Plug 'gorodinskiy/vim-coloresque', { 'for': ['css', 'html', 'vim'] }
@@ -156,9 +153,6 @@ silent! if plug#begin('~/.vim/plugged')
 " Unite {{{
   " Unite and create user interfaces
   Plug 'Shougo/unite.vim'
-
-  " Unite plugin to switch between colorschemes
-  Plug 'ujihisa/unite-colorscheme'
 
   " Unite plugin providing outline view for a buffer
   Plug 'Shougo/unite-outline'
@@ -191,14 +185,6 @@ silent! if plug#begin('~/.vim/plugged')
 
   " Find out where maps are defined
   Plug 'vim-scripts/listmaps.vim', { 'on': 'Listmaps' }
-
-  " Some utility functions for VIM
-  " FIXME: does any plugin depend on that?
-  Plug 'tomtom/tlib_vim'
-
-  " Interpret a file by function and cache file automatically
-  " FIXME: does any plugin depend on that?
-  Plug 'MarcWeber/vim-addon-mw-utils'
 
   " Markdown support
   Plug 'tpope/vim-markdown'
