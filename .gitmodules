@@ -22,3 +22,6 @@
 [submodule "dotbot"]
 	path = dotbot
 	url = https://github.com/anishathalye/dotbot
+[submodule "bin/mimi"]
+  path = bin/mimi
+  url = https://github.com/march-linux/mimi.git
