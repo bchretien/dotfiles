@@ -10,5 +10,6 @@ gmail.dat
 .mpd/mpd.state
 .mpd/playlists/*
 .mpd/sticker.sql
+config/mopidy/mopidy.conf
 .ncmpcpp/artists/*
 .tmux/plugins/*
