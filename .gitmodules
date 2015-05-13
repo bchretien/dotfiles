@@ -11,7 +11,7 @@
 	path = dev/dotgdb
 	url = https://github.com/bchretien/Gdbinit
 [submodule "i3"]
-	path = i3
+	path = gui/i3
 	url = https://github.com/bchretien/i3-config.git
 [submodule "tmux/plugins/tpm"]
 	path = term/tmux/plugins/tpm

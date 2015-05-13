@@ -8,7 +8,6 @@
     ~/.dotfiles: ''
     ~/.fonts: fonts/
     ~/.gnupg: gnupg/
-    ~/.i3: i3/
     # dev
     ~/.gdb: dev/gdb/
     ~/.gdbinit: dev/gdbinit
@@ -30,6 +29,7 @@
       create: true
       path: editor/custom_snippets/
     # gui
+    ~/.i3: gui/i3/
     ~/.themes: gui/themes/
     ~/.Xresources: gui/Xresources
     ~/.xbindkeysrc: gui/xbindkeysrc
