@@ -54,11 +54,43 @@ Currently supported:
 
 ### gui
 
+Files related to window managers, X11, etc.
+
+Currently supported:
+
+* i3 (i3 config with i3blocks),
+* X11 configuration,
+* GTK2 theme.
+
+
 ### media
+
+Files related to media players (music, video).
+
+Currently supported:
+
+* mpd,
+* ncmpcpp.
 
 ### term
 
+Files related to terminal emulators and multiplexers.
+
+Currently supported:
+
+* fzf,
+* tmux (config and plugins),
+* weechat,
+* zsh (config based on prezto).
+
 ### util
+
+Files related to utility software that did not fit in the other categories.
+
+Currently supported:
+
+* gnupg,
+* fonts (patched fonts for Powerline users).
 
 ## Dependencies
 
