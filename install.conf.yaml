@@ -6,8 +6,6 @@
 
 - link:
     ~/.dotfiles: ''
-    ~/.fonts: fonts/
-    ~/.gnupg: gnupg/
     # dev
     ~/.gdb: dev/gdb/
     ~/.gdbinit: dev/gdbinit
@@ -42,6 +40,9 @@
     ~/.tmux.conf: term/tmux.conf
     ~/.tmux: term/tmux/
     ~/.weechat: term/weechat/
+    # util
+    ~/.fonts: util/fonts/
+    ~/.gnupg: util/gnupg/
     # zsh
     ~/.zprezto: term/zsh/zprezto/
     ~/.zpreztorc: term/zsh/zpreztorc

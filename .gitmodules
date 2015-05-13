@@ -5,7 +5,7 @@
 	path = gui/conky-themes
 	url = https://github.com/bchretien/conky-themes
 [submodule "fonts"]
-	path = fonts
+	path = util/fonts
 	url = https://github.com/Lokaltog/powerline-fonts
 [submodule "dotgdb"]
 	path = dev/dotgdb
