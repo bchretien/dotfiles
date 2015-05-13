@@ -1,5 +1,8 @@
 - clean: ['~', '~/.config']
 
+- shell:
+    - git submodule update --init --recursive
+
 - link:
     ~/.Xresources: Xresources
     ~/.dotfiles: ''
@@ -27,7 +30,10 @@
     ~/.weechat: weechat/
     ~/.xbindkeysrc: xbindkeysrc
     ~/.zprezto: zprezto/
+    ~/.zpreztorc: zpreztorc
     ~/.zshrc: zshrc
+    ~/.zshenv: zshenv
+    ~/.zprofile: zprofile
     # Special case: ~/.config
     ~/.config/fontconfig:
       create: true
@@ -53,7 +59,6 @@
       path: custom_snippets/
 
 - shell:
-    - git submodule update --init --recursive
     - fc-cache -vf ~/.fonts # load fonts
     - mkdir -p ~/.ssh 2> /dev/null
     # Install vim plugins
