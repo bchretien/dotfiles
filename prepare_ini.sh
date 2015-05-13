@@ -5,7 +5,7 @@ set -e
 dotdir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
 
 # Files ending with .ini are copied if they do not already exist
-inifiles=`find $dotdir $dotdir/zsh -maxdepth 1 -type f -and -name '*.ini'`
+inifiles=`find $dotdir $dotdir/term/zsh -maxdepth 1 -type f -and -name '*.ini'`
 for i in $inifiles; do
   new_name=${i%.ini}
   if [ ! -f $new_name ]; then
