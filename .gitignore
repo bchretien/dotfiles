@@ -13,3 +13,4 @@ mpd/sticker.sql
 config/mopidy/mopidy.conf
 ncmpcpp/artists/*
 tmux/plugins/*
+weechat/*
