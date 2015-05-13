@@ -2,6 +2,7 @@
 
 - shell:
     - git submodule update --init --recursive
+    - ./prepare_ini.sh
 
 - link:
     ~/.Xresources: Xresources
@@ -14,8 +15,10 @@
     ~/.gdbinit: gdbinit
     ~/.git_template: git_template/
     ~/.gitconfig: gitconfig
+    ~/.gitconfig.local: gitconfig.local
     ~/.gnupg: gnupg/
     ~/.hgrc: hgrc
+    ~/.hgrc.local: hgrc.local
     ~/.i3: i3/
     ~/.latexmkrc: latexmkrc
     ~/.mpd: mpd/
@@ -32,8 +35,11 @@
     ~/.zprezto: zprezto/
     ~/.zpreztorc: zpreztorc
     ~/.zshrc: zshrc
+    ~/.zshrc.local: zshrc.local
     ~/.zshenv: zshenv
+    ~/.zshenv.local: zshenv.local
     ~/.zprofile: zprofile
+    ~/.zprofile.local: zprofile.local
     # Special case: ~/.config
     ~/.config/fontconfig:
       create: true
