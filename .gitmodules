@@ -1,5 +1,5 @@
 [submodule "git_template"]
-	path = git_template
+	path = dev/git_template
 	url = https://github.com/bchretien/git_template
 [submodule "conky-themes"]
 	path = gui/conky-themes
@@ -8,13 +8,13 @@
 	path = fonts
 	url = https://github.com/Lokaltog/powerline-fonts
 [submodule "dotgdb"]
-	path = dotgdb
+	path = dev/dotgdb
 	url = https://github.com/bchretien/Gdbinit
 [submodule "i3"]
 	path = i3
 	url = https://github.com/bchretien/i3-config.git
 [submodule "tmux/plugins/tpm"]
-	path = tmux/plugins/tpm
+	path = term/tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm
 [submodule "zprezto"]
 	path = zsh/zprezto

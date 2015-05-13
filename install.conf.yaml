@@ -5,37 +5,19 @@
     - ./prepare_ini.sh
 
 - link:
-    ~/.Xresources: Xresources
     ~/.dotfiles: ''
     ~/.fonts: fonts/
-    ~/.fzfrc: fzfrc
-    ~/.gdb: gdb/
-    ~/.gdbinit: gdbinit
-    ~/.git_template: git_template/
-    ~/.gitconfig: gitconfig
-    ~/.gitconfig.local: gitconfig.local
     ~/.gnupg: gnupg/
-    ~/.hgrc: hgrc
-    ~/.hgrc.local: hgrc.local
     ~/.i3: i3/
-    ~/.latexmkrc: latexmkrc
-    ~/.mpd: mpd/
-    ~/.screenrc: screenrc
-    ~/.themes: themes/
-    ~/.taskrc: taskrc
-    ~/.tmux.conf: tmux.conf
-    ~/.tmux: tmux/
-    ~/.weechat: weechat/
-    ~/.xbindkeysrc: xbindkeysrc
-    # zsh
-    ~/.zprezto: zsh/zprezto/
-    ~/.zpreztorc: zsh/zpreztorc
-    ~/.zshrc: zsh/zshrc
-    ~/.zshrc.local: zsh/zshrc.local
-    ~/.zshenv: zsh/zshenv
-    ~/.zshenv.local: zsh/zshenv.local
-    ~/.zprofile: zsh/zprofile
-    ~/.zprofile.local: zsh/zprofile.local
+    # dev
+    ~/.gdb: dev/gdb/
+    ~/.gdbinit: dev/gdbinit
+    ~/.git_template: dev/git_template/
+    ~/.gitconfig: dev/gitconfig
+    ~/.gitconfig.local: dev/gitconfig.local
+    ~/.hgrc: dev/hgrc
+    ~/.hgrc.local: dev/hgrc.local
+    ~/.latexmkrc: dev/latexmkrc
     # editor
     ~/.emacs.d: editor/emacs.d/
     ~/.emacs: editor/emacs
@@ -47,8 +29,28 @@
     ~/.vim/custom_snippets:
       create: true
       path: editor/custom_snippets/
+    # gui
+    ~/.themes: gui/themes/
+    ~/.Xresources: gui/Xresources
+    ~/.xbindkeysrc: gui/xbindkeysrc
     # media
+    ~/.mpd: media/mpd/
     ~/.ncmpcpp: media/ncmpcpp/
+    # term
+    ~/.fzfrc: term/fzfrc
+    ~/.screenrc: term/screenrc
+    ~/.tmux.conf: term/tmux.conf
+    ~/.tmux: term/tmux/
+    ~/.weechat: term/weechat/
+    # zsh
+    ~/.zprezto: zsh/zprezto/
+    ~/.zpreztorc: zsh/zpreztorc
+    ~/.zshrc: zsh/zshrc
+    ~/.zshrc.local: zsh/zshrc.local
+    ~/.zshenv: zsh/zshenv
+    ~/.zshenv.local: zsh/zshenv.local
+    ~/.zprofile: zsh/zprofile
+    ~/.zprofile.local: zsh/zprofile.local
     # Special case: ~/.config
     ~/.config/fontconfig:
       create: true
