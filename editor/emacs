@@ -6,7 +6,7 @@
     (color-theme-subtle-hacker)
   (color-theme-hober))
 
-(add-to-list 'load-path "~/.dotfiles/.emacs.d")
+(add-to-list 'load-path "~/.emacs.d")
 
 ;; remove the useless parts of the GUI
 (tool-bar-mode -1)

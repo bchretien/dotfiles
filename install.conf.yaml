@@ -1,4 +1,4 @@
-- clean: ['~', '~/.config']
+- clean: ['~', '~/.config', '~/.vim', '~/.vim/autoload']
 
 - shell:
     - git submodule update --init --recursive
@@ -7,8 +7,6 @@
 - link:
     ~/.Xresources: Xresources
     ~/.dotfiles: ''
-    ~/.emacs.d: emacs.d/
-    ~/.emacs: emacs
     ~/.fonts: fonts/
     ~/.fzfrc: fzfrc
     ~/.gdb: gdb/
@@ -22,14 +20,11 @@
     ~/.i3: i3/
     ~/.latexmkrc: latexmkrc
     ~/.mpd: mpd/
-    ~/.ncmpcpp: ncmpcpp/
     ~/.screenrc: screenrc
     ~/.themes: themes/
     ~/.taskrc: taskrc
     ~/.tmux.conf: tmux.conf
     ~/.tmux: tmux/
-    ~/.vimrc: vimrc
-    ~/.vimrc.plugins: vimrc.plugins
     ~/.weechat: weechat/
     ~/.xbindkeysrc: xbindkeysrc
     # zsh
@@ -41,6 +36,19 @@
     ~/.zshenv.local: zsh/zshenv.local
     ~/.zprofile: zsh/zprofile
     ~/.zprofile.local: zsh/zprofile.local
+    # editor
+    ~/.emacs.d: editor/emacs.d/
+    ~/.emacs: editor/emacs
+    ~/.vimrc: editor/vimrc
+    ~/.vimrc.plugins: editor/vimrc.plugins
+    ~/.vim/autoload/plug.vim:
+      create: true
+      path: editor/vim/autoload/plug.vim
+    ~/.vim/custom_snippets:
+      create: true
+      path: editor/custom_snippets/
+    # media
+    ~/.ncmpcpp: media/ncmpcpp/
     # Special case: ~/.config
     ~/.config/fontconfig:
       create: true
@@ -57,13 +65,6 @@
     ~/.config/termite:
       create: true
       path: config/termite/
-    # Vim:
-    ~/.vim/autoload/plug.vim:
-      create: true
-      path: vim/autoload/plug.vim
-    ~/.vim/custom_snippets:
-      create: true
-      path: custom_snippets/
 
 - shell:
     - fc-cache -vf ~/.fonts # load fonts
