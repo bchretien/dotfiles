@@ -17,7 +17,7 @@
 	path = tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm
 [submodule "zprezto"]
-	path = zprezto
+	path = zsh/zprezto
 	url = https://github.com/bchretien/prezto.git
 [submodule "dotbot"]
 	path = dotbot
