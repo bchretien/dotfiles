@@ -9,6 +9,7 @@
     # dev
     ~/.gdb: dev/gdb/
     ~/.gdbinit: dev/gdbinit
+    ~/.gdbinit.local: dev/gdbinit.local
     ~/.git_template: dev/git_template/
     ~/.gitconfig: dev/gitconfig
     ~/.gitconfig.local: dev/gitconfig.local
