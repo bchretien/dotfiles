@@ -1,10 +1,15 @@
-dotfiles
-========
+# ![dotfiles](https://raw.githubusercontent.com/bchretien/dotfiles/master/.images/dotfiles.png)
 
 Configuration files and utilities for my Linux system.
 
 Relies on [Dotbot](https://github.com/anishathalye/dotbot) for dotfiles
 installation.
+
+## Dependencies
+
+Required:
+* Git
+* Python (Dotbot)
 
 ## Install
 
@@ -91,22 +96,4 @@ Currently supported:
 
 * gnupg,
 * fonts (patched fonts for Powerline users).
-
-## Dependencies
-
-Required:
-* Git
-* Python (Dotbot)
-
-Supported:
-* ack
-* conky
-* fasd
-* gpg
-* mpd
-* ncmpcpp
-* tmux
-* vim
-* zsh
-* etc.
 
