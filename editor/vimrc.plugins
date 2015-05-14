@@ -4,6 +4,9 @@
 silent! if plug#begin('~/.vim/plugged')
 
 " Edition plugins {{{
+  " Auto-close feature for parentheses, brackets etc.
+  Plug 'jiangmiao/auto-pairs'
+
   " Improved incremental searching
   Plug 'haya14busa/incsearch.vim'
 
@@ -22,9 +25,6 @@ silent! if plug#begin('~/.vim/plugged')
 
   " Provide a completion function for Unicode glyphs
   Plug 'chrisbra/unicode.vim'
-
-  " Auto-close feature for parentheses, brackets etc.
-  Plug 'Townk/vim-autoclose'
 
   " Alignment plugin
   Plug 'junegunn/vim-easy-align', { 'on': ['<Plug>(EasyAlign)', 'EasyAlign'] }
