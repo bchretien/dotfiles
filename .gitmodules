@@ -25,3 +25,6 @@
 [submodule "bin/mimi"]
   path = bin/mimi
   url = https://github.com/march-linux/mimi.git
+[submodule "editor/emacs.d"]
+	path = editor/emacs.d
+	url = http://github.com/syl20bnr/spacemacs
