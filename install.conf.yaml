@@ -17,13 +17,17 @@
     ~/.hgrc.local: dev/hgrc.local
     ~/.latexmkrc: dev/latexmkrc
     # editor
+    ~/.emacs_zsh: editor/emacs_zsh
     ~/.emacs.d: editor/emacs.d/
-    ~/.emacs: editor/emacs
+    ~/.spacemacs: editor/spacemacs
     ~/.vimrc: editor/vimrc
     ~/.vimrc.plugins: editor/vimrc.plugins
     ~/.vim/autoload/plug.vim:
       create: true
       path: editor/vim/autoload/plug.vim
+    ~/.vim/after/compiler/gcc.vim:
+      create: true
+      path: editor/vim/after/compiler/gcc.vim
     ~/.vim/custom_snippets:
       create: true
       path: editor/custom_snippets/
