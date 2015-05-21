@@ -28,3 +28,6 @@
 [submodule "editor/emacs.d"]
 	path = editor/emacs.d
 	url = http://github.com/syl20bnr/spacemacs
+[submodule "editor/vim/vim-plug"]
+	path = editor/vim/vim-plug
+	url = git@github.com:junegunn/vim-plug.git
