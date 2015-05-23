@@ -47,7 +47,8 @@
     ~/.weechat: term/weechat/
     # util
     ~/.fonts: util/fonts/
-    ~/.gnupg: util/gnupg/
+    ~/.gnupg/gpg.conf: util/gnupg/gpg.conf
+    ~/.gnupg/gpg-agent.conf: util/gnupg/gpg-agent.conf
     # zsh
     ~/.zprezto: term/zsh/zprezto/
     ~/.zpreztorc: term/zsh/zpreztorc
