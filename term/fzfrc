@@ -1,4 +1,8 @@
 #!/usr/bin/sh
+if [ -f /etc/profile.d/fzf.zsh ]; then
+    source /etc/profile.d/fzf.zsh
+fi
+
 export FZF_DEFAULT_OPTS='-x'
 
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
@@ -48,4 +52,27 @@ fshow() {
       done
     fi
   done
+}
+
+# fh - repeat history
+fh() {
+  print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed 's/ *[0-9]* *//')
+  zle accept-line
+}
+
+# Override C-R
+zle -N fh
+bindkey '^r' fh
+
+unalias j
+j() {
+  if ! command -v fasd_cd >/dev/null 2>&1; then
+    exit
+  fi
+
+  if [[ -z "$*" ]]; then
+    cd "$(fasd_cd -d -l 2>&1 | sed -n 's/^[ 0-9.,]*//p' | fzf)"
+  else
+    fasd_cd -d "$@"
+  fi
 }
