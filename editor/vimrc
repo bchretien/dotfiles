@@ -255,6 +255,8 @@
 " Key (re)Mappings {{{
   let mapleader = ','
   let maplocalleader = ';'
+  nmap <Space> ,
+  vmap <Space> ,
 
   " Wrapped lines goes down/up to next row, rather than next line in file.
   noremap j gj
@@ -379,6 +381,13 @@
     endif
   " }}}
 
+  " auto-pairs.vim {{{
+    " When you press the key for the closing pair (e.g. `)`) it jumps past it.
+    " If set to 1, then it'll jump to the next line, if there is only whitespace.
+    " If set to 0, then it'll only jump to a closing pair on the same line.
+    let g:AutoPairsMultilineClose = 0
+  " }}}
+
   " clang_complete {{{
    if isdirectory(expand("~/.vim/plugged/clang_complete"))
      " Use the library rather than the executable
@@ -476,6 +485,8 @@
 
       let g:easy_align_delimiters = {
       \ ' ': { 'pattern': ' ', 'left_margin': 0, 'right_margin': 0, 'stick_to_left': 0 },
+      \ '+': { 'pattern': '+', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ '-': { 'pattern': '-', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
       \ '=': { 'pattern': '===\|<=>\|\(&&\|||\|<<\|>>\)=\|=\~[#?]\?\|=>\|[:+/*!%^=><&|.-]\?=[#?]\?',
       \ 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
       \ ':': { 'pattern': ':', 'left_margin': 0, 'right_margin': 1, 'stick_to_left': 1 },
@@ -520,11 +531,31 @@
   " }}}
 
   " incsearch {{{
-    let g:incsearch#auto_nohlsearch = 1
-
     map /  <Plug>(incsearch-forward)
     map ?  <Plug>(incsearch-backward)
     map g/ <Plug>(incsearch-stay)
+
+    let g:incsearch#auto_nohlsearch = 1
+    let g:incsearch#consistent_n_direction = 1
+    map n  <Plug>(incsearch-nohl-n)
+    map N  <Plug>(incsearch-nohl-N)
+
+    let g:incsearch#highlight = {
+          \   'on_cursor' : {
+          \     'group': 'StatusLine',
+          \     'priority' : '10000000000000'
+          \   }
+          \ }
+
+    augroup incsearch-keymap
+        autocmd!
+        autocmd VimEnter * call s:incsearch_keymap()
+    augroup END
+    function! s:incsearch_keymap()
+        IncSearchNoreMap <C-k> <C-k>
+    endfunction
+
+    highlight IncSearchOnCursor ctermfg=9 ctermbg=8 guifg=#000000 guibg=#FF0000
   " }}}
 
   " jedi.vim {{{
@@ -544,6 +575,19 @@
 
   " lightline.vim {{{
     if isdirectory(expand("~/.vim/plugged/lightline.vim"))
+      function! LightlineMode()
+        let fname = expand('%:t')
+        return fname == '__Tagbar__' ? 'Tagbar' :
+              \ fname == 'ControlP' ? 'CtrlP':
+              \ fname == '__Gundo__' ? 'Gundo' :
+              \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
+              \ fname =~ 'NERD_tree' ? 'NERDTree' :
+              \ &ft == 'unite' ? 'Unite' :
+              \ &ft == 'vimfiler' ? 'VimFiler' :
+              \ &ft == 'vimshell' ? 'VimShell' :
+              \ winwidth('.') > 60 ? lightline#mode() : ''
+      endfunction
+
       let g:lightline = {
             \ 'colorscheme': 'murmur',
             \ 'enable': {
@@ -551,18 +595,22 @@
             \   'statusline': 1,
             \ },
             \ 'active': {
-            \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
+            \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ], ['tagbar'] ],
             \   'right': [ [ 'syntastic', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
             \ },
             \ 'component': {
             \   'readonly': '%{&filetype=="help"?"":&readonly?"":""}',
             \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
-            \   'fugitive': '%{exists("*fugitive#head")? " ".fugitive#head():""}'
+            \   'fugitive': '%{exists("*fugitive#head")? " ".fugitive#head():""}',
+            \   'tagbar': '%{tagbar#currenttag("[%s]", "", "f")}'
             \ },
             \ 'component_visible_condition': {
             \   'readonly': '(&filetype!="help"&& &readonly)',
             \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
             \   'fugitive': '(exists("*fugitive#head") && ""!=fugitive#head())'
+            \ },
+            \ 'component_function': {
+            \   'mode': 'LightlineMode',
             \ },
             \ 'separator': { 'left': '', 'right': '' },
             \ 'subseparator': { 'left': '', 'right': '' }
@@ -587,46 +635,43 @@
   " }}}
 
   " neocomplete {{{
-    " Disable AutoComplPop.
-    let g:acp_enableAtStartup = 0
-    " AutoComplPop like behavior.
-    let g:neocomplete#enable_auto_select = 0
-    let g:neocomplete#enable_refresh_always = 0
-    " Use neocomplete.
-    let g:neocomplete#enable_at_startup = 1
-    " Use smartcase.
-    let g:neocomplete#enable_smart_case = 1
-    let g:neocomplete#auto_completion_start_length = 3
+    if isdirectory(expand("~/.vim/plugged/neocomplete.vim"))
+      " Disable AutoComplPop.
+      let g:acp_enableAtStartup = 0
+      " AutoComplPop like behavior.
+      let g:neocomplete#enable_auto_select = 0
+      let g:neocomplete#enable_refresh_always = 0
+      " Use neocomplete.
+      let g:neocomplete#enable_at_startup = 1
+      " Use smartcase.
+      let g:neocomplete#enable_smart_case = 1
+      let g:neocomplete#auto_completion_start_length = 3
 
-    let g:neocomplete#enable_prefetch = 1
-    let g:neocomplete#skip_auto_completion_time = "0.1"
+      "let g:neocomplete#enable_prefetch = 1
+      let g:neocomplete#skip_auto_completion_time = "0.1"
 
-    " Set minimum syntax keyword length.
-    let g:neocomplete#sources#syntax#min_keyword_length = 3
-    let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
-    let g:neocomplete#use_vimproc = 1
+      " Set minimum syntax keyword length.
+      let g:neocomplete#sources#syntax#min_keyword_length = 4
+      let g:neocomplete#use_vimproc = 1
 
-    " Fix neco-ghc errors
-    let g:neocomplete#force_overwrite_completefunc = 1
+      " Define dictionary.
+      let g:neocomplete#sources#dictionary#dictionaries = {
+            \ 'default' : ''
+            \ }
 
-    " Define dictionary.
-    let g:neocomplete#sources#dictionary#dictionaries = {
-          \ 'default' : ''
-          \ }
+      let g:neocomplete#enable_omni_fallback = 0
 
-    let g:neocomplete#enable_omni_fallback = 0
+      " Disable ctags (too slow)
+      let g:neocomplete#ctags_command = ""
 
-    if !exists('g:neocomplete#force_omni_input_patterns')
-      let g:neocomplete#force_omni_input_patterns = {}
+      if !exists('g:neocomplete#force_omni_input_patterns')
+        let g:neocomplete#force_omni_input_patterns = {}
+      endif
+
+      " Jedi support
+      let g:neocomplete#force_omni_input_patterns.python =
+            \ '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
     endif
-    let g:neocomplete#force_omni_input_patterns.c =
-          \ '[^.[:digit:] *\t]\%(\.\|->\)\%(\h\w*\)\?'
-    let g:neocomplete#force_omni_input_patterns.cpp =
-          \ '[^.[:digit:] *\t]\%(\.\|->\)\%(\h\w*\)\?\|\h\w*::\%(\h\w*\)\?'
-
-    " Jedi support
-    let g:neocomplete#force_omni_input_patterns.python =
-          \ '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
   " }}}
 
   " python-mode {{{
@@ -752,23 +797,32 @@
       nnoremap <SID>[unite]w :<C-u>Unite tab<CR>
       "nnoremap <SID>[unite]m :<C-u>Unite file_mru<CR>
       nnoremap <SID>[unite]o :<C-u>Unite outline<CR>
-      nnoremap <SID>[unite]q :<C-u>Unite qf -no-quit<CR>
       "nnoremap <SID>[unite]M :<C-u>Unite mark<CR>
       nnoremap <SID>[unite]r :<C-u>Unite register<CR>
       nnoremap <SID>[unite]g :<C-u>Unite grep -no-quit -direction=botright -buffer-name=grep-buffer<CR>
 
       " Grep-like search
-      nnoremap <Leader>/  :Unite grep -no-quit<CR><CR>
-      nnoremap <Leader>// :Unite grep -no-quit<CR>
-      vnoremap <Leader>/  y:Unite grep -no-quit<CR><CR><C-R>=escape(@", '\\.*$^[]')<CR><CR>
+      nnoremap <Leader>/  :Unite  grep -custom-grep-search-word-highlight=IncSearch -no-quit<CR><CR>
+      nnoremap <Leader>// :Unite  grep -custom-grep-search-word-highlight=IncSearch -no-quit<CR>
+      vnoremap <Leader>/  y:Unite grep -custom-grep-search-word-highlight=IncSearch -no-quit<CR><CR><C-R>=escape(@", '\\.*$^[]')<CR><CR>
 
-      " File search, CtrlP style
+      " File search, Ctrl-P style
       nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert -default-action=open file_rec/async:!<CR>
       nnoremap <C-p>p :<C-u>Unite -buffer-name=files -start-insert -default-action=open file_rec/async:
     " }}}
 
     " Plugins {{{
       nnoremap <SID>[unite]c :<C-u>Unite -no-quit colorscheme<CR>
+
+      " unite-quickfix
+      let unite_quickfix_filename_is_pathshorten = 0
+      nnoremap <SID>[unite]q :<C-u>Unite quickfix -no-quit<CR>
+      nnoremap <SID>[unite]l :<C-u>Unite location_list -no-quit<CR>
+      " Behaviour similar to quickfix
+      " Open unite.vim at the bottom (-direction=botright),
+      " and don't quit unite.vim (-no-quit) after selecting candidate.
+      nmap <leader>ql :Unite quickfix -direction=botright -no-quit <CR>
+      nmap <leader>ll :Unite location_list -no-quit<CR>
 
       " vimfiler
       let g:vimfiler_as_default_explorer = 1
@@ -793,9 +847,9 @@
   " }}}
 
   " vim-lengthmatters {{{
-  let g:lengthmatters_excluded = ['unite', 
-        \ 'tagbar', 'startify', 'gundo', 
-        \ 'vimshell', 'w3m', 'nerdtree',
+  let g:lengthmatters_excluded = ['unite',
+        \ 'tagbar', 'startify', 'gundo',
+        \ 'vimshell', 'w3m', 'man', 'nerdtree',
         \ 'help', 'qf', 'gfimarkdown', 'log']
 
   " }}}
@@ -914,8 +968,10 @@
   nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
 
   function! EpsilonCleaning(val)
-    exe '%s/\v([-]*[0-9]+.[0-9]+[e\+-]*[0-9]*)/\='
+    normal mz
+    exe '%s/\v([-]*[0-9]+\.[0-9]+[e\+-]*[0-9]*)/\='
       \ . 'abs(str2float(submatch(0))) < str2float("'. a:val . '") ? "0" : submatch(0)/ge'
+    normal `z
   endfunction
 
   function! StripTrailingWhitespace()
@@ -960,8 +1016,12 @@
   " CUDA support
   au BufNewFile,BufRead *.cu,*.cuh set ft=cpp
 
-  " Fix Python comments style for UltiSnips
+  " Fix Python/CMake comments style for UltiSnips
   au FileType python set comments=b:#
+  au FileType cmake set comments=b:#
+
+  " URDF/SRDF support
+  au BufNewFile,BufRead *.urdf,*.rsdf set ft=xml
 " }}}
 
 " Optimization
@@ -992,43 +1052,6 @@ if !exists("my_auto_commands_loaded")
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" Damian Conway's OSCON 2013 tricks
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-"====[ Highlight the match in red ]====
-" This rewires n and N to do the highlighing
-"nnoremap <silent> n   n:call HLNext(0.1)<cr>
-"nnoremap <silent> N   N:call HLNext(0.1)<cr>
-
-"function! HLNext (blinktime)
-    "highlight WhiteOnRed ctermfg=white ctermbg=red
-    "let [bufnum, lnum, col, off] = getpos('.')
-    "let matchlen = strlen(matchstr(strpart(getline('.'),col-1),@/))
-    "let target_pat = '\c\%#'.@/
-    "let ring = matchadd('WhiteOnRed', target_pat, 101)
-    "redraw
-    "exec 'sleep ' . float2nr(a:blinktime * 1000) . 'm'
-    "call matchdelete(ring)
-    "redraw
-"endfunction
-
-
-"====[ Make CTRL-K list diagraphs before each digraph entry ]====
-"inoremap <expr>  <C-K>   HUDG_GetDigraph()
-"inoremap <expr>  <C-K>   BDG_GetDigraph()
-"inoremap <expr>  <C-Z>   HUDG_GetDigraph()
-
-"====[ Move/duplicate blocks of code ]====
-vmap  <expr>  h        DVB_Drag('left')
-vmap  <expr>  l        DVB_Drag('right')
-vmap  <expr>  j        DVB_Drag('down')
-vmap  <expr>  k        DVB_Drag('up')
-vmap  <expr>  D        DVB_Duplicate()
-
-" Remove any introduced trailing whitespace after moving...
-let g:DVB_TrimWS = 1
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" Miscellaneous development
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -1053,8 +1076,8 @@ set cino=N0,g0,(0
 " Note: Normally, :cwindow jumps to the quickfix window if the command opens it
 " (but not if it's already open). However, as part of the autocmd, this doesn't
 " seem to happen.
-autocmd QuickFixCmdPost [^l]* nested cwindow
-autocmd QuickFixCmdPost    l* nested lwindow
+"autocmd QuickFixCmdPost [^l]* nested cwindow
+"autocmd QuickFixCmdPost    l* nested lwindow
 
 " Move quickfix window to bottom
 autocmd FileType qf wincmd J
@@ -1065,6 +1088,13 @@ au FileType c,cpp,cuda setlocal formatoptions+=c
 au FileType c,cpp,cuda setlocal formatoptions+=o
 au FileType c,cpp,cuda setlocal comments-=://
 au FileType c,cpp,cuda setlocal comments+=:///
+
+" Don't show tabs/trailing whitespaces in man pages
+au FileType man set nolist
+
+" Fix for errorformat
+au FileType c,cpp,cuda compiler gcc
+let g:compiler_gcc_ignore_unmatched_lines = 1
 
 " Do not indent template in C++
 function! CppNoTemplateIndent()
@@ -1107,10 +1137,6 @@ function! CppNoTemplateIndent()
   endif
   return l:retv
 endfunction
-
-if has("autocmd")
-  autocmd BufEnter *.{cc,cxx,cpp,cu,h,hh,hpp,hxx,cuh} setlocal indentexpr=CppNoTemplateIndent()
-endif
 
 " See: http://stackoverflow.com/a/6171215/1043187
 " Escape special characters in a string for exact matching.

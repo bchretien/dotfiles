@@ -36,7 +36,7 @@ silent! if plug#begin('~/.vim/plugged')
   Plug 'whatyouhide/vim-lengthmatters'
 
   " True Sublime Text style multiple selections for Vim
-  Plug 'kristijanhusak/vim-multiple-cursors'
+  Plug 'terryma/vim-multiple-cursors'
 
   " Quoting/parenthesizing made simple
   Plug 'tpope/vim-surround'
