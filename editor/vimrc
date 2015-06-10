@@ -308,7 +308,7 @@
 
   " Navigate the location list
   nmap <Leader>n :lnext<Enter>
-  nmap <Leader>p :lprevious<Enter>
+  nmap <Leader>N :lprevious<Enter>
 
   " Exit insert mode with Ctrl+C without skipping InsertLeave event
   inoremap <C-c> <Esc>
@@ -858,15 +858,16 @@
     nnoremap <M-Tab> :A<CR>
   " }}}
 
-  " vim-snowdrop {{{
-    let g:snowdrop#libclang_path = "/usr/lib"
-    let g:snowdrop#libclang_file = "libclang.so"
-    "let g:snowdrop#include_paths = {
-          "\ "cpp" : [
-          "\ "/usr/include",
-          "\ "/usr/include/boost",
-          "\ "/usr/include/eigen3"
-          "\ ]}
+  " Yankstack {{{
+    if isdirectory(expand("~/.vim/plugged/neocomplete.vim"))
+      " load yankstack without defining any of the default key mappings
+      let g:yankstack_map_keys = 0
+      " avoid conflict with surround (e.g. S key mapping)
+      call yankstack#setup()
+
+      nmap <leader>p <Plug>yankstack_substitute_older_paste
+      nmap <leader>P <Plug>yankstack_substitute_newer_paste
+    endif
   " }}}
 
   " tagbar {{{
@@ -1154,21 +1155,6 @@ endfunction
 autocmd BufWritePost * if &diff == 1 | diffupdate | endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" cmake.vim
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:cmake_cxx_compiler = 'g++'
-let g:cmake_c_compiler = 'gcc'
-let g:cmake_build_dirs = [ "build" ]
-let g:cmake_build_type = "RelWithDebInfo"
-let g:cmake_inject_flags = {}
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" ListToggle
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:lt_location_list_toggle_map = '<leader>ll'
-let g:lt_quickfix_list_toggle_map = '<leader>ql'
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" numbers.vim
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Disable
@@ -1202,12 +1188,6 @@ let g:signify_disable_by_default = 0
 let g:signify_update_on_bufenter = 0
 let g:signify_line_highlight = 0
 let g:signify_update_on_focusgained = 0
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" YankStack
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set <M-p>=^[p
-set <M-P>=^[P
 
 " fix meta-keys which generate <Esc>a .. <Esc>z
 let c='a'
