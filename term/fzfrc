@@ -56,7 +56,12 @@ fshow() {
 
 # fh - repeat history
 fh() {
-  print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed 's/ *[0-9]* *//')
+  print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf-tmux +s --tac | sed 's/ *[0-9]* *//')
+  zle accept-line
+}
+
+fH() {
+  print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf-tmux --tiebreak=length --tac | sed 's/ *[0-9]* *//')
   zle accept-line
 }
 
@@ -71,7 +76,7 @@ j() {
   fi
 
   if [[ -z "$*" ]]; then
-    cd "$(fasd_cd -d -l 2>&1 | sed -n 's/^[ 0-9.,]*//p' | fzf)"
+    cd "$(fasd_cd -d -l 2>&1 | sed -n 's/^[ 0-9.,]*//p' | fzf-tmux)"
   else
     fasd_cd -d "$@"
   fi
