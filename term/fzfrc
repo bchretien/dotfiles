@@ -56,12 +56,12 @@ fshow() {
 
 # fh - repeat history
 fh() {
-  print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf-tmux +s --tac | sed 's/ *[0-9]* *//')
+  print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf-tmux +s --tac | sed 's/ *[0-9]*[\*]* *//')
   zle accept-line
 }
 
 fH() {
-  print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf-tmux --tiebreak=length --tac | sed 's/ *[0-9]* *//')
+  print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf-tmux --tiebreak=length --tac | sed 's/ *[0-9]*[\*]* *//')
   zle accept-line
 }
 
