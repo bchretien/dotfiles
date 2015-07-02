@@ -56,16 +56,19 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 # Report CPU usage for commands running longer than 10 seconds
 REPORTTIME=10
 
+# 10ms for key sequences
+KEYTIMEOUT=1
+
 # Watch people logging on the machine (except the current user)
 watch=(notme)
 
 
 # If glances installed
 if type "glances" > /dev/null; then
-  alias glances="glances -b --process-short-name --disable-process-extended -1"
+  alias glances="glances -b --process-short-name -1"
 fi
 
 # Use local .zshenv
 if [ -f ~/.zshenv.local ]; then
-    source ~/.zshenv.local
+  source ~/.zshenv.local
 fi

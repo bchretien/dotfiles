@@ -34,27 +34,21 @@ set +m
 #unsetopt share_history
 
 if [ -f /etc/zsh_command_not_found ]; then
-    . /etc/zsh_command_not_found
+  . /etc/zsh_command_not_found
 fi
 
-# Add fzf support
-if [ -f /etc/profile.d/fzf.zsh ]; then
-    . /etc/profile.d/fzf.zsh
-fi
-
-if [ -f ~/.fzfrc ]; then
-    source ~/.fzfrc
+if [ -f ~/.tmuxinator/tmuxinator.zsh ]; then
+  source ~/.tmuxinator/tmuxinator.zsh
 fi
 
 if [ -f ~/.zshrc.local ]; then
-    source ~/.zshrc.local
+  source ~/.zshrc.local
 fi
 
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
-
 
 # Bindings
 bindkey "^A" beginning-of-line
@@ -73,3 +67,7 @@ fancy-ctrl-z () {
 zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
 
+# Source fzf after prezto with vi mode
+if [ -f ~/.fzfrc ]; then
+  source ~/.fzfrc
+fi
