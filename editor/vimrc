@@ -224,7 +224,7 @@
   set colorcolumn=
 
   " Folding
-  set foldmethod=manual
+  set foldmethod=indent
   set foldenable
   set foldlevel=100
 
@@ -362,6 +362,9 @@
 
   " Resize splits when the window is resized
   au VimResized * :wincmd =
+
+  " Remap double click for latex
+  autocmd FileType tex nnoremap <silent> <2-LeftMouse> :VimtexView<CR>
 " }}}
 
 " Plugins {{{
@@ -843,7 +846,10 @@
   " }}}
 
   " vim-latex {{{
-    let g:latex_build_dir = './build'
+    let g:vimtex_latexmk_build_dir = './build'
+    let g:vimtex_view_general_viewer = 'qpdfview'
+    let g:vimtex_view_general_options = '--unique @pdf\#src:@tex:@line:@col'
+    let g:vimtex_view_general_options_latexmk = '--unique'
   " }}}
 
   " vim-lengthmatters {{{
@@ -854,31 +860,6 @@
 
   " }}}
 
-  " vim-marching {{{
-    if isdirectory(expand("~/.vim/plugged/vim-marching"))
-      let g:marching_enable_neocomplete = 1
-      let g:marching_enable_auto_select = 1
-      let g:marching_backend = "clang_command"
-      "let g:marching_clang_command_option="-std=c++11"
-      let g:marching_wait_time = 0.5
-      let g:marching_enable_refresh_always = 0
-
-      set updatetime=200
-
-      " Load include paths:
-      "  - Standard library
-      "  - Boost
-      "  - Eigen 3
-      let g:marching_include_paths = filter(
-            \ split(glob('/usr/include/c++/*'), '\n') +
-            \ split(glob('/usr/include/c++/*/*/bits'), '\n') +
-            \ split(glob('/usr/include/boost/*'), '\n') +
-            \ split(glob('/usr/include/eigen3'), '\n'),
-            \ 'isdirectory(v:val)')
-
-      "imap <buffer> <C-x><C-o> <Plug>(marching_start_omni_complete)
-      "imap <buffer> <C-x><C-x><C-o> <Plug>(marching_force_start_omni_complete)
-    endif
   " }}}
 
   " vim-multiple-cursors {{{
