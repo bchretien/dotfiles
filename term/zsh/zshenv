@@ -18,6 +18,7 @@ export MAIL=$HOME/Mail
 
 # Tools
 export EDITOR='vim'
+export VISUAL='vim'
 export MAIL="/var/mail/$USER"
 
 # Find the first available terminal
@@ -49,6 +50,8 @@ export PYTHONSTARTUP=$HOME/.pythonrc.py
 # Useful aliases
 alias m="make -j8"
 alias v="valgrind --tool=memcheck --track-origins=yes  --show-reachable=yes --error-limit=no"
+# Useful for use with synctex
+alias vimtex='vim --servername LATEX'
 
 # Enable GCC coloring (GCC >= 4.9)
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
@@ -62,10 +65,28 @@ KEYTIMEOUT=1
 # Watch people logging on the machine (except the current user)
 watch=(notme)
 
+# Load XDG parameters
+source ~/.config/user-dirs.dirs
 
 # If glances installed
 if type "glances" > /dev/null; then
   alias glances="glances -b --process-short-name -1"
+fi
+
+# Arch stuff
+if [[ -f "/etc/arch-release" ]]; then
+  # Update AUR package
+  function update_aur {
+    pkg_version=$(sed -n "s/pkgver='\([0-9]\+.[0-9]\+.[0-9]\+\)'/\1/p" PKGBUILD)
+    commit_msg="Update to version ${pkg_version}"
+
+    mksrcinfo \
+      && git add -p . \
+      && makepkg -if \
+      && git cm "${commit_msg}" \
+      && git branch -f master \
+      && git push origin master
+  }
 fi
 
 # Use local .zshenv

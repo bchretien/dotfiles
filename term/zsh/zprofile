@@ -6,6 +6,7 @@ export BATTERY_ID=BAT1
 if [ -n "$DISPLAY" ]; then
   # Load .Xresources (if any)
   [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
+  [[ -f ~/.config/xmodmap/conf ]] && xmodmap ~/.config/xmodmap/conf
 fi
 
 # run local .zprofile
@@ -14,6 +15,6 @@ source ~/.zprofile.local
 run_process gpg-agent --daemon &>/dev/null
 
 # load keychain to manage SSH and GPG keys
-if command -v keychain &>/dev/null; then
+if command_exists keychain; then
   keychain --eval --agents ssh -Q --quiet id_rsa &>/dev/null
 fi
