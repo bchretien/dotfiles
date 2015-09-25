@@ -77,15 +77,20 @@ fi
 if [[ -f "/etc/arch-release" ]]; then
   # Update AUR package
   function update_aur {
-    pkg_version=$(sed -n "s/pkgver='\([0-9]\+.[0-9]\+.[0-9]\+\)'/\1/p" PKGBUILD)
-    commit_msg="Update to version ${pkg_version}"
+    # If it's an AUR submodule with an HTTPS/SSH+Git URL
+    pull_url=$(git config --get remote.origin.url)
+    pkg_name=$(echo ${pull_url} | sed -n 's;\(https://\|ssh+git://aur@\)aur[4]*.archlinux.org/\([-A-Za-z0-9]\+\).git;\2;p')
+    if [[ ! -z ${pkg_name} ]]; then
+      pkg_version=$(sed -n "s/pkgver=['\"]*\([0-9]\+.[0-9]\+.[0-9]\+\)['\"]*/\1/p" PKGBUILD)
+      commit_msg="Update to version ${pkg_version}"
 
-    mksrcinfo \
-      && git add -p . \
-      && makepkg -if \
-      && git cm "${commit_msg}" \
-      && git branch -f master \
-      && git push origin master
+      mksrcinfo \
+        && git add -p . \
+        && makepkg -if --noconfirm \
+        && git cm "${commit_msg}" \
+        && $(git branch -f master || true) \
+        && { git push origin master:master; echo $fg[green] "Successfully pushed ${pkg_name} to the AUR" $reset_color; } &
+    fi
   }
 fi
 
