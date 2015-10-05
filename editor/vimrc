@@ -83,6 +83,12 @@
   " Keep the window height when windows are opened or closed
   set winfixheight
 
+  set autoindent
+  filetype plugin indent on
+
+  " Fix autoindent in yaml
+  autocmd FileType yaml setl indentkeys-=<:>
+
   " spf13-vim: restore cursor to file position in previous editing session
   function! ResCur()
     if line("'\"") <= line("$")
@@ -100,7 +106,7 @@
     set noautochdir
   endif
 
-  set title titlestring=Vim:\ %F
+  "set title titlestring=Vim:\ %F
 
   " Setting up the directories {{{
   set noswapfile " disable swap files
@@ -343,7 +349,7 @@
 
   " When the popup menu is opened, make the Enter key select the completion
   " entry instead of creating a new line
-  inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+  "inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
   " qq to record, Q to replay (plus disable Ex mode)
   nmap Q @q
@@ -543,6 +549,18 @@
     map n  <Plug>(incsearch-nohl-n)
     map N  <Plug>(incsearch-nohl-N)
 
+    function! IncsearchUnmap()
+      sil! unmap /
+      sil! unmap ?
+      sil! unmap g/
+      sil! unmap n
+      sil! unmap N
+    endfunction
+
+    augroup LargeFile
+      autocmd BufReadPre * let f=getfsize(expand("<afile>")) | if f > g:LargeFile || f == -2 | call IncsearchUnmap() | endif
+    augroup END
+
     let g:incsearch#highlight = {
           \   'on_cursor' : {
           \     'group': 'StatusLine',
@@ -624,7 +642,7 @@
             \ 'right': [ [ 'close' ] ] }
 
       "let g:lightline.component_expand = {
-            "\ 'tabs': 'ctrlspace#tabline' }
+            "\ 'tabs': 'CtrlSpaceCustomTabline' }
 
       "let g:lightline.component_type = {
             "\ 'tabs': 'raw' }
@@ -713,9 +731,14 @@
   " }}}
 
   " Syntastic {{{
-    highlight link SyntasticError   ErrMsg
-    highlight link SyntasticWarning airline_warning
-    let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+    if isdirectory(expand("~/.vim/plugged/syntastic"))
+      highlight link SyntasticError   ErrMsg
+      highlight link SyntasticWarning airline_warning
+      let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+
+      let g:syntastic_text_checkers = ['language_check']
+      let g:syntastic_text_language_check_args = '--language=en-US -d WHITESPACE_RULE,EN_QUOTES,COMMA_PARENTHESIS_WHITESPACE,CURRENCY,EN_UNPAIRED_BRACKETS'
+    endif
   " }}}
 
   " UltiSnips {{{
@@ -764,7 +787,7 @@
     call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
           \ 'ignore_pattern', join([
           \ '\.git/',
-          \ '\/build',
+          \ '\/*build*',
           \ '\target/',
           \ 'node_modules/',
           \ ], '\|'))
@@ -780,15 +803,19 @@
     " silver_searcher
     if executable('ag')
       let g:unite_source_grep_command = 'ag'
-      let g:unite_source_grep_default_opts = '-f --line-numbers --nocolor --nogroup -i ' .
+      let g:unite_source_grep_default_opts = '-f -i --vimgrep ' .
             \ '--hidden --ignore ".hg" --ignore ".svn" --ignore ".git" ' .
             \ '--ignore "bzr" --ignore ".svg"  '
       let g:unite_source_grep_recursive_opt = ''
+
+      let g:unite_source_rec_async_command =
+            \ ['ag', '--follow', '--nocolor', '--nogroup',
+            \  '--hidden', '-g', '']
     endif
 
     " Mappings {{{
       nnoremap [unite] <Nop>
-      nmap ' <SID>[unite]
+      nmap \ <SID>[unite]
 
       nnoremap <SID>[unite]u :<C-u>Unite
       nnoremap <SID>[unite]' :<C-u>Unite buffer file<CR>
@@ -802,6 +829,8 @@
       nnoremap <SID>[unite]o :<C-u>Unite outline<CR>
       "nnoremap <SID>[unite]M :<C-u>Unite mark<CR>
       nnoremap <SID>[unite]r :<C-u>Unite register<CR>
+      nnoremap <SID>[unite]c :<C-u>Unite history/command<CR>
+      nnoremap <SID>[unite]s :<C-u>Unite history/search<CR>
       nnoremap <SID>[unite]g :<C-u>Unite grep -no-quit -direction=botright -buffer-name=grep-buffer<CR>
 
       " Grep-like search
@@ -815,8 +844,6 @@
     " }}}
 
     " Plugins {{{
-      nnoremap <SID>[unite]c :<C-u>Unite -no-quit colorscheme<CR>
-
       " unite-quickfix
       let unite_quickfix_filename_is_pathshorten = 0
       nnoremap <SID>[unite]q :<C-u>Unite quickfix -no-quit<CR>
@@ -838,11 +865,66 @@
 
   " Vim-CtrlSpace {{{
     let g:airline_exclude_preview = 1
-    let g:ctrlspace_use_tabline = 1
-    let g:ctrlspace_use_mouse_and_arrows_in_term = 1
+
+    let g:CtrlSpaceUseTabline = 1
+    let g:CtrlSpaceUseMouseAndArrowsInTerm = 1
+    let g:CtrlSpaceCacheDir = expand("~/.vim/")
+
+    if executable("ag")
+        let g:CtrlSpaceGlobCommand = 'ag -l --nocolor -g ""' .
+            \ '-f -i --vimgrep ' .
+            \ '--hidden --ignore ".hg" --ignore ".svn" --ignore ".git" ' .
+            \ '--ignore "bzr" --ignore ".svg"  '
+    endif
+
     hi CtrlSpaceSelected term=reverse ctermfg=187  ctermbg=23   cterm=bold
     hi CtrlSpaceNormal   term=NONE    ctermfg=244  ctermbg=232  cterm=NONE
     hi CtrlSpaceFound                 ctermfg=220  ctermbg=NONE cterm=bold
+
+    function! CtrlSpaceCustomTabline()
+      let lastTab    = tabpagenr("$")
+      let currentTab = tabpagenr()
+      let tabline    = ''
+
+      for t in range(1, lastTab)
+        let winnr      = tabpagewinnr(t)
+        let buflist    = tabpagebuflist(t)
+        let bufnr      = buflist[winnr - 1]
+        let bufname    = bufname(bufnr)
+        let bufsNumber = ctrlspace#api#TabBuffersNumber(t)
+        let title      = ctrlspace#api#TabTitle(t, bufnr, bufname)
+
+        if !empty(bufsNumber)
+          let bufsNumber = ":" . bufsNumber
+        end
+
+        let tabline .= '%' . t . 'T'
+        let tabline .= (t == currentTab ? '%#TabLineSel#' : '%#TabLine#')
+        let tabline .= ' ' . t . bufsNumber . ' '
+
+        if ctrlspace#api#TabModified(t)
+          let tabline .= '+ '
+        endif
+
+        let tabline .= title . ' '
+      endfor
+
+      let tabline .= '%#TabLineFill#%T'
+
+      if lastTab > 1
+        let tabline .= '%='
+        let tabline .= '%#TabLine#%999XX'
+      endif
+
+      return tabline
+    endfunction
+  " }}}
+
+  " vim-dispatch {{{
+  let g:dispatch_compilers = {
+        \ 'm': 'gcc',
+        \ 'make': 'gcc',
+        \ 'ninja': 'gcc' }
   " }}}
 
   " vim-latex {{{
@@ -1028,8 +1110,23 @@ if !exists("my_auto_commands_loaded")
   " undolevels=-1 (no undo possible)
   let g:LargeFile = 1024 * 1024 * 10
   augroup LargeFile
-    autocmd BufReadPre * let f=expand("<afile>") | if getfsize(f) > g:LargeFile | set eventignore+=FileType | setlocal noswapfile bufhidden=unload buftype=nowrite undolevels=-1 | else | set eventignore-=FileType | endif
+    autocmd BufReadPre * let f=getfsize(expand("<afile>")) | if f > g:LargeFile || f == -2 | call LargeFile() | endif
+    autocmd FileType python let g:jedi#show_function_definition = 0 | let g:jedi#popup_on_dot = 0
   augroup END
+
+  function LargeFile()
+    " no syntax highlighting etc
+    set eventignore+=FileType
+    setlocal noswapfile
+    " save memory when other file is viewed
+    setlocal bufhidden=unload
+    " is read-only (write with :w new_filename)
+    setlocal buftype=nowrite
+    " no undo possible
+    setlocal undolevels=-1
+    " display message
+    autocmd VimEnter *  echo "The file is larger than " . (g:LargeFile / 1024 / 1024) . " MB, so some options are changed (see .vimrc for details)."
+  endfunction
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
