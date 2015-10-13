@@ -31,3 +31,6 @@
 [submodule "editor/vim/vim-plug"]
 	path = editor/vim/vim-plug
 	url = https://github.com/junegunn/vim-plug
+[submodule "dev/lldbinit"]
+	path = dev/dotlldb
+	url = https://github.com/bchretien/lldbinit.git
