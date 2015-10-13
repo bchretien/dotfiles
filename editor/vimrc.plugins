@@ -7,6 +7,9 @@ silent! if plug#begin('~/.vim/plugged')
   " Auto-close feature for parentheses, brackets etc.
   Plug 'jiangmiao/auto-pairs'
 
+  " Trace and highlight the difference, character by character
+  Plug 'vim-scripts/diffchar.vim'
+
   " Improved incremental searching
   Plug 'haya14busa/incsearch.vim'
 
@@ -34,6 +37,17 @@ silent! if plug#begin('~/.vim/plugged')
 
   " Highlight the part of a line that doesn't fit into textwidth
   Plug 'whatyouhide/vim-lengthmatters'
+
+  " Build on Vim’s spell/thes/dict completion
+  Plug 'reedes/vim-lexical', {
+        \ 'do': 'wget -nc http://www.gutenberg.org/files/3202/files.zip -O /tmp/thesaurus.zip &&
+              \  sha256sum -c <(printf \"%s  /tmp/thesaurus.zip\n\" \"3a54e61dd3b4153313e00c3113bda1e939af505d1336a350a0fd93a80538a6d8\") &&
+              \  mkdir -p ~/.vim/thesaurus &&
+              \  unzip -p /tmp/thesaurus.zip files/mthesaur.txt >~/.vim/thesaurus/mthesaur.txt',
+        \ 'for': ['tex'] }
+
+  " Uncover usage problems in your writing
+  "Plug 'reedes/vim-pencil'
 
   " True Sublime Text style multiple selections for Vim
   Plug 'terryma/vim-multiple-cursors'
@@ -181,7 +195,9 @@ silent! if plug#begin('~/.vim/plugged')
 
 " Miscellaneous plugins {{{
   " LaTeX support
-  Plug 'lervag/vimtex'
+  if executable('latexmk')
+    Plug 'lervag/vimtex'
+  endif
 
   " Find out where maps are defined
   Plug 'vim-scripts/listmaps.vim', { 'on': 'Listmaps' }
@@ -198,7 +214,7 @@ silent! if plug#begin('~/.vim/plugged')
 
   " Interactive command execution in Vim
   " Required by: vim-clang-format, vim-marching
-  Plug 'Shougo/vimproc.vim', { 'do': 'make'}
+  Plug 'Shougo/vimproc.vim', { 'do': 'make clean && make'}
 
   " Run a command and show its result quickly
   Plug 'thinca/vim-quickrun', { 'on': 'QuickRun' }
