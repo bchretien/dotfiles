@@ -1015,6 +1015,11 @@
     put! a
   endfunction
 
+  " K to lookup current word in cppman
+  command! -nargs=+ Cppman silent! call system("tmux split-window cppman " . expand(<q-args>))
+  "autocmd FileType cpp set keywordprg="tmux split-window cppman"
+  autocmd FileType cpp nnoremap <silent><buffer> K <Esc>:Cppman <cword><CR>
+
   " Zoom / Restore window.
   function! s:ZoomToggle() abort
       if exists('t:zoomed') && t:zoomed
