@@ -1,4 +1,4 @@
-" vim: set foldmethod=marker foldlevel=0 et:
+" vim: set foldmethod=marker foldlevel=0 et ts=2 sw=2 sts=2:
 " ============================================================================
 " .nvimrc of bchretien
 " ============================================================================
@@ -81,10 +81,41 @@ set winfixheight
 set autoindent
 filetype plugin indent on
 
+" Optimization
+set viminfo=<0,'0,/150,:100,h,f0,s0
+
+" Default number of spaces for indent, tab behavior, etc.
+set shiftwidth=2
+set expandtab
+set tabstop=2
+
+" Swap, backup, undo {{{
+  " Disable swap files
+  set noswapfile
+  " Disable backups
+  set nobackup
+  if has('persistent_undo')
+    " Maximum number of changes that can be undone
+    set undolevels=1000
+    " Maximum number lines to save for undo on a buffer reload
+    set undoreload=10000
+    " Undo directory
+    set undodir=~/.nvim/tmp/undo/
+    " Undo file
+    set undofile
+
+    " Make those folders automatically if they don't already exist.
+    if !isdirectory(expand(&undodir))
+        call mkdir(expand(&undodir), "p")
+    endif
+  endif
+" }}}
+
 " }}}
 " ============================================================================
 " User Interface {{{
 " ============================================================================
+
 " Colors {{{
   " Enable 256 colors
   if $TERM == "xterm-256color"
@@ -163,8 +194,9 @@ set scrolljump=5
 " Minimum lines to keep above and below cursor
 set scrolloff=3
 
+" Highlight problematic whitespace
 set list
-set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
+set listchars=tab:>-,trail:~,extends:>,precedes:<
 
 " Completion
 set completeopt+=menuone
@@ -199,6 +231,7 @@ set switchbuf=usetab
 " ============================================================================
 " Autocmd {{{
 " ============================================================================
+
 " Fix autoindent in yaml
 autocmd FileType yaml setl indentkeys-=<:>
 
@@ -215,10 +248,10 @@ autocmd BufWritePost * if &diff == 1 | diffupdate | endif
 " set it to the first line when editing a git commit message
 autocmd FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
 
-" Help in new tabs (from Junegunn Choi's dotfiles)
+" From Junegunn Choi's dotfiles
 function! s:helptab()
   if &buftype == 'help'
-    wincmd T
+    "wincmd T
     nnoremap <buffer> q :q<cr>
   endif
 endfunction
@@ -227,5 +260,147 @@ augroup vimrc_help
   autocmd!
   autocmd BufEnter *.txt call s:helptab()
 augroup END
+
+" Don't show tabs/trailing whitespaces in man pages
+autocmd FileType man set nolist
+
+" Use :help with K
+autocmd FileType vim set keywordprg=:bel\ help\ \|\ bot\ resize\ 20
+
+" }}}
+" ============================================================================
+" Mappings {{{
+
+" Navigation
+nnoremap j gj
+nnoremap k gk
+xnoremap j gj
+xnoremap k gk
+
+" Navigation for tabs
+nnoremap th  :tabfirst<CR>
+nnoremap tj  :tabprev<CR>
+nnoremap tk  :tabnext<CR>
+nnoremap tl  :tablast<CR>
+nnoremap tm  :tabm<Space>
+nnoremap tn  :tabnew<CR>
+nnoremap td  :tabclose<CR>
+nnoremap tt  :tabnext<CR>
+
+"This unsets the "last search pattern" register by hitting return
+nnoremap <CR> :noh<CR><CR>
+
+" }}}
+" ============================================================================
+" Plugins {{{
+" ============================================================================
+  " fzf.vim {{{
+  if isdirectory(expand("~/.nvim/plugged/fzf.vim"))
+    " Disable statusline overwriting
+    let g:fzf_nvim_statusline = 0
+
+    let g:fzf_action = {
+          \ 'ctrl-s': 'split',
+          \ 'ctrl-v': 'vsplit'
+          \ }
+
+    fun! s:fzf_root()
+      let path = finddir(".git", expand("%:p:h").";")
+      return expand(fnamemodify(substitute(path, ".git", "", ""), ":p:h"))
+    endfun
+
+    " Ctrl-P without fuzzy search
+    nnoremap <c-p> :FZF -e<cr>
+
+    " Ctrl-Space to see buffers
+    " Note: <c-space> seen as <c-@> by neovim.
+    " See: https://github.com/neovim/neovim/issues/2782
+    nnoremap <c-@> :Buffers<cr>
+  endif
+  " }}}
+  " lightline.vim {{{
+    if isdirectory(expand("~/.nvim/plugged/lightline.vim"))
+      function! LightlineMode()
+        let fname = expand('%:t')
+        return fname == '__Tagbar__' ? 'Tagbar' :
+              \ fname == 'ControlP' ? 'CtrlP':
+              \ fname == '__Gundo__' ? 'Gundo' :
+              \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
+              \ fname =~ 'NERD_tree' ? 'NERDTree' :
+              \ &ft == 'unite' ? 'Unite' :
+              \ &ft == 'vimfiler' ? 'VimFiler' :
+              \ &ft == 'vimshell' ? 'VimShell' :
+              \ winwidth('.') > 60 ? lightline#mode() : ''
+      endfunction
+
+      let g:lightline = {
+            \ 'colorscheme': 'murmur',
+            \ 'enable': {
+            \   'tabline': 1,
+            \   'statusline': 1,
+            \ },
+            \ 'active': {
+            \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ], ['tagbar'] ],
+            \   'right': [ [ 'syntastic', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
+            \ },
+            \ 'component': {
+            \   'readonly': '%{&filetype=="help"?"":&readonly?"":""}',
+            \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
+            \   'fugitive': '%{exists("*fugitive#head")? " ".fugitive#head():""}',
+            \   'tagbar': '%{tagbar#currenttag("[%s]", "", "f")}'
+            \ },
+            \ 'component_visible_condition': {
+            \   'readonly': '(&filetype!="help"&& &readonly)',
+            \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
+            \   'fugitive': '(exists("*fugitive#head") && ""!=fugitive#head())'
+            \ },
+            \ 'component_function': {
+            \   'mode': 'LightlineMode',
+            \ },
+            \ 'separator': { 'left': '', 'right': '' },
+            \ 'subseparator': { 'left': '', 'right': '' }
+            \ }
+
+      let g:lightline.tabline = {
+            \ 'left': [ [ 'tabs' ] ],
+            \ 'right': [ [ 'close' ] ] }
+
+      "let g:lightline.component_type = {
+            "\ 'tabs': 'raw' }
+    endif
+  " }}}
+  " supertab {{{
+    if isdirectory(expand("~/.nvim/plugged/supertab"))
+      let g:SuperTabDefaultCompletionType = '<Tab>'
+      let g:SuperTabBackward = '<C-S-Tab>'
+    endif
+  " }}}
+  " ultisnips {{{
+    if isdirectory(expand("~/.nvim/plugged/ultisnips"))
+      " Trigger configuration.
+      let g:UltiSnipsExpandTrigger="<tab>"
+      let g:UltiSnipsJumpForwardTrigger="<tab>"
+      let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+      let g:UltiSnipsListSnippets="<c-tab>"
+
+      " If you want :UltiSnipsEdit to split your window.
+      let g:UltiSnipsEditSplit="vertical"
+
+      " Custom snippets
+      let g:UltiSnipsSnippetsDir = "~/.nvim/custom_snippets"
+      let g:UltiSnipsSnippetDirectories=["UltiSnips", "custom_snippets"]
+
+      " Prevent UltiSnips from stealing ctrl-k.
+      augroup VimStartup
+        autocmd!
+        autocmd VimEnter * sil! iunmap <c-k>
+      augroup end
+    endif
+  " }}}
+  " YouCompleteMe {{{
+    if isdirectory(expand("~/.nvim/plugged/YouCompleteMe"))
+      let g:ycm_key_list_select_completion = ['<Down>']
+    endif
+  " }}}
 " }}}
 " ============================================================================

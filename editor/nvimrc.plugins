@@ -8,19 +8,42 @@ silent! if plug#begin('~/.nvim/plugged')
   Plug 'tpope/vim-surround'
 " }}}
 
+" Development plugins {{{
+  " Commenter plugin
+  Plug 'scrooloose/nerdcommenter'
+
+  " Display tags in a window, ordered by scope
+  Plug 'majutsushi/tagbar'
+
+  " UltiSnips: engine.
+  Plug 'sirver/ultisnips'
+  Plug 'honza/vim-snippets'
+
+  " Git wrapper
+  Plug 'tpope/vim-fugitive'
+
+  " Git wrapper
+  Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py' }
+" }}}
+
 " Miscellaneous plugins {{{
   " fzf for vim
   if executable('fzf')
+    Plug 'junegunn/fzf'
     Plug 'junegunn/fzf.vim'
   endif
+
+  " Perform all your Vim insert mode completions with Tab
+  Plug 'ervandew/supertab'
 " }}}
-"
+
 " Display plugins {{{
   " A light and configurable statusline/tabline for Vim
   Plug 'bchretien/lightline.vim'
 
   " Color schemes
   Plug 'flazz/vim-colorschemes'
+
 " }}}
 
 " Load local plugin file (if it exists)
