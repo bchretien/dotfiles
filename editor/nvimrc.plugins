@@ -23,7 +23,7 @@ silent! if plug#begin('~/.nvim/plugged')
   Plug 'tpope/vim-fugitive'
 
   " Git wrapper
-  Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py' }
+  Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py --clang-completer --system-libclang' }
 " }}}
 
 " Miscellaneous plugins {{{
