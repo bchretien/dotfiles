@@ -3,7 +3,12 @@ if [ -f /etc/profile.d/fzf.zsh ]; then
     source /etc/profile.d/fzf.zsh
 fi
 
-export FZF_DEFAULT_OPTS='-x'
+
+export FZF_DEFAULT_OPTS='
+  -x
+  --color fg:252,bg:233,hl:67,fg+:252,bg+:235,hl+:81
+  --color info:144,prompt:161,spinner:135,pointer:135,marker:118
+  '
 
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
 #   - Bypass fuzzy finder if there's only one match (--select-1)
@@ -57,7 +62,7 @@ fs() {
 
 # fh - repeat history, toggle sort with ctrl-r
 fh() {
-  print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf-tmux +s --tac --toggle-sort=ctrl-r | sed 's/ *[0-9]*[\*]* *//')
+  print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf-tmux +s -e --tac --toggle-sort=ctrl-r | sed 's/ *[0-9]*[\*]* *//')
   zle accept-line
 }
 
@@ -65,7 +70,8 @@ fh() {
 zle -N fh
 bindkey '^r' fh
 
-unalias j
+# TODO: check if still required
+unalias j &>/dev/null
 j() {
   if ! command -v fasd_cd >/dev/null 2>&1; then
     exit
@@ -76,4 +82,17 @@ j() {
   else
     fasd_cd -d "$@"
   fi
+}
+
+fmpc() {
+  # if mpc is not available or mpd is not running
+  if ! mpc -q status >/dev/null 2>&1; then
+    return
+  fi
+
+  local song_position
+  song_position=$(mpc -f "%position%) %artist% - %title%" playlist | \
+    fzf-tmux --query="$1" --reverse --select-1 --exit-0 | \
+    sed -n 's/^\([0-9]\+\)).*/\1/p')
+  [ -n "$song_position" ] && mpc -q play $song_position
 }
