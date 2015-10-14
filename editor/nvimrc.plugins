@@ -1,0 +1,35 @@
+" vim: set sw=2 ts=2 sts=2 et tw=78 foldmarker={{{,}}} foldlevel=0 foldmethod=marker spell: ft=vim
+
+" Start adding Plugs
+silent! if plug#begin('~/.nvim/plugged')
+
+" Edition plugins {{{
+  " Quoting/parenthesizing made simple
+  Plug 'tpope/vim-surround'
+" }}}
+
+" Miscellaneous plugins {{{
+  " fzf for vim
+  if executable('fzf')
+    Plug 'junegunn/fzf.vim'
+  endif
+" }}}
+"
+" Display plugins {{{
+  " A light and configurable statusline/tabline for Vim
+  Plug 'bchretien/lightline.vim'
+
+  " Color schemes
+  Plug 'flazz/vim-colorschemes'
+" }}}
+
+" Load local plugin file (if it exists)
+" This provides a way to have user-specific plugins without needing
+" to change this file.
+if filereadable(expand("~/.nvimrc.plugins.local"))
+  source ~/.nvimrc.plugins.local
+endif
+
+" Stop adding Plugs
+call plug#end()
+endif

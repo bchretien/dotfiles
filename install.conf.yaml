@@ -16,10 +16,18 @@
     ~/.hgrc: dev/hgrc
     ~/.hgrc.local: dev/hgrc.local
     ~/.latexmkrc: dev/latexmkrc
-    # editor
+    ~/.lldbinit: dev/lldbinit
+    # emacs
     ~/.emacs_zsh: editor/emacs_zsh
     ~/.emacs.d: editor/emacs.d/
     ~/.spacemacs: editor/spacemacs
+    # neovim
+    ~/.nvimrc: editor/nvimrc
+    ~/.nvimrc.plugins: editor/nvimrc.plugins
+    ~/.nvim/autoload/plug.vim:
+      create: true
+      path: editor/vim/autoload/plug.vim
+    # vim
     ~/.vimrc: editor/vimrc
     ~/.vimrc.plugins: editor/vimrc.plugins
     ~/.vim/autoload/plug.vim:
@@ -44,6 +52,7 @@
     ~/.screenrc: term/screenrc
     ~/.tmux.conf: term/tmux.conf
     ~/.tmux: term/tmux/
+    ~/.tmuxinator: term/tmuxinator
     ~/.weechat: term/weechat/
     # util
     ~/.fonts: util/fonts/
@@ -68,6 +77,9 @@
     ~/.config/qutebrowser:
       create: true
       path: config/qutebrowser/
+    ~/.config/pulse:
+      create: true
+      path: config/pulse/
     ~/.config/ranger:
       create: true
       path: config/ranger/
@@ -80,7 +92,13 @@
     - mkdir -p ~/.ssh 2> /dev/null
     # Install vim plugins
     -
-      command: vim -Nu ~/.vimrc.plugins +PlugUpdate +qall &> /dev/null
+      command: vim -Nu ~/.vimrc.plugins +PlugUpdate +PlugDiff
+      stdin: true
+      stdout: true
+      stderr: true
+    # Install neovim plugins
+    -
+      command: nvim -u ~/.nvimrc.plugins +PlugUpdate
       stdin: true
       stdout: true
       stderr: true
