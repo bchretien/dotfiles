@@ -22,7 +22,10 @@ silent! if plug#begin('~/.nvim/plugged')
   " Git wrapper
   Plug 'tpope/vim-fugitive'
 
-  " Git wrapper
+  " Perform the replacement in quickfix
+  Plug 'thinca/vim-qfreplace'
+
+  " A code-completion engine for Vim
   Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py --clang-completer --system-libclang' }
 " }}}
 

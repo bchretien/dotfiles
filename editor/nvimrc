@@ -261,6 +261,10 @@ autocmd FileType man set nolist
 " Use :help with K
 autocmd FileType vim set keywordprg=:bel\ help\ \|\ bot\ resize\ 20
 
+" q closes location/quickfix/qfreplace list
+autocmd FileType qf nnoremap <buffer> q :q<cr>
+autocmd FileType qfreplace nnoremap <buffer> q :bd<cr>
+
 " }}}
 " ============================================================================
 " Mappings {{{
@@ -281,9 +285,20 @@ nnoremap tn  :tabnew<CR>
 nnoremap td  :tabclose<CR>
 nnoremap tt  :tabnext<CR>
 
-"This unsets the "last search pattern" register by hitting return
+" This unsets the "last search pattern" register by hitting return
 nnoremap <CR> :noh<CR><CR>
 
+" Leader
+let mapleader = ','
+let maplocalleader = ';'
+nmap <Space> ,
+vmap <Space> ,
+
+" Grep-like search
+nnoremap <Leader>/  :Agr 
+vnoremap <Leader>/  y:Agr <C-R>=escape(@", '\\.*$^[]')<CR><CR>
+" TODO: specify directory to look into
+"nnoremap <Leader>// :Agr 
 " }}}
 " ============================================================================
 " Plugins {{{
@@ -310,6 +325,62 @@ nnoremap <CR> :noh<CR><CR>
     " Note: <c-space> seen as <c-@> by neovim.
     " See: https://github.com/neovim/neovim/issues/2782
     nnoremap <c-@> :Buffers<cr>
+
+    " List colorschemes
+    autocmd VimEnter * command! Colors
+      \ call fzf#vim#colors({'left': '15%', 'options': '--reverse --margin 30%,0'})
+
+    function! s:ag_to_qf(line)
+      let parts = split(a:line, ':')
+      return {'filename': parts[0], 'lnum': parts[1], 'col': parts[2],
+            \ 'text': join(parts[3:], ':')}
+    endfunction
+
+    function! s:w(bang)
+      return a:bang ? {} : copy(get(g:, 'fzf_layout', g:fzf#vim#default_layout))
+    endfunction
+
+    function! s:expect()
+      return ' --expect='.join(keys(get(g:, 'fzf_action', g:fzf_action)), ',')
+    endfunction
+
+    function! s:escape(path)
+      return escape(a:path, ' %#''"\')
+    endfunction
+
+    function! s:fzf_ag_handler(lines)
+      echomsg "ag_handler"
+      if len(a:lines) < 2
+        return
+      endif
+
+      let cmd = get(get(g:, 'fzf_action', g:fzf_action), a:lines[0], 'e')
+      let list = map(a:lines[1:], 's:ag_to_qf(v:val)')
+
+      let first = list[0]
+      execute cmd s:escape(first.filename)
+      execute first.lnum
+      execute 'normal!' first.col.'|zz'
+
+      if len(list) > 1
+        call setqflist(list)
+        wincmd p
+        Qfreplace
+      endif
+    endfunction
+
+    function! s:fzf_ag(query, ...)
+      call fzf#run({
+            \ 'source':  printf('ag --nogroup --column --color "%s"',
+            \                   escape(empty(a:query) ? '^(?=.)' : a:query, '"\')),
+            \ 'sink*':    function('s:fzf_ag_handler'),
+            \ 'options': '--ansi --delimiter : --nth 4.. --prompt "Ag> " '.
+            \            '--multi --bind ctrl-a:select-all,ctrl-d:deselect-all,tab:toggle-up,shift-tab:toggle-down '.
+            \            '--cycle --color hl:68,hl+:110'.s:expect()}, a:000)
+    endfunction
+
+    " Ag + qfreplace
+    command! -bang -nargs=* Agr call <sid>fzf_ag(<q-args>, s:w(<bang>0))
   endif
   " }}}
   " lightline.vim {{{
