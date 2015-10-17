@@ -39,7 +39,7 @@ if [ "$TMUX" != "" ]; then
   export TERM=screen-256color
 
   # Fix ctrl+S in tmux with vim
-  stty stop undef
+  [[ $- == *i* ]] && stty stop undef
 fi
 
 apt_pref='apt-get'

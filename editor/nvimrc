@@ -49,13 +49,7 @@ if &term =~ '^screen'
 endif
 
 " System clipboard support
-if has('clipboard')
-  if has('unnamedplus') " When possible use + register for copy-paste
-    set clipboard=unnamed,unnamedplus
-  else " On mac and Windows, use * register for copy-paste
-    set clipboard=unnamed
-  endif
-endif
+set clipboard=unnamed,unnamedplus
 
 " Abbrev. of messages (avoids 'hit enter')
 set shortmess+=filmnrxoOtT
