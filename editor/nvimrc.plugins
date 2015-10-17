@@ -27,6 +27,9 @@ silent! if plug#begin('~/.nvim/plugged')
 
   " A code-completion engine for Vim
   Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py --clang-completer --system-libclang' }
+
+  " Enhanced syntax highlighting for C++
+  Plug 'octol/vim-cpp-enhanced-highlight'
 " }}}
 
 " Miscellaneous plugins {{{

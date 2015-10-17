@@ -465,6 +465,8 @@ vnoremap <Leader>/  y:Agr <C-R>=escape(@", '\\.*$^[]')<CR><CR>
   " YouCompleteMe {{{
     if isdirectory(expand("~/.nvim/plugged/YouCompleteMe"))
       let g:ycm_key_list_select_completion = ['<Down>']
+      let g:ycm_global_ycm_extra_conf = '~/.nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+      let g:ycm_show_diagnostics_ui = 0
     endif
   " }}}
 " }}}
