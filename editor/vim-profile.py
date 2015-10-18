@@ -6,12 +6,13 @@ import subprocess
 import re
 import csv
 import operator
+import argparse
 
-def run_vim(log_filename):
-    print("Running Vim to generate startup logs...", end="")
+def run_vim(exe, log_filename):
+    print("Running %s to generate startup logs..." % exe, end="")
     if os.path.isfile(log_filename):
         os.remove(log_filename)
-    cmd = ["nvim", "--startuptime", log_filename, "-c", "q"]
+    cmd = [exe, "--startuptime", log_filename, "-c", "q"]
     subprocess.call(cmd, shell=False)
     print(" done.")
 
@@ -56,27 +57,40 @@ def export_result(data, output_filename="result.csv"):
             writer.writerow(["%.3f" % time, name])
     print(" done.")
 
-def print_summary(data):
+def print_summary(data, exe):
     n = 10
-    print("====================================")
-    print("Top %i Plugins Slowing Vim's Startup" % n)
-    print("====================================")
+    title = "Top %i plugins slowing %s's startup" % (n, exe)
+    length = len(title)
+    print(''.center(length, '='))
+    print(title)
+    print(''.center(length, '='))
 
     # Sort by time
+    rank = 0
     for name, time in sorted(data.items(), key=operator.itemgetter(1), reverse=True)[:n]:
-        print("%.3f\t%s" % (time, name))
+        rank += 1
+        print("%i\t%.3f\t%s" % (rank, time, name))
 
-    print("====================================")
+    print(''.center(length, '='))
 
 def main():
-    log_filename = "vim.log"
-    output_filename = "result.csv"
+    parser = argparse.ArgumentParser(description='Analyze startup times of plugins.')
+    parser.add_argument("-o", dest="csv", type=str)
+    parser.add_argument("-p", dest="plot", action='store_true')
+    parser.add_argument(dest="exe", nargs='?', const=1, type=str, default="vim")
 
-    run_vim(log_filename)
+    args = parser.parse_args()
+    exe = args.exe
+    log_filename = "vim.log"
+    output_filename = args.csv
+
+    run_vim(exe, log_filename)
     data = load_data(log_filename)
-    export_result(data, output_filename)
-    print_summary(data)
-    # plot_data(data)
+    print_summary(data, exe)
+    if output_filename is not None:
+        export_result(data, output_filename)
+    if args.plot:
+        plot_data(data)
 
 if __name__ == "__main__":
     main()
