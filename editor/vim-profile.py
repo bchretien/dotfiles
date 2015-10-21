@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import os
 import subprocess
 import re
@@ -8,33 +10,51 @@ import csv
 import operator
 import argparse
 
-def run_vim(exe, log_filename):
-    print("Running %s to generate startup logs..." % exe, end="")
+def clean_log(log_filename):
+    """
+    Clean existing logs.
+    """
     if os.path.isfile(log_filename):
         os.remove(log_filename)
+
+def run_vim(exe, log_filename):
+    """
+    Run vim/nvim to generate startup logs.
+    """
+    print("Running %s to generate startup logs..." % exe, end="")
+    clean_log(log_filename)
     cmd = [exe, "--startuptime", log_filename, "-c", "q"]
     subprocess.call(cmd, shell=False)
     print(" done.")
 
-def load_data(log_filename):
-    print("Loading and processing logs...", end="")
+def load_data(exe, log_filename):
+    """
+    Load log and extract relevant data.
+    """
     data = {}
+    vim_dir = os.path.expanduser("~/.%s" % os.path.basename(exe))
     # Load log file and process it
     with open(log_filename, 'r') as log:
+        print("Loading and processing logs...", end="")
+
         for line in log:
-            if re.search("plugged", line):
-                res = re.match('\d+.\d+\s+\d+.\d+\s+(\d+.\d+): sourcing [\w\/\s.-]+/plugged/([^/]+)', line)
-                time = res.group(1)
-                plugin = res.group(2)
-                if plugin in data:
-                    data[plugin] += float(time)
-                else:
-                    data[plugin] = float(time)
+            if re.search(vim_dir, line):
+                res = re.match("\d+.\d+\s+\d+.\d+\s+(\d+.\d+): sourcing %s/[^/]+/([^/]+)/" % vim_dir, line)
+                if res is not None:
+                    time = res.group(1)
+                    plugin = res.group(2)
+                    if plugin in data:
+                        data[plugin] += float(time)
+                    else:
+                        data[plugin] = float(time)
     print(" done.")
 
     return data
 
 def plot_data(data):
+    """
+    Plot startup data.
+    """
     import matplotlib
     matplotlib.use('Qt5Agg')
     import pylab
@@ -48,7 +68,9 @@ def plot_data(data):
     print(" done.")
 
 def export_result(data, output_filename="result.csv"):
-    # Write sorted result to file
+    """
+    Write sorted result to file
+    """
     print("Writing result to %s..." % output_filename, end="")
     with open(output_filename, 'w') as fp:
         writer = csv.writer(fp, delimiter='\t')
@@ -57,8 +79,10 @@ def export_result(data, output_filename="result.csv"):
             writer.writerow(["%.3f" % time, name])
     print(" done.")
 
-def print_summary(data, exe):
-    n = 10
+def print_summary(data, exe, n):
+    """
+    Print summary of startup times for plugins.
+    """
     title = "Top %i plugins slowing %s's startup" % (n, exe)
     length = len(title)
     print(''.center(length, '='))
@@ -74,23 +98,35 @@ def print_summary(data, exe):
     print(''.center(length, '='))
 
 def main():
-    parser = argparse.ArgumentParser(description='Analyze startup times of plugins.')
-    parser.add_argument("-o", dest="csv", type=str)
-    parser.add_argument("-p", dest="plot", action='store_true')
-    parser.add_argument(dest="exe", nargs='?', const=1, type=str, default="vim")
+    parser = argparse.ArgumentParser(description='Analyze startup times of vim/neovim plugins.')
+    parser.add_argument("-o", dest="csv", type=str,
+                        help="Export result to a csv file")
+    parser.add_argument("-p", dest="plot", action='store_true',
+                        help="Plot result as a bar chart")
+    parser.add_argument(dest="exe", nargs='?', const=1, type=str, default="vim",
+                        help="vim or neovim executable")
+    parser.add_argument("-n", dest="n", type=int, default=10,
+                        help="Number of plugins to list in the summary")
 
+    # Parse CLI arguments
     args = parser.parse_args()
     exe = args.exe
     log_filename = "vim.log"
     output_filename = args.csv
+    n = args.n
 
+    # Run analysis
     run_vim(exe, log_filename)
-    data = load_data(log_filename)
-    print_summary(data, exe)
+    data = load_data(exe, log_filename)
+    if n > 0:
+        print_summary(data, exe, n)
     if output_filename is not None:
         export_result(data, output_filename)
     if args.plot:
         plot_data(data)
+
+    # Cleanup
+    clean_log(log_filename)
 
 if __name__ == "__main__":
     main()
