@@ -299,6 +299,13 @@ nnoremap <Leader>/  :Agr
 vnoremap <Leader>/  y:Agr <C-R>=escape(@", '\\.*$^[]')<CR><CR>
 " TODO: specify directory to look into
 "nnoremap <Leader>// :Agr 
+
+" Force saving files that require root permission with w!!
+cmap w!! w !sudo tee % >/dev/null
+
+" Easier formatting
+nnoremap <silent> <leader>q gwip
+vnoremap <silent> <leader>q gw
 " }}}
 " ============================================================================
 " Plugins {{{
