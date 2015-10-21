@@ -412,7 +412,7 @@ vnoremap <Leader>/  y:Agr <C-R>=escape(@", '\\.*$^[]')<CR><CR>
             \   'readonly': '%{&filetype=="help"?"":&readonly?"":""}',
             \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
             \   'fugitive': '%{exists("*fugitive#head")? " ".fugitive#head():""}',
-            \   'tagbar': '%{tagbar#currenttag("[%s]", "", "f")}'
+            \   'tagbar':   '%{exists("*tagbar#currenttag")?tagbar#currenttag("[%s]", "", "f"):""}'
             \ },
             \ 'component_visible_condition': {
             \   'readonly': '(&filetype!="help"&& &readonly)',

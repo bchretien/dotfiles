@@ -13,7 +13,7 @@ silent! if plug#begin('~/.nvim/plugged')
   Plug 'scrooloose/nerdcommenter'
 
   " Display tags in a window, ordered by scope
-  Plug 'majutsushi/tagbar'
+  Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 
   " UltiSnips: engine.
   Plug 'sirver/ultisnips'
