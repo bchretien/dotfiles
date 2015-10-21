@@ -6,6 +6,9 @@ silent! if plug#begin('~/.nvim/plugged')
 " Edition plugins {{{
   " Quoting/parenthesizing made simple
   Plug 'tpope/vim-surround'
+
+  " A Vim alignment plugin
+  Plug 'junegunn/vim-easy-align', { 'on': ['<Plug>(EasyAlign)', 'EasyAlign'] }
 " }}}
 
 " Development plugins {{{
@@ -23,7 +26,7 @@ silent! if plug#begin('~/.nvim/plugged')
   Plug 'tpope/vim-fugitive'
 
   " Perform the replacement in quickfix
-  Plug 'thinca/vim-qfreplace'
+  Plug 'thinca/vim-qfreplace', { 'on': 'Qfreplace' }
 
   " A code-completion engine for Vim
   Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py --clang-completer --system-libclang' }
@@ -47,9 +50,12 @@ silent! if plug#begin('~/.nvim/plugged')
   " A light and configurable statusline/tabline for Vim
   Plug 'bchretien/lightline.vim'
 
-  " Color schemes
-  Plug 'flazz/vim-colorschemes'
+  " Fancy start screen
+  Plug 'mhinz/vim-startify'
 
+  " Color schemes
+  "Plug 'flazz/vim-colorschemes'
+  Plug 'w0ng/vim-hybrid'
 " }}}
 
 " Load local plugin file (if it exists)
