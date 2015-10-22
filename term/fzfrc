@@ -4,11 +4,17 @@ if [ -f /etc/profile.d/fzf.zsh ]; then
 fi
 
 
+# Default: non-fuzzy search
 export FZF_DEFAULT_OPTS='
-  -x
+  -e
   --color fg:252,bg:233,hl:67,fg+:252,bg+:235,hl+:81
   --color info:144,prompt:161,spinner:135,pointer:135,marker:118
   '
+
+# If ag is available
+if command -v ag >/dev/null 2>&1; then
+  export FZF_DEFAULT_COMMAND='ag -l -g ""'
+fi
 
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
 #   - Bypass fuzzy finder if there's only one match (--select-1)
