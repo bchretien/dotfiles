@@ -17,6 +17,7 @@
     ~/.hgrc.local: dev/hgrc.local
     ~/.latexmkrc: dev/latexmkrc
     ~/.lldbinit: dev/lldbinit
+    ~/.valgrindrc: dev/valgrindrc
     # emacs
     ~/.emacs_zsh: editor/emacs_zsh
     ~/.emacs.d: editor/emacs.d/

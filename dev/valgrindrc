@@ -1,0 +1,12 @@
+--read-var-info=yes
+--track-fds=yes
+
+--memcheck:error-limit=no
+--memcheck:free-fill=0xbb
+--memcheck:malloc-fill=0xaa
+--memcheck:show-reachable=yes
+--memcheck:track-origins=yes
+--memcheck:undef-value-errors=yes
+
+--callgrind:dump-instr=yes
+--callgrind:simulate-cache=yes
