@@ -22,11 +22,15 @@
     ~/.emacs.d: editor/emacs.d/
     ~/.spacemacs: editor/spacemacs
     # neovim
-    ~/.nvimrc: editor/nvimrc
-    ~/.nvimrc.plugins: editor/nvimrc.plugins
-    ~/.nvim/autoload/plug.vim:
+    ~/.config/nvim/init.vim: editor/nvimrc
+    ~/.config/nvim/plugins.vim: editor/nvimrc.plugins
+    ~/.local/share/nvim/autoload/plug.vim:
       create: true
       path: editor/vim/autoload/plug.vim
+    ~/.config/nvim/custom_snippets:
+      create: true
+      path: editor/custom_snippets/
+    ~/.ycm_extra_conf.py: editor/ycm_extra_conf.py
     # vim
     ~/.vimrc: editor/vimrc
     ~/.vimrc.plugins: editor/vimrc.plugins

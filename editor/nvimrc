@@ -17,8 +17,8 @@
 " }}}
 
 " Use plugins config {{{
-  if filereadable(expand("~/.nvimrc.plugins"))
-    source ~/.nvimrc.plugins
+  if filereadable(expand("~/.config/nvim/plugins.vim"))
+    source ~/.config/nvim/plugins.vim
   endif
 " }}}
 
@@ -94,7 +94,7 @@ set tabstop=2
     " Maximum number lines to save for undo on a buffer reload
     set undoreload=10000
     " Undo directory
-    set undodir=~/.nvim/tmp/undo/
+    set undodir=~/.local/share/nvim/tmp/undo/
     " Undo file
     set undofile
 
@@ -311,7 +311,7 @@ vnoremap <silent> <leader>q gw
 " Plugins {{{
 " ============================================================================
   " fzf.vim {{{
-  if isdirectory(expand("~/.nvim/plugged/fzf.vim"))
+  if isdirectory(expand("~/.config/nvim/plugged/fzf.vim"))
     " Disable statusline overwriting
     let g:fzf_nvim_statusline = 0
 
@@ -391,7 +391,7 @@ vnoremap <silent> <leader>q gw
   endif
   " }}}
   " lightline.vim {{{
-    if isdirectory(expand("~/.nvim/plugged/lightline.vim"))
+    if isdirectory(expand("~/.config/nvim/plugged/lightline.vim"))
       function! LightlineMode()
         let fname = expand('%:t')
         return fname == '__Tagbar__' ? 'Tagbar' :
@@ -442,13 +442,13 @@ vnoremap <silent> <leader>q gw
     endif
   " }}}
   " supertab {{{
-    if isdirectory(expand("~/.nvim/plugged/supertab"))
+    if isdirectory(expand("~/.config/nvim/plugged/supertab"))
       let g:SuperTabDefaultCompletionType = '<Tab>'
       let g:SuperTabBackward = '<C-S-Tab>'
     endif
   " }}}
   " ultisnips {{{
-    if isdirectory(expand("~/.nvim/plugged/ultisnips"))
+    if isdirectory(expand("~/.config/nvim/plugged/ultisnips"))
       " Trigger configuration.
       let g:UltiSnipsExpandTrigger="<tab>"
       let g:UltiSnipsJumpForwardTrigger="<tab>"
@@ -459,7 +459,7 @@ vnoremap <silent> <leader>q gw
       let g:UltiSnipsEditSplit="vertical"
 
       " Custom snippets
-      let g:UltiSnipsSnippetsDir = "~/.nvim/custom_snippets"
+      let g:UltiSnipsSnippetsDir = "~/.config/nvim/custom_snippets"
       let g:UltiSnipsSnippetDirectories=["UltiSnips", "custom_snippets"]
 
       " Prevent UltiSnips from stealing ctrl-k.
@@ -470,7 +470,7 @@ vnoremap <silent> <leader>q gw
     endif
   " }}}
   " YouCompleteMe {{{
-    if isdirectory(expand("~/.nvim/plugged/YouCompleteMe"))
+    if isdirectory(expand("~/.config/nvim/plugged/YouCompleteMe"))
       let g:ycm_key_list_select_completion = ['<Down>']
       let g:ycm_global_ycm_extra_conf = '~/.nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
       let g:ycm_show_diagnostics_ui = 0
