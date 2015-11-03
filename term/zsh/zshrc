@@ -28,7 +28,9 @@ setopt autocd
 # Don't print job information (e.g. fork pids)
 set +m
 
-#autoload zmv
+# Enable ZSH colors
+autoload colors
+colors
 
 # Unset shared history
 #unsetopt share_history

@@ -38,8 +38,8 @@ if [ "$TMUX" != "" ]; then
   # Fix term type
   export TERM=screen-256color
 
-  # Fix ctrl+S in tmux with vim
-  [[ $- == *i* ]] && stty stop undef
+  # Disable Ctrl-S
+  [[ $- == *i* ]] && stty -ixon
 fi
 
 apt_pref='apt-get'
@@ -62,16 +62,25 @@ REPORTTIME=10
 # 10ms for key sequences
 KEYTIMEOUT=1
 
+# The maximum number of events to save in the internal history
+HISTSIZE=4000
+# The maximum number of events to save in the history file
+SAVEHIST=4000
+
 # Watch people logging on the machine (except the current user)
 watch=(notme)
 
 # Load XDG parameters
-source ~/.config/user-dirs.dirs
+if [ -f  "~/.config/user-dirs.dirs" ]; then
+  source ~/.config/user-dirs.dirs
+fi
 
 # If glances installed
 if type "glances" > /dev/null; then
   alias glances="glances -b --process-short-name -1"
 fi
+
+export GPG_TTY=$(tty)
 
 # Arch stuff
 if [[ -f "/etc/arch-release" ]]; then
@@ -79,10 +88,11 @@ if [[ -f "/etc/arch-release" ]]; then
   function update_aur {
     # If it's an AUR submodule with an HTTPS/SSH+Git URL
     pull_url=$(git config --get remote.origin.url)
-    pkg_name=$(echo ${pull_url} | sed -n 's;\(https://\|ssh+git://aur@\)aur[4]*.archlinux.org/\([-A-Za-z0-9]\+\).git;\2;p')
+    pkg_name=$(echo ${pull_url} | sed -n 's;\(https://\|ssh+git://aur@\)aur[4]*.archlinux.org\(:22\)\{0,1\}/\([-A-Za-z0-9]\+\).git;\3;p')
     if [[ ! -z ${pkg_name} ]]; then
       pkg_version=$(sed -n "s/pkgver=['\"]*\([0-9]\+.[0-9]\+.[0-9]\+\)['\"]*/\1/p" PKGBUILD)
-      commit_msg="Update to version ${pkg_version}"
+      pkg_rel=$(sed -n "s/pkgrel=['\"]*\([0-9]\+\)['\"]*/\1/p" PKGBUILD)
+      commit_msg="Update to version ${pkg_version} (pkgrel ${pkg_rel})"
 
       mksrcinfo \
         && git add -p . \
@@ -90,6 +100,8 @@ if [[ -f "/etc/arch-release" ]]; then
         && git cm "${commit_msg}" \
         && $(git branch -f master || true) \
         && { git push origin master:master; echo $fg[green] "Successfully pushed ${pkg_name} to the AUR" $reset_color; } &
+    else
+      >&2 echo "Error: this is not a valid AUR submodule"
     fi
   }
 fi
