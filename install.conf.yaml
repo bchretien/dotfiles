@@ -1,4 +1,29 @@
-- clean: ['~', '~/.config', '~/.vim', '~/.vim/autoload']
+#######################################################################
+#                               Aliases                               #
+#######################################################################
+
+- aliases:
+    # Install vim plugins
+    - &vim_plugins
+      command: vim -Nu ~/.vimrc.plugins +PlugInstall
+      stdin: true
+      stdout: true
+      stderr: true
+
+    # Install neovim plugins
+    - &nvim_plugins
+      command: nvim -u ~/.config/nvim/plugins.vim +PlugInstall
+      stdin: true
+      stdout: true
+      stderr: true
+
+
+#######################################################################
+#                               Install                               #
+#######################################################################
+
+- clean: ['~', '~/.config', '~/.vim', '~/.vim/autoload',
+          '~/.config/nvim', '~/.config/nvim/autoload']
 
 - shell:
     - git submodule update --init --recursive
@@ -95,15 +120,5 @@
 - shell:
     - fc-cache -vf ~/.fonts # load fonts
     - mkdir -p ~/.ssh 2> /dev/null
-    # Install vim plugins
-    -
-      command: vim -Nu ~/.vimrc.plugins +PlugUpdate +PlugDiff
-      stdin: true
-      stdout: true
-      stderr: true
-    # Install neovim plugins
-    -
-      command: nvim -u ~/.nvimrc.plugins +PlugUpdate
-      stdin: true
-      stdout: true
-      stderr: true
+    - *vim_plugins
+    - *nvim_plugins
