@@ -70,6 +70,8 @@
     dr  = "!f() { git diff "$1"^.."$1"; }; f"
     diffr  = "!f() { git diff "$1"^.."$1"; }; f"
     branch = branch -ra
+    #diff for latex
+    difftex = difftool -y -t latex
 
     #reset commands
     r = reset
@@ -115,3 +117,7 @@
 # }}}
 [core]
 	editor = vim
+[diff]
+	wordRegex = [A-z0-9_\\.]+|[^[:space:]]
+[difftool.latex]
+	cmd = latexdiff "$LOCAL" "$REMOTE"
