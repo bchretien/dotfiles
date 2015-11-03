@@ -2,7 +2,7 @@
 
 - shell:
     - git submodule update --init --recursive
-    - ./prepare_ini.sh
+    - ./lib/prepare_ini.sh
 
 - link:
     ~/.dotfiles: ''
