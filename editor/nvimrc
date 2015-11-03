@@ -76,7 +76,7 @@ set autoindent
 filetype plugin indent on
 
 " Optimization
-set viminfo=<0,'0,/150,:100,h,f0,s0
+set viminfo=<0,'10,/150,:100,h,f0,s10
 
 " Default number of spaces for indent, tab behavior, etc.
 set shiftwidth=2
@@ -111,22 +111,7 @@ set tabstop=2
 " ============================================================================
 
 " Colors {{{
-  " Enable 256 colors
-  if $TERM == "xterm-256color"
-    set t_Co=256
-  endif
-
-  " Change cursor color
-  if &term =~ "xterm\\|rxvt\\|screen"
-    " cursor color in insert mode
-    let &t_SI = "\<Esc>]12;#118A3D\x7"
-    " else
-    let &t_EI = "\<Esc>]12;#115E8B\x7"
-    silent !echo -ne "\033]12;blue\007"
-    " reset cursor when vim exits
-    autocmd VimLeave * silent !echo -ne "\033]112\007"
-    " use \003]12;gray\007 for gnome-terminal
-  endif
+  " TODO: change cursor color on insert
 
   " Colorscheme
   colorscheme hybrid
@@ -223,6 +208,47 @@ set switchbuf=usetab
 
 " }}}
 " ============================================================================
+" Functions {{{
+" ============================================================================
+" See: http://stackoverflow.com/a/6171215/1043187
+" Escape special characters in a string for exact matching.
+" This is useful to copying strings from the file to the search tool
+" Based on this - http://peterodding.com/code/vim/profile/autoload/xolox/escape.vim
+function! EscapeString (string)
+  let string=a:string
+" Escape regex characters
+  let string = escape(string, '^$.*\/~[]')
+" Escape the line endings
+  let string = substitute(string, '\n', '\\n', 'g')
+  return string
+endfunction
+
+" Get the current visual block for search and replaces
+" This function passed the visual block through a string escape function
+" Based on this - http://stackoverflow.com/questions/676600/vim-replace-selected-text/677918#677918
+function! GetVisual() range
+  " Save the current register and clipboard
+  let reg_save = getreg('"')
+  let regtype_save = getregtype('"')
+  let cb_save = &clipboard
+  set clipboard&
+
+  " Put the current visual selection in the " register
+  normal! ""gvy
+  let selection = getreg('"')
+
+  " Put the saved registers and clipboards back
+  call setreg('"', reg_save, regtype_save)
+  let &clipboard = cb_save
+
+  "Escape any special characters in the selection
+  let escaped_selection = EscapeString(selection)
+
+  return escaped_selection
+endfunction
+
+" }}}
+" ============================================================================
 " Autocmd {{{
 " ============================================================================
 
@@ -265,6 +291,9 @@ autocmd FileType vim set keywordprg=:bel\ help\ \|\ bot\ resize\ 20
 autocmd FileType qf nnoremap <buffer> q :q<cr>
 autocmd FileType qfreplace nnoremap <buffer> q :bd<cr>
 
+" Fix Python/CMake comments style for UltiSnips
+autocmd FileType python set comments=b:#
+autocmd FileType cmake set comments=b:#
 " }}}
 " ============================================================================
 " Mappings {{{
@@ -300,6 +329,18 @@ vnoremap <Leader>/  y:Agr <C-R>=escape(@", '\\.*$^[]')<CR><CR>
 " TODO: specify directory to look into
 "nnoremap <Leader>// :Agr 
 
+" Start the find and replace command from the cursor position to the end of
+" the file
+vmap <leader>z <Esc>:,$s/<c-r>=GetVisual()<cr>/
+" Start the find and replace command across the whole file
+vmap <leader>zz <Esc>:%s/<c-r>=GetVisual()<cr>/
+
+" Enable 'very magic' mode
+nnoremap / /\v
+vnoremap / /\v
+cnoremap %s/ %smagic/
+cnoremap \>s/ \>smagic/
+
 " Force saving files that require root permission with w!!
 cmap w!! w !sudo tee % >/dev/null
 
@@ -326,7 +367,7 @@ vnoremap <silent> <leader>q gw
     endfun
 
     " Ctrl-P without fuzzy search
-    nnoremap <c-p> :FZF -e<cr>
+    nnoremap <c-p> :FZF -e --cycle<cr>
 
     " Ctrl-Space to see buffers
     " Note: <c-space> seen as <c-@> by neovim.
@@ -441,10 +482,37 @@ vnoremap <silent> <leader>q gw
             "\ 'tabs': 'raw' }
     endif
   " }}}
+  " startify {{{
+    if isdirectory(expand("~/.config/nvim/plugged/vim-startify"))
+      " Helper function to center header
+      function! s:center_header(lines) abort
+        let longest_line   = max(map(copy(a:lines), 'len(v:val)'))
+        let centered_lines = map(copy(a:lines),
+              \ 'repeat(" ", (&columns / 2) - (longest_line / 2)) . v:val')
+        return centered_lines
+      endfunction
+
+      " Call fortune and cowsay (if present), and center the output
+      let g:startify_custom_header =
+        \ s:center_header(map(split(system('cowsay -f "$(ls /usr/share/cows/ | grep -vE "head|sod|kiss|surg|tele" | sort -R | head -1)" "$(fortune -s)"'), '\n'), '" ". v:val') + ['',''])
+
+      " Skip list
+      let g:startify_skiplist = [
+        \ '^/tmp'
+        \ ]
+
+      " Number of files
+      let g:startify_files_number = 5
+
+      let g:startify_list_order = [['-- Bookmarks --'], 'bookmarks', ['-- Recent files --'], 'files']
+      let g:startify_bookmarks = [ '~/.config/nvim/init.vim', '~/.config/nvim/plugins.vim' ]
+    endif
+  " }}}
   " supertab {{{
     if isdirectory(expand("~/.config/nvim/plugged/supertab"))
       let g:SuperTabDefaultCompletionType = '<Tab>'
       let g:SuperTabBackward = '<C-S-Tab>'
+      let g:SuperTabCrMapping = 1
     endif
   " }}}
   " ultisnips {{{
@@ -469,11 +537,98 @@ vnoremap <silent> <leader>q gw
       augroup end
     endif
   " }}}
+  " vim-clang-format {{{
+    if isdirectory(expand("~/.config/nvim/plugged/vim-clang-format"))
+      " map to <Leader>cf in C++ code
+      autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
+      autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
+    endif
+  " }}}
+  " vim-commentary {{{
+    if isdirectory(expand("~/.config/nvim/plugged/vim-commentary")) || isdirectory(expand("~/.config/nvim/plugged/tcomment_vim"))
+      " For transition from nerdcommenter
+      nmap <Leader>c<Space> gcc
+      nmap <Leader>cc       gc
+      vmap <Leader>c<Space> gcc
+      vmap <Leader>cc       gc
+    endif
+  " }}}
+  " vim-easy-align {{{
+    if isdirectory(expand("~/.config/nvim/plugged/vim-easy-align"))
+      " Start interactive EasyAlign in visual mode
+      vmap <Enter> <Plug>(EasyAlign)
+
+      " Start interactive EasyAlign with a Vim movement
+      nmap <Leader>a <Plug>(EasyAlign)
+
+      let g:easy_align_delimiters = {
+      \ ' ': { 'pattern': ' ', 'left_margin': 0, 'right_margin': 0, 'stick_to_left': 0 },
+      \ '+': { 'pattern': '+', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ '-': { 'pattern': '-', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ '=': { 'pattern': '===\|<=>\|\(&&\|||\|<<\|>>\)=\|=\~[#?]\?\|=>\|[:+/*!%^=><&|.-]\?=[#?]\?',
+      \ 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ ':': { 'pattern': ':', 'left_margin': 0, 'right_margin': 1, 'stick_to_left': 1 },
+      \ ',': { 'pattern': ',', 'left_margin': 0, 'right_margin': 1, 'stick_to_left': 1 },
+      \ '|': { 'pattern': '|', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ '.': { 'pattern': '\.', 'left_margin': 0, 'right_margin': 0, 'stick_to_left': 0 },
+      \ '&': { 'pattern': '\\\@<!&\|\\\\', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ '{': { 'pattern': '(\@<!{', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ '}': { 'pattern': '}', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
+      \ '\': { 'pattern': '\\', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
+      \ '<': { 'pattern': '<', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
+      \ 'd': { 'pattern': ' \(\S\+\s*[;=]\)\@=', 'left_margin': 0, 'right_margin': 0},
+      \ '#': { 'pattern': '#', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ '[': { 'pattern': '(\@<![', 'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+      \ ']': { 'pattern': ']', 'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 },
+      \ }
+    endif
+  " }}}
+  " vim-notes {{{
+    if isdirectory(expand("~/.config/nvim/plugged/vim-notes"))
+      let g:notes_directories=["~/.local/share/nvim/notes"]
+      autocmd BufNewFile,BufRead *.note set filetype=notes
+    endif
+  " }}}
+  " vim-sneak {{{
+    if isdirectory(expand("~/.config/nvim/plugged/vim-sneak"))
+      " Use Sneak as a minimalist alternative to EasyMotion
+      let g:sneak#streak = 1
+      let g:sneak#s_next = 1
+
+      " Colors
+      highlight SneakPluginTarget guifg=white guibg=red    ctermfg=white ctermbg=red
+      highlight SneakStreakTarget guifg=white guibg=red    ctermfg=white ctermbg=red
+      highlight SneakStreakMask   guifg=gray  guibg=red    ctermfg=gray  ctermbg=red
+      highlight SneakPluginScope  guifg=black guibg=yellow ctermfg=black ctermbg=yellow
+
+      "replace 'f' with 1-char Sneak
+      nmap f <Plug>Sneak_f
+      nmap F <Plug>Sneak_F
+      xmap f <Plug>Sneak_f
+      xmap F <Plug>Sneak_F
+      omap f <Plug>Sneak_f
+      omap F <Plug>Sneak_F
+
+      "replace 't' with 1-char Sneak
+      nmap t <Plug>Sneak_t
+      nmap T <Plug>Sneak_T
+      xmap t <Plug>Sneak_t
+      xmap T <Plug>Sneak_T
+      omap t <Plug>Sneak_t
+      omap T <Plug>Sneak_T
+
+      " nmap s <Plug>(SneakStreak)
+      " nmap S <Plug>(SneakStreakBackward)
+    endif
+  " }}}
   " YouCompleteMe {{{
     if isdirectory(expand("~/.config/nvim/plugged/YouCompleteMe"))
       let g:ycm_key_list_select_completion = ['<Down>']
-      let g:ycm_global_ycm_extra_conf = '~/.nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+      " let g:ycm_key_invoke_completion = '<S-Space>'
+      let g:ycm_key_invoke_completion = '<C-y>'
+      let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
       let g:ycm_show_diagnostics_ui = 0
+      let g:ycm_filepath_completion_use_working_dir = 1
     endif
   " }}}
 " }}}

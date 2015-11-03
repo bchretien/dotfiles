@@ -9,11 +9,14 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " A Vim alignment plugin
   Plug 'junegunn/vim-easy-align', { 'on': ['<Plug>(EasyAlign)', 'EasyAlign'] }
+
+  " Minimalist, versatile Vim motion plugin
+  Plug 'justinmk/vim-sneak'
 " }}}
 
 " Development plugins {{{
   " Commenter plugin
-  Plug 'scrooloose/nerdcommenter'
+  Plug 'tomtom/tcomment_vim'
 
   " Display tags in a window, ordered by scope
   Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
@@ -22,6 +25,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'sirver/ultisnips'
   Plug 'honza/vim-snippets'
 
+  " Vim plugin for clang-format, a formatter for C, C++ and Obj-C code
+  Plug 'rhysd/vim-clang-format', { 'for': ['c', 'cpp', 'objc'], 'on': ['ClangFormat', 'ClangFormatAutoToggle'] }
+
   " Git wrapper
   Plug 'tpope/vim-fugitive'
 
@@ -29,7 +35,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'thinca/vim-qfreplace', { 'on': 'Qfreplace' }
 
   " A code-completion engine for Vim
-  Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py --clang-completer --system-libclang' }
+  Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py --clang-completer --system-libclang --system-boost' }
 
   " Enhanced syntax highlighting for C++
   Plug 'octol/vim-cpp-enhanced-highlight'
