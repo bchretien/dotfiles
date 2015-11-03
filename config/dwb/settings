@@ -1,5 +1,0 @@
-[default]
-proxy=true
-proxy-url=localhost:8118
-font=monospace 10
-searchengine-submit-pattern=XXX

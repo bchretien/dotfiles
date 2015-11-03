@@ -1,9 +1,6 @@
 [submodule "git_template"]
 	path = dev/git_template
 	url = https://github.com/bchretien/git_template
-[submodule "conky-themes"]
-	path = gui/conky-themes
-	url = https://github.com/bchretien/conky-themes
 [submodule "fonts"]
 	path = util/fonts
 	url = https://github.com/Lokaltog/powerline-fonts
@@ -22,9 +19,6 @@
 [submodule "dotbot"]
 	path = dotbot
 	url = https://github.com/anishathalye/dotbot
-[submodule "bin/mimi"]
-  path = bin/mimi
-  url = https://github.com/march-linux/mimi.git
 [submodule "editor/emacs.d"]
 	path = editor/emacs.d
 	url = https://github.com/syl20bnr/spacemacs
