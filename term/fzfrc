@@ -13,7 +13,7 @@ export FZF_DEFAULT_OPTS='
 
 # If ag is available
 if command -v ag >/dev/null 2>&1; then
-  export FZF_DEFAULT_COMMAND='ag -l -g ""'
+  export FZF_DEFAULT_COMMAND='ag -l --hidden -g ""'
 fi
 
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
@@ -91,14 +91,9 @@ j() {
 }
 
 fmpc() {
-  # if mpc is not available or mpd is not running
-  if ! mpc -q status >/dev/null 2>&1; then
-    return
-  fi
-
   local song_position
   song_position=$(mpc -f "%position%) %artist% - %title%" playlist | \
     fzf-tmux --query="$1" --reverse --select-1 --exit-0 | \
-    sed -n 's/^\([0-9]\+\)).*/\1/p')
+    sed -n 's/^\([0-9]\+\)).*/\1/p') || return 1
   [ -n "$song_position" ] && mpc -q play $song_position
 }
