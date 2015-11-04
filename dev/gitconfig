@@ -114,7 +114,9 @@
 
     lasttag = describe --tags --abbrev=0
     lt = describe --tags --abbrev=0
-# }}}
+
+    # Fix permissions
+    permission-reset = "!git diff -p -R | grep -E \"^(diff|(old|new) mode)\" | git apply"
 [core]
 	editor = vim
 [diff]
