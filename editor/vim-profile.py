@@ -9,6 +9,7 @@ import re
 import csv
 import operator
 import argparse
+import collections
 
 def clean_log(log_filename):
     """
@@ -27,26 +28,45 @@ def run_vim(exe, log_filename):
     subprocess.call(cmd, shell=False)
     print(" done.")
 
+def guess_plugin_dir(log_txt):
+    """
+    Try to guess the vim directory containing plugins.
+    """
+    candidates = list()
+    user_dir = os.path.expanduser("~")
+
+    # Get common plugin dir if any
+    matches = re.findall("^\d+.\d+\s+\d+.\d+\s+\d+.\d+: sourcing (.+?)/[^/]+/plugin/[^/]+", log_txt, re.MULTILINE)
+    for plugin_dir in matches:
+        # Ignore system plugins
+        if user_dir in plugin_dir:
+            candidates.append(plugin_dir)
+
+    return collections.Counter(candidates).most_common(1)[0][0]
+
 def load_data(exe, log_filename):
     """
     Load log and extract relevant data.
     """
     data = {}
-    vim_dir = os.path.expanduser("~/.%s" % os.path.basename(exe))
+
     # Load log file and process it
     with open(log_filename, 'r') as log:
         print("Loading and processing logs...", end="")
 
-        for line in log:
-            if re.search(vim_dir, line):
-                res = re.match("\d+.\d+\s+\d+.\d+\s+(\d+.\d+): sourcing %s/[^/]+/([^/]+)/" % vim_dir, line)
-                if res is not None:
-                    time = res.group(1)
-                    plugin = res.group(2)
-                    if plugin in data:
-                        data[plugin] += float(time)
-                    else:
-                        data[plugin] = float(time)
+        log_txt = log.read()
+
+        # Try to guess the folder based on the logs themselves
+        plugin_dir = guess_plugin_dir(log_txt)
+
+        matches = re.findall("^\d+.\d+\s+\d+.\d+\s+(\d+.\d+): sourcing %s/([^/]+)/" % plugin_dir, log_txt, re.MULTILINE)
+        for res in matches:
+            time = res[0]
+            plugin = res[1]
+            if plugin in data:
+                data[plugin] += float(time)
+            else:
+                data[plugin] = float(time)
     print(" done.")
 
     return data
