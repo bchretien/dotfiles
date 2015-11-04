@@ -15,6 +15,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
 " }}}
 
 " Development plugins {{{
+  " gitk for Vim
+  Plug 'gregsexton/gitv', { 'on': 'Gitv' }
+
   " Commenter plugin
   Plug 'tomtom/tcomment_vim'
 
@@ -55,6 +58,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
 " Display plugins {{{
   " A light and configurable statusline/tabline for Vim
   Plug 'bchretien/lightline.vim'
+
+  " Show a VCS diff using Vim's sign column
+  Plug 'mhinz/vim-signify'
 
   " Fancy start screen
   Plug 'mhinz/vim-startify'

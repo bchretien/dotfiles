@@ -247,6 +247,29 @@ function! GetVisual() range
   return escaped_selection
 endfunction
 
+" See: http://stackoverflow.com/a/5538963/1043187
+function! MyCloseDiff()
+  if (&diff == 0 || getbufvar('#', '&diff') == 0)
+        \ && (bufname('%') !~ '^fugitive:' && bufname('#') !~ '^fugitive:')
+    echom "Not in diff view."
+    return
+  endif
+
+  " close current buffer if alternate is not fugitive but current one is
+  if bufname('#') !~ '^fugitive:' && bufname('%') =~ '^fugitive:'
+    if bufwinnr("#") == -1
+      b #
+      bd #
+    else
+      bd
+    endif
+  else
+    bd #
+  endif
+endfunction
+nnoremap <Leader>gD :call MyCloseDiff()<cr>
+nnoremap <Leader>gd :Gdiff<cr>
+
 " }}}
 " ============================================================================
 " Autocmd {{{
@@ -430,6 +453,13 @@ vnoremap <silent> <leader>q gw
     " Ag + qfreplace
     command! -bang -nargs=* Agr call <sid>fzf_ag(<q-args>, s:w(<bang>0))
   endif
+  " }}}
+  " gitv {{{
+    if isdirectory(expand("~/.config/nvim/plugged/gitv"))
+      nmap <leader>gv :Gitv --all<cr>
+      nmap <leader>gV :Gitv! --all<cr>
+      vmap <leader>gV :Gitv! --all<cr>
+    endif
   " }}}
   " lightline.vim {{{
     if isdirectory(expand("~/.config/nvim/plugged/lightline.vim"))
