@@ -18,6 +18,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " gitk for Vim
   Plug 'gregsexton/gitv', { 'on': 'Gitv' }
 
+  " Asynchronous :make using Neovim's job-control functionality
+  Plug 'benekastah/neomake', { 'on': 'Neomake' }
+
   " Commenter plugin
   Plug 'tomtom/tcomment_vim'
 
@@ -30,6 +33,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " Vim plugin for clang-format, a formatter for C, C++ and Obj-C code
   Plug 'rhysd/vim-clang-format', { 'for': ['c', 'cpp', 'objc'], 'on': ['ClangFormat', 'ClangFormatAutoToggle'] }
+
+  " Vim plug for switching between companion source files (e.g. ".h" and ".cpp")
+  Plug 'derekwyatt/vim-fswitch', { 'for': ['c', 'cpp', 'objc'], 'on': ['FSwitch'] }
 
   " Git wrapper
   Plug 'tpope/vim-fugitive'
@@ -66,8 +72,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'mhinz/vim-startify'
 
   " Color schemes
-  "Plug 'flazz/vim-colorschemes'
-  Plug 'w0ng/vim-hybrid'
+  Plug 'bchretien/vim-hybrid'
 " }}}
 
 " Load local plugin file (if it exists)

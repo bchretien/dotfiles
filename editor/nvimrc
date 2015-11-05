@@ -126,8 +126,6 @@ set tabstop=2
   highlight clear SignColumn " SignColumn should match background
   highlight clear LineNr " Current line number row will have same background color in relative mode
   "highlight clear CursorLineNr " Remove highlight color from current line number
-
-  au BufRead,BufWinEnter * if &diff || (v:progname =~ "diff") | set nocursorline | endif
 " }}}
 
 " Only show 15 tabs
@@ -267,9 +265,50 @@ function! MyCloseDiff()
     bd #
   endif
 endfunction
-nnoremap <Leader>gD :call MyCloseDiff()<cr>
-nnoremap <Leader>gd :Gdiff<cr>
 
+" Zoom / Restore window.
+function! s:ZoomToggle() abort
+    if exists('t:zoomed') && t:zoomed
+        execute t:zoom_winrestcmd
+        let t:zoomed = 0
+    else
+        let t:zoom_winrestcmd = winrestcmd()
+        resize
+        vertical resize
+        let t:zoomed = 1
+    endif
+endfunction
+command! ZoomToggle call s:ZoomToggle()
+
+function! EpsilonCleaning(val)
+  normal mz
+  exe '%s/\v([-]?[0-9]+[\.]?[0-9]*[e\+-]*[0-9]*)/\='
+    \ . 'abs(str2float(submatch(0))) < str2float("'. a:val . '") ? "0" : submatch(0)/ge'
+  normal `z
+endfunction
+
+function! s:StripTrailingWhitespace()
+  if !&binary && &filetype != 'diff'
+    normal mz
+    normal Hmy
+    %s/\s\+$//e
+    normal 'yz<CR>
+    normal `z
+  endif
+endfunction
+command! StripTrailingWhitespace call s:StripTrailingWhitespace()
+
+" Write file, call emacs for indenting, then reload
+" To use this:
+" :call EmacsIndent()
+function! s:EmacsIndent()
+  let l:filename = expand("%:p")
+  w
+  echom system("emacs -batch " . l:filename . " --eval '(indent-region (point-min) (point-max) nil)' -f save-buffer -kill")
+  edit!
+  redraw
+endfunction
+command! EmacsIndent call s:EmacsIndent()
 " }}}
 " ============================================================================
 " Autocmd {{{
@@ -314,9 +353,15 @@ autocmd FileType vim set keywordprg=:bel\ help\ \|\ bot\ resize\ 20
 autocmd FileType qf nnoremap <buffer> q :q<cr>
 autocmd FileType qfreplace nnoremap <buffer> q :bd<cr>
 
+" Move quickfix window to bottom
+autocmd FileType qf wincmd J
+
 " Fix Python/CMake comments style for UltiSnips
 autocmd FileType python set comments=b:#
 autocmd FileType cmake set comments=b:#
+
+" Easy zooming
+nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
 " }}}
 " ============================================================================
 " Mappings {{{
@@ -473,7 +518,39 @@ vnoremap <silent> <leader>q gw
               \ &ft == 'unite' ? 'Unite' :
               \ &ft == 'vimfiler' ? 'VimFiler' :
               \ &ft == 'vimshell' ? 'VimShell' :
+              \ bufname("%") =~ "^fugitive:" ? 'Fugitive' :
               \ winwidth('.') > 60 ? lightline#mode() : ''
+      endfunction
+
+      function! LightlineReadonly()
+        if &filetype == "help"
+          return ""
+        elseif &readonly
+          return ""
+        else
+          return ""
+        endif
+      endfunction
+
+      function! LightlineModified()
+        if &filetype == "help"
+          return ""
+        elseif &modified
+          return "+"
+        elseif &modifiable
+          return ""
+        else
+          return ""
+        endif
+      endfunction
+
+      function! LightlineFilename()
+        let ll_ro = LightlineReadonly()
+        let ll_mo = LightlineModified()
+        let ll_na = expand('%:t')
+        return ('' != ll_ro ? ll_ro . ' ' : '') .
+              \ ('' != ll_na ? ll_na : '[No Name]') .
+              \ ('' != ll_mo ? ' ' . ll_mo : '')
       endfunction
 
       let g:lightline = {
@@ -487,18 +564,17 @@ vnoremap <silent> <leader>q gw
             \   'right': [ [ 'syntastic', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
             \ },
             \ 'component': {
-            \   'readonly': '%{&filetype=="help"?"":&readonly?"":""}',
-            \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
             \   'fugitive': '%{exists("*fugitive#head")? " ".fugitive#head():""}',
             \   'tagbar':   '%{exists("*tagbar#currenttag")?tagbar#currenttag("[%s]", "", "f"):""}'
             \ },
             \ 'component_visible_condition': {
-            \   'readonly': '(&filetype!="help"&& &readonly)',
-            \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
             \   'fugitive': '(exists("*fugitive#head") && ""!=fugitive#head())'
             \ },
             \ 'component_function': {
-            \   'mode': 'LightlineMode',
+            \   'mode':     'LightlineMode',
+            \   'readonly': 'LightlineReadonly',
+            \   'modified': 'LightlineModified',
+            \   'filename': 'LightlineFilename'
             \ },
             \ 'separator': { 'left': '', 'right': '' },
             \ 'subseparator': { 'left': '', 'right': '' }
@@ -510,6 +586,20 @@ vnoremap <silent> <leader>q gw
 
       "let g:lightline.component_type = {
             "\ 'tabs': 'raw' }
+    endif
+  " }}}
+  " neomake {{{
+    if isdirectory(expand("~/.config/nvim/plugged/neomake"))
+      let g:neomake_error_sign = {
+            \ 'text': '>>',
+            \ 'texthl': 'ErrorMsg',
+            \ }
+      let g:neomake_warning_sign = {
+            \ 'text': '>>',
+            \ 'texthl': 'WarningMsg',
+            \ }
+
+      let g:neomake_open_list = 1
     endif
   " }}}
   " startify {{{
@@ -613,6 +703,20 @@ vnoremap <silent> <leader>q gw
       \ }
     endif
   " }}}
+  " vim-fswitch {{{
+  if isdirectory(expand("~/.config/nvim/plugged/vim-fswitch"))
+    let g:fsnonewfiles = 'on'
+
+    augroup mycppfiles
+      au!
+      au BufEnter *.h,*.hh let b:fswitchdst  = 'hpp,hxx,cpp,cc'
+      au BufEnter *.hpp,*.hxx let b:fswitchdst  = 'cpp,cc,h,hh'
+      au BufEnter *.cpp,*.cc let b:fswitchdst  = 'h,hh,hpp,hxx'
+    augroup END
+
+    nnoremap <silent> <M-Tab> :FSHere<CR>
+  endif
+  " }}}
   " vim-notes {{{
     if isdirectory(expand("~/.config/nvim/plugged/vim-notes"))
       let g:notes_directories=["~/.local/share/nvim/notes"]
@@ -623,7 +727,6 @@ vnoremap <silent> <leader>q gw
     if isdirectory(expand("~/.config/nvim/plugged/vim-sneak"))
       " Use Sneak as a minimalist alternative to EasyMotion
       let g:sneak#streak = 1
-      let g:sneak#s_next = 1
 
       " Colors
       highlight SneakPluginTarget guifg=white guibg=red    ctermfg=white ctermbg=red
@@ -646,9 +749,6 @@ vnoremap <silent> <leader>q gw
       xmap T <Plug>Sneak_T
       omap t <Plug>Sneak_t
       omap T <Plug>Sneak_T
-
-      " nmap s <Plug>(SneakStreak)
-      " nmap S <Plug>(SneakStreakBackward)
     endif
   " }}}
   " YouCompleteMe {{{
