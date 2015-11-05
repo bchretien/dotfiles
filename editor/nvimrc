@@ -359,9 +359,6 @@ autocmd FileType qf wincmd J
 " Fix Python/CMake comments style for UltiSnips
 autocmd FileType python set comments=b:#
 autocmd FileType cmake set comments=b:#
-
-" Easy zooming
-nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
 " }}}
 " ============================================================================
 " Mappings {{{
@@ -415,6 +412,13 @@ cmap w!! w !sudo tee % >/dev/null
 " Easier formatting
 nnoremap <silent> <leader>q gwip
 vnoremap <silent> <leader>q gw
+
+" Helpers for fugitive
+nnoremap <Leader>gD :call MyCloseDiff()<cr>
+nnoremap <Leader>gd :Gdiff<cr>
+
+" Easy zooming
+nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
 " }}}
 " ============================================================================
 " Plugins {{{
