@@ -4,17 +4,26 @@
 silent! if plug#begin('~/.config/nvim/plugged')
 
 " Edition plugins {{{
-  " Quoting/parenthesizing made simple
-  Plug 'tpope/vim-surround'
+  " Auto-close feature for parentheses, brackets etc.
+  Plug 'jiangmiao/auto-pairs'
 
   " A Vim alignment plugin
   Plug 'junegunn/vim-easy-align', { 'on': ['<Plug>(EasyAlign)', 'EasyAlign'] }
+
+  " True Sublime Text style multiple selections for Vim
+  Plug 'terryma/vim-multiple-cursors'
+
+  " Quoting/parenthesizing made simple
+  Plug 'tpope/vim-surround'
 
   " Minimalist, versatile Vim motion plugin
   Plug 'justinmk/vim-sneak'
 " }}}
 
 " Development plugins {{{
+  " DoxygenToolkit: Doxygen support
+  Plug 'vim-scripts/DoxygenToolkit.vim', { 'for': ['c', 'cpp', 'python'] }
+
   " gitk for Vim
   Plug 'gregsexton/gitv', { 'on': 'Gitv' }
 
@@ -28,7 +37,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 
   " UltiSnips: engine.
-  Plug 'sirver/ultisnips'
+  Plug 'sirver/ultisnips', { 'on': [] }
   Plug 'honza/vim-snippets'
 
   " Vim plugin for clang-format, a formatter for C, C++ and Obj-C code
@@ -44,10 +53,18 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'thinca/vim-qfreplace', { 'on': 'Qfreplace' }
 
   " A code-completion engine for Vim
-  Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py --clang-completer --system-libclang --system-boost' }
+  Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py --clang-completer --system-libclang --system-boost',
+                                 \ 'on': [] }
 
   " Enhanced syntax highlighting for C++
   Plug 'octol/vim-cpp-enhanced-highlight'
+
+  " Lazy load UltiSnips and YouCompleteMe
+  augroup load_us_ycm
+    autocmd!
+    autocmd InsertEnter * call plug#load('ultisnips', 'YouCompleteMe')
+                       \| call youcompleteme#Enable() | echo "YouCompleteMe & UltiSnips enabled" | autocmd! load_us_ycm
+  augroup END
 " }}}
 
 " Miscellaneous plugins {{{
@@ -57,8 +74,16 @@ silent! if plug#begin('~/.config/nvim/plugged')
     Plug 'junegunn/fzf.vim'
   endif
 
+  " LaTeX support
+  if executable('latexmk')
+    Plug 'lervag/vimtex'
+  endif
+
   " Perform all your Vim insert mode completions with Tab
   Plug 'ervandew/supertab'
+
+  " Change Vim working directory to the project root
+  Plug 'airblade/vim-rooter'
 " }}}
 
 " Display plugins {{{

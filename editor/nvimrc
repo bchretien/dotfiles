@@ -4,7 +4,7 @@
 " ============================================================================
 
 " Environment {{{
-  " Identify platform 
+  " Identify platform
   silent function! OSX()
     return has('macunix')
   endfunction
@@ -14,11 +14,15 @@
   silent function! WINDOWS()
     return (has('win16') || has('win32') || has('win64'))
   endfunction
-" }}}
 
+  " Paths
+  let s:nvim_dir = expand("~/.config/nvim/")
+  let s:plugin_dir = s:nvim_dir . "plugged/"
+" }}}
 " Use plugins config {{{
-  if filereadable(expand("~/.config/nvim/plugins.vim"))
-    source ~/.config/nvim/plugins.vim
+  let s:plugins_script = s:nvim_dir . 'plugins.vim'
+  if filereadable(s:plugins_script)
+    exec "source " . s:plugins_script
   endif
 " }}}
 
@@ -83,6 +87,9 @@ set shiftwidth=2
 set expandtab
 set tabstop=2
 
+" Add <> to matchpairs
+set mps+=<:>
+
 " Swap, backup, undo {{{
   " Disable swap files
   set noswapfile
@@ -130,8 +137,8 @@ set tabstop=2
 
 " Only show 15 tabs
 set tabpagemax=15
-" Display the current mode
-set showmode
+" Do not show the current mode as (status bar available)
+set noshowmode
 " Highlight current line
 set cursorline
 
@@ -268,15 +275,15 @@ endfunction
 
 " Zoom / Restore window.
 function! s:ZoomToggle() abort
-    if exists('t:zoomed') && t:zoomed
-        execute t:zoom_winrestcmd
-        let t:zoomed = 0
-    else
-        let t:zoom_winrestcmd = winrestcmd()
-        resize
-        vertical resize
-        let t:zoomed = 1
-    endif
+  if exists('t:zoomed') && t:zoomed
+    execute t:zoom_winrestcmd
+    let t:zoomed = 0
+  else
+    let t:zoom_winrestcmd = winrestcmd()
+    resize
+    vertical resize
+    let t:zoomed = 1
+  endif
 endfunction
 command! ZoomToggle call s:ZoomToggle()
 
@@ -309,6 +316,41 @@ function! s:EmacsIndent()
   redraw
 endfunction
 command! EmacsIndent call s:EmacsIndent()
+
+" See: http://stackoverflow.com/questions/290465/vim-how-to-paste-over-without-overwriting-register
+function! RestoreRegister()
+  if &clipboard =~ 'unnamed'
+    let @* = s:restore_reg
+  endif
+  if &clipboard =~ 'unnamedplus'
+    let @+ = s:restore_reg
+  endif
+  if &clipboard !~ 'unnamed' && &clipboard !~ 'unnamedplus'
+    let @" = s:restore_reg
+  endif
+  return ''
+endfunction
+
+function! s:Repl()
+  if &clipboard =~ 'unnamed'
+    let s:restore_reg = @*
+  elseif &clipboard =~ 'unnamedplus'
+    let s:restore_reg = @+
+  else
+    let s:restore_reg = @"
+  endif
+  return "p@=RestoreRegister()\<cr>"
+endfunction
+
+function! s:ReplSelect()
+    echo "Register to paste over selection? (<cr> => default register: ".strtrans(@").")"
+    let c = nr2char(getchar())
+    let reg = c =~ '^[0-9a-z:.%#/*+~]$'
+                \ ? '"'.c
+                \ : ''
+    return "\<C-G>".reg
+endfunction
+
 " }}}
 " ============================================================================
 " Autocmd {{{
@@ -363,6 +405,12 @@ autocmd FileType cmake set comments=b:#
 " ============================================================================
 " Mappings {{{
 
+" Leader
+let mapleader = ','
+let maplocalleader = ';'
+nmap <Space> ,
+vmap <Space> ,
+
 " Navigation
 nnoremap j gj
 nnoremap k gk
@@ -379,20 +427,34 @@ nnoremap tn  :tabnew<CR>
 nnoremap td  :tabclose<CR>
 nnoremap tt  :tabnext<CR>
 
+" Copy to system clipboard
+"vnoremap  <leader>y  "+y
+"nnoremap  <leader>Y  "+yg_
+"nnoremap  <leader>y  "+y
+"nnoremap  <leader>yy  "+yy
+
+" Paste from system clipboard
+"nnoremap <leader>p "+p
+"nnoremap <leader>P "+P
+"vnoremap <leader>p "+p
+"vnoremap <leader>P "+P
+
+" Paste without overwriting the register
+xnoremap <silent> <expr> p <sid>Repl()
+xnoremap <silent> <expr> <S-Insert> <sid>Repl()
+snoremap <silent> <expr> <S-Insert> <sid>ReplSelect()
+
 " This unsets the "last search pattern" register by hitting return
 nnoremap <CR> :noh<CR><CR>
 
-" Leader
-let mapleader = ','
-let maplocalleader = ';'
-nmap <Space> ,
-vmap <Space> ,
+" qq to record, Q to replay (plus disable Ex mode)
+nmap Q @q
 
 " Grep-like search
-nnoremap <Leader>/  :Agr 
+nnoremap <Leader>/  :Ag 
 vnoremap <Leader>/  y:Agr <C-R>=escape(@", '\\.*$^[]')<CR><CR>
 " TODO: specify directory to look into
-"nnoremap <Leader>// :Agr 
+"nnoremap <Leader>// :Agr
 
 " Start the find and replace command from the cursor position to the end of
 " the file
@@ -405,6 +467,10 @@ nnoremap / /\v
 vnoremap / /\v
 cnoremap %s/ %smagic/
 cnoremap \>s/ \>smagic/
+
+" Visual shifting (does not exit Visual mode)
+vnoremap < <gv
+vnoremap > >gv
 
 " Force saving files that require root permission with w!!
 cmap w!! w !sudo tee % >/dev/null
@@ -423,15 +489,37 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
 " ============================================================================
 " Plugins {{{
 " ============================================================================
+  " DoxygenToolkit.vim {{{
+  if isdirectory(s:plugin_dir . "DoxygenToolkit.vim")
+    " Use C++ here for /// doxygen doc, else /** */ is used.
+    let g:DoxygenToolkit_commentType = "C++"
+    " Leading character used for @brief, @param...
+    let g:DoxygenToolkit_versionString = "\\"
+    " Comment block with ,d
+    nmap <Leader>d :Dox<Enter>
+
+    let g:DoxygenToolkit_briefTag_pre="\\brief "
+    let g:DoxygenToolkit_paramTag_pre="\\param "
+    let g:DoxygenToolkit_templateParamTag_pre="\\tparam "
+    let g:DoxygenToolkit_throwTag_pre="\\throw "
+    let g:DoxygenToolkit_returnTag="\\return "
+    let g:DoxygenToolkit_blockHeader=""
+    let g:DoxygenToolkit_blockFooter=""
+    let g:DoxygenToolkit_authorName=$FULLNAME
+  endif
+  " }}}
   " fzf.vim {{{
-  if isdirectory(expand("~/.config/nvim/plugged/fzf.vim"))
+  if isdirectory(s:plugin_dir . "fzf.vim")
     " Disable statusline overwriting
     let g:fzf_nvim_statusline = 0
 
     let g:fzf_action = {
           \ 'ctrl-s': 'split',
-          \ 'ctrl-v': 'vsplit'
+          \ 'ctrl-v': 'vsplit',
           \ }
+
+    " Default fzf layout
+    let g:fzf_layout = { 'down': '30%' }
 
     fun! s:fzf_root()
       let path = finddir(".git", expand("%:p:h").";")
@@ -440,11 +528,6 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
 
     " Ctrl-P without fuzzy search
     nnoremap <c-p> :FZF -e --cycle<cr>
-
-    " Ctrl-Space to see buffers
-    " Note: <c-space> seen as <c-@> by neovim.
-    " See: https://github.com/neovim/neovim/issues/2782
-    nnoremap <c-@> :Buffers<cr>
 
     " List colorschemes
     autocmd VimEnter * command! Colors
@@ -490,28 +573,91 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
     endfunction
 
     function! s:fzf_ag(query, ...)
-      call fzf#run({
+      let opts={
             \ 'source':  printf('ag --nogroup --column --color "%s"',
             \                   escape(empty(a:query) ? '^(?=.)' : a:query, '"\')),
             \ 'sink*':    function('s:fzf_ag_handler'),
             \ 'options': '--ansi --delimiter : --nth 4.. --prompt "Ag> " '.
-            \            '--multi --bind ctrl-a:select-all,ctrl-d:deselect-all,tab:toggle-up,shift-tab:toggle-down '.
-            \            '--cycle --color hl:68,hl+:110'.s:expect()}, a:000)
+            \            '--multi --bind "ctrl-a:select-all,ctrl-d:deselect-all,tab:toggle-up,shift-tab:toggle-down" '.
+            \            '--cycle --color hl:68,hl+:110'.s:expect()}
+      let extra  = copy(get(a:000, 0, {}))
+      let merged = extend(copy(opts), extra)
+      call fzf#run(merged)
     endfunction
 
     " Ag + qfreplace
     command! -bang -nargs=* Agr call <sid>fzf_ag(<q-args>, s:w(<bang>0))
+
+    function! s:ansi(str, col, bold)
+      return printf("\x1b[%s%sm%s\x1b[m", a:col, a:bold ? ';1' : '', a:str)
+    endfunction
+
+    for [s:c, s:a] in items({'black': 30, 'red': 31, 'green': 32, 'yellow': 33, 'blue': 34, 'magenta': 35, 'cyan': 36})
+      execute "function! s:".s:c."(str, ...)\n"
+            \ "  return s:ansi(a:str, ".s:a.", get(a:, 1, 0))\n"
+            \ "endfunction"
+    endfor
+
+    function! s:buflisted()
+      return filter(range(1, bufnr('$')), 'buflisted(v:val)')
+    endfunction
+
+    function! s:strip(str)
+      return substitute(a:str, '^\s*\|\s*$', '', 'g')
+    endfunction
+
+    function! s:bufopen(lines)
+      if len(a:lines) < 2
+        return
+      endif
+      let cmd = get(get(g:, 'fzf_action', g:fzf_action), a:lines[0], '')
+      if !empty(cmd)
+        execute 'silent' cmd
+      endif
+      execute 'buffer' matchstr(a:lines[1], '\[\zs[0-9]*\ze\]')
+    endfunction
+
+    function! s:format_buffer(b)
+      let name = bufname(a:b)
+      let name = empty(name) ? '[No Name]' : name
+      let flag = a:b == bufnr('')  ? s:blue('★') : ' '
+            "\ (a:b == bufnr('#') ? s:magenta('#') : ' ')
+      let modified = getbufvar(a:b, '&modified') ? s:red(' [+]') : ''
+      let readonly = getbufvar(a:b, '&modifiable') ? '' : s:green(' [RO]')
+      let extra = join(filter([modified, readonly], '!empty(v:val)'), '')
+      return s:strip(printf("[%s] %s\t%s\t%s", s:yellow(a:b), flag, name, extra))
+      "return printf("%s  %s\t%s", flag, name, extra)
+    endfunction
+
+    function! s:fzf_buffers(...)
+      let bufs = map(s:buflisted(), 's:format_buffer(v:val)')
+      let socket=$NVIM_LISTEN_ADDRESS
+      let opts={
+            \ 'source':  reverse(bufs),
+            \ 'sink*':   function('s:bufopen'),
+            \ 'options': '+m -x --tiebreak=index --ansi -d "\t" -n 2,1..2 --bind "'.
+            \            'ctrl-x:execute(~/.dotfiles/editor/nvim_utils.py -s '. socket .' -q close_buffer {})'.
+            \            '" --prompt="Buffers > "' . s:expect(),
+            \ }
+      let extra  = copy(get(a:000, 0, {}))
+      let merged = extend(copy(opts), extra)
+      call fzf#run(merged)
+    endfunction
+
+    " Ag + qfreplace
+    command! -bang -nargs=* Buf call <sid>fzf_buffers(s:w(<bang>0))
+    nnoremap <c-@> :Buf<cr>
   endif
   " }}}
   " gitv {{{
-    if isdirectory(expand("~/.config/nvim/plugged/gitv"))
+    if isdirectory(s:plugin_dir . "gitv")
       nmap <leader>gv :Gitv --all<cr>
       nmap <leader>gV :Gitv! --all<cr>
       vmap <leader>gV :Gitv! --all<cr>
     endif
   " }}}
   " lightline.vim {{{
-    if isdirectory(expand("~/.config/nvim/plugged/lightline.vim"))
+    if isdirectory(s:plugin_dir . "lightline.vim")
       function! LightlineMode()
         let fname = expand('%:t')
         return fname == '__Tagbar__' ? 'Tagbar' :
@@ -593,7 +739,7 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
     endif
   " }}}
   " neomake {{{
-    if isdirectory(expand("~/.config/nvim/plugged/neomake"))
+    if isdirectory(s:plugin_dir . "neomake") || isdirectory(s:plugin_dir . "vim-dispatch")
       let g:neomake_error_sign = {
             \ 'text': '>>',
             \ 'texthl': 'ErrorMsg',
@@ -604,10 +750,16 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
             \ }
 
       let g:neomake_open_list = 1
+
+      " Add clang-tidy support
+      let g:neomake_c_clangtidy_args_conf = ['-p', '_build']
+
+      " Run make
+      nmap <Leader>b :Neomake!<CR>
     endif
   " }}}
   " startify {{{
-    if isdirectory(expand("~/.config/nvim/plugged/vim-startify"))
+    if isdirectory(s:plugin_dir . "vim-startify")
       " Helper function to center header
       function! s:center_header(lines) abort
         let longest_line   = max(map(copy(a:lines), 'len(v:val)'))
@@ -628,19 +780,21 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
       " Number of files
       let g:startify_files_number = 5
 
-      let g:startify_list_order = [['-- Bookmarks --'], 'bookmarks', ['-- Recent files --'], 'files']
-      let g:startify_bookmarks = [ '~/.config/nvim/init.vim', '~/.config/nvim/plugins.vim' ]
+      let g:startify_list_order = [['-- Bookmarks --'], 'bookmarks', ['-- Sessions --'], 'sessions', ['-- Recent files --'], 'files']
+      let g:startify_bookmarks = [ s:nvim_dir . 'init.vim', s:nvim_dir . 'plugins.vim' ]
+
+      let g:startify_session_dir = s:nvim_dir . 'sessions'
     endif
   " }}}
   " supertab {{{
-    if isdirectory(expand("~/.config/nvim/plugged/supertab"))
+    if isdirectory(s:plugin_dir . "supertab")
       let g:SuperTabDefaultCompletionType = '<Tab>'
       let g:SuperTabBackward = '<C-S-Tab>'
       let g:SuperTabCrMapping = 1
     endif
   " }}}
   " ultisnips {{{
-    if isdirectory(expand("~/.config/nvim/plugged/ultisnips"))
+    if isdirectory(s:plugin_dir . "ultisnips")
       " Trigger configuration.
       let g:UltiSnipsExpandTrigger="<tab>"
       let g:UltiSnipsJumpForwardTrigger="<tab>"
@@ -651,7 +805,7 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
       let g:UltiSnipsEditSplit="vertical"
 
       " Custom snippets
-      let g:UltiSnipsSnippetsDir = "~/.config/nvim/custom_snippets"
+      let g:UltiSnipsSnippetsDir = s:nvim_dir . 'custom_snippets'
       let g:UltiSnipsSnippetDirectories=["UltiSnips", "custom_snippets"]
 
       " Prevent UltiSnips from stealing ctrl-k.
@@ -662,14 +816,14 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
     endif
   " }}}
   " vim-clang-format {{{
-    if isdirectory(expand("~/.config/nvim/plugged/vim-clang-format"))
+    if isdirectory(s:plugin_dir . "vim-clang-format")
       " map to <Leader>cf in C++ code
       autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
       autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
     endif
   " }}}
   " vim-commentary {{{
-    if isdirectory(expand("~/.config/nvim/plugged/vim-commentary")) || isdirectory(expand("~/.config/nvim/plugged/tcomment_vim"))
+    if isdirectory(s:plugin_dir . "vim-commentary") || isdirectory(s:plugin_dir . "tcomment_vim")
       " For transition from nerdcommenter
       nmap <Leader>c<Space> gcc
       nmap <Leader>cc       gc
@@ -678,7 +832,7 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
     endif
   " }}}
   " vim-easy-align {{{
-    if isdirectory(expand("~/.config/nvim/plugged/vim-easy-align"))
+    if isdirectory(s:plugin_dir . "vim-easy-align")
       " Start interactive EasyAlign in visual mode
       vmap <Enter> <Plug>(EasyAlign)
 
@@ -708,7 +862,7 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
     endif
   " }}}
   " vim-fswitch {{{
-  if isdirectory(expand("~/.config/nvim/plugged/vim-fswitch"))
+  if isdirectory(s:plugin_dir . "vim-fswitch")
     let g:fsnonewfiles = 'on'
 
     augroup mycppfiles
@@ -718,17 +872,39 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
       au BufEnter *.cpp,*.cc let b:fswitchdst  = 'h,hh,hpp,hxx'
     augroup END
 
-    nnoremap <silent> <M-Tab> :FSHere<CR>
+    nnoremap <silent> <M-Tab> :silent! FSHere<CR>
+  endif
+  " }}}
+  " vim-multiple-cursors {{{
+  if isdirectory(s:plugin_dir . "vim-multiple-cursors")
+    " Called once right before you start selecting multiple cursors
+    function! Multiple_cursors_before()
+      if exists("g:loaded_youcompleteme")
+        let s:old_ycm_whitelist = g:ycm_filetype_whitelist
+        let g:ycm_filetype_whitelist = {}
+      endif
+    endfunction
+
+    " Called once only when the multiple selection is canceled (default <Esc>)
+    function! Multiple_cursors_after()
+      if exists("s:old_ycm_whitelist")
+        let g:ycm_filetype_whitelist = s:old_ycm_whitelist
+      endif
+    endfunction
+
+    " Press Escape and go back to Normal mode
+    let g:multi_cursor_exit_from_visual_mode = 0
+    let g:multi_cursor_exit_from_insert_mode = 0
   endif
   " }}}
   " vim-notes {{{
-    if isdirectory(expand("~/.config/nvim/plugged/vim-notes"))
+    if isdirectory(s:plugin_dir . "vim-notes")
       let g:notes_directories=["~/.local/share/nvim/notes"]
       autocmd BufNewFile,BufRead *.note set filetype=notes
     endif
   " }}}
   " vim-sneak {{{
-    if isdirectory(expand("~/.config/nvim/plugged/vim-sneak"))
+    if isdirectory(s:plugin_dir . "vim-sneak")
       " Use Sneak as a minimalist alternative to EasyMotion
       let g:sneak#streak = 1
 
@@ -755,8 +931,19 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
       omap T <Plug>Sneak_T
     endif
   " }}}
+  " vimtex {{{
+    if isdirectory(s:plugin_dir . "vimtex")
+      let g:vimtex_latexmk_build_dir = './build'
+      let g:vimtex_view_general_viewer = 'qpdfview'
+      let g:vimtex_view_general_options = '--unique @pdf\#src:@tex:@line:@col'
+      let g:vimtex_view_general_options_latexmk = '--unique'
+
+      " Remap double click for latex
+      autocmd FileType tex nnoremap <silent> <2-LeftMouse> :VimtexView<CR>
+    endif
+  " }}}
   " YouCompleteMe {{{
-    if isdirectory(expand("~/.config/nvim/plugged/YouCompleteMe"))
+    if isdirectory(s:plugin_dir . "YouCompleteMe")
       let g:ycm_key_list_select_completion = ['<Down>']
       " let g:ycm_key_invoke_completion = '<S-Space>'
       let g:ycm_key_invoke_completion = '<C-y>'
