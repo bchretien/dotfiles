@@ -703,6 +703,15 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
               \ ('' != ll_mo ? ' ' . ll_mo : '')
       endfunction
 
+      function! LightlineFileEncoding()
+        return (&fenc != "utf-8") ?
+              \ (strlen(&fenc) ? &fenc : (&enc != "utf-8" ? &enc : '' )) : ''
+      endfunction
+
+      function! LightlineFileFormat()
+        return (&ff != "unix") ? &ff : ''
+      endfunction
+
       let g:lightline = {
             \ 'colorscheme': 'murmur',
             \ 'enable': {
@@ -724,7 +733,9 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
             \   'mode':     'LightlineMode',
             \   'readonly': 'LightlineReadonly',
             \   'modified': 'LightlineModified',
-            \   'filename': 'LightlineFilename'
+            \   'filename': 'LightlineFilename',
+            \   'fileencoding': 'LightlineFileEncoding',
+            \   'fileformat': 'LightlineFileFormat'
             \ },
             \ 'separator': { 'left': '', 'right': '' },
             \ 'subseparator': { 'left': '', 'right': '' }
@@ -733,9 +744,6 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
       let g:lightline.tabline = {
             \ 'left': [ [ 'tabs' ] ],
             \ 'right': [ [ 'close' ] ] }
-
-      "let g:lightline.component_type = {
-            "\ 'tabs': 'raw' }
     endif
   " }}}
   " neomake {{{
