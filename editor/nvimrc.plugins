@@ -1,11 +1,22 @@
 " vim: set sw=2 ts=2 sts=2 et tw=78 foldmarker={{{,}}} foldlevel=0 foldmethod=marker spell: ft=vim
 
+let g:nvim_dir = get(g:, "nvim_dir", expand("~/.config/nvim/"))
+let g:plugin_dir = get(g:, "plugin_dir", g:nvim_dir . "plugged/")
+
 " Start adding Plugs
-silent! if plug#begin('~/.config/nvim/plugged')
+silent! if plug#begin(g:plugin_dir)
 
 " Edition plugins {{{
   " Auto-close feature for parentheses, brackets etc.
   Plug 'jiangmiao/auto-pairs'
+
+  " Provide a completion function for Unicode glyphs
+  Plug 'chrisbra/unicode.vim', {
+        \ 'do': 'wget -nc http://www.unicode.org/Public/UNIDATA/UnicodeData.txt -O /tmp/UnicodeData.txt && ' .
+              \ 'sha256sum -c <(printf \"38b17e1118206489a7e0ab5d29d7932212d38838df7d3ec025ecb58e8798ec20  /tmp/UnicodeData.txt\n\") && ' .
+              \ 'mkdir -p ' . g:plugin_dir . 'unicode.vim/autoload/unicode && ' .
+              \ 'cp /tmp/UnicodeData.txt ' . g:plugin_dir . 'unicode.vim/autoload/unicode',
+        \ 'on': 'Digraphs' }
 
   " A Vim alignment plugin
   Plug 'junegunn/vim-easy-align', { 'on': ['<Plug>(EasyAlign)', 'EasyAlign'] }
@@ -24,6 +35,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " DoxygenToolkit: Doxygen support
   Plug 'vim-scripts/DoxygenToolkit.vim', { 'for': ['c', 'cpp', 'python'] }
 
+  " Gist wrapper
+  Plug 'mattn/webapi-vim', { 'on': 'Gist' } | Plug 'mattn/gist-vim', { 'on': 'Gist' }
+
   " gitk for Vim
   Plug 'gregsexton/gitv', { 'on': 'Gitv' }
 
@@ -37,8 +51,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 
   " UltiSnips: engine.
-  Plug 'sirver/ultisnips', { 'on': [] }
-  Plug 'honza/vim-snippets'
+  Plug 'sirver/ultisnips', { 'on': [] } | Plug 'honza/vim-snippets'
 
   " Vim plugin for clang-format, a formatter for C, C++ and Obj-C code
   Plug 'rhysd/vim-clang-format', { 'for': ['c', 'cpp', 'objc'], 'on': ['ClangFormat', 'ClangFormatAutoToggle'] }
@@ -60,18 +73,22 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'octol/vim-cpp-enhanced-highlight'
 
   " Lazy load UltiSnips and YouCompleteMe
+  function! Load_YCM_US ()
+    call plug#load('ultisnips', 'YouCompleteMe')
+      \ | call youcompleteme#Enable()
+      \ | echo 'YouCompleteMe & UltiSnips enabled'
+  endfunction
+
   augroup load_us_ycm
     autocmd!
-    autocmd InsertEnter * call plug#load('ultisnips', 'YouCompleteMe')
-                       \| call youcompleteme#Enable() | echo "YouCompleteMe & UltiSnips enabled" | autocmd! load_us_ycm
+    autocmd InsertEnter * call Load_YCM_US() | autocmd! load_us_ycm
   augroup END
 " }}}
 
 " Miscellaneous plugins {{{
   " fzf for vim
   if executable('fzf')
-    Plug 'junegunn/fzf'
-    Plug 'junegunn/fzf.vim'
+    Plug 'junegunn/fzf' | Plug 'junegunn/fzf.vim'
   endif
 
   " LaTeX support
