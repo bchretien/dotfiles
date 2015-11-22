@@ -28,3 +28,6 @@
 [submodule "dev/lldbinit"]
 	path = dev/dotlldb
 	url = https://github.com/bchretien/lldbinit.git
+[submodule "term/tmuxifier"]
+	path = term/tmuxifier
+	url = https://github.com/jimeh/tmuxifier.git
