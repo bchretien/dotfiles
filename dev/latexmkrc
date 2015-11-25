@@ -3,6 +3,9 @@ $clean_full_ext = "hyph";
 @generated_exts = qw(acn acr alg aux glg glo gls idx ind ist lof lot out toc);
 $pdf_previewer = "start qpdfview --unique";
 
+# For synctex
+$pdflatex = 'pdflatex -synctex=1 %O %S';
+
 # For nomenclature
 add_cus_dep("nlo", "nls", 0, "nlo2nls");
 sub nlo2nls {
