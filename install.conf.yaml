@@ -42,6 +42,7 @@
     ~/.hgrc.local: dev/hgrc.local
     ~/.latexmkrc: dev/latexmkrc
     ~/.lldbinit: dev/lldbinit
+    ~/.matplotlibrc: dev/matplotlibrc
     ~/.valgrindrc: dev/valgrindrc
     # emacs
     ~/.emacs_zsh: editor/emacs_zsh
