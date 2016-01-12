@@ -16,7 +16,7 @@ if __name__ == "__main__":
     nvim = Nvim.from_session(session)
 
     if not os.path.samefile(nvim.current.buffer.name, args.file):
-        nvim.command("b {}".format(args.file))
+        nvim.command("e {}".format(os.path.normpath(args.file)))
 
     nvim.current.window.cursor = (args.line, 0)
     nvim.feedkeys("zz")
