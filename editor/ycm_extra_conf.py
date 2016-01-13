@@ -43,6 +43,8 @@ flags = [
 '-Wno-variadic-macros',
 '-fexceptions',
 '-DNDEBUG',
+'-isystem',
+'/usr/include',
 # You 100% do NOT need -DUSE_CLANG_COMPLETER in your flags; only the YCM
 # source code needs it.
 # '-DUSE_CLANG_COMPLETER',
@@ -59,12 +61,12 @@ flags = [
 # For a C project, you would set this to 'c' instead of 'c++'.
 '-x',
 'c++',
+'-I',
+'./include',
 '-isystem',
 '/usr/include/boost',
 '-isystem',
-'/usr/include/eigen3',
-'-I',
-'./include'
+'/usr/include/eigen3'
 ]
 
 
@@ -80,10 +82,18 @@ flags = [
 # 'flags' list of compilation flags. Notice that YCM itself uses that approach.
 compilation_database_folder = ''
 
+# Note: assumes nvim running at the root of the project that contains a "build"
+# directory
+if os.path.isfile( './build/compile_commands.json' ):
+  compilation_database_folder = './build'
+
 if os.path.exists( compilation_database_folder ):
   database = ycm_core.CompilationDatabase( compilation_database_folder )
+  # FIXME: use the flags of the first file in the db
+  backup_flags = flags
 else:
   database = None
+  backup_flags = None
 
 SOURCE_EXTENSIONS = [ '.cpp', '.cxx', '.cc', '.cu', '.c', '.m', '.mm' ]
 
@@ -142,6 +152,13 @@ def GetCompilationInfoForFile( filename ):
     return None
   return database.GetCompilationInfoForFile( filename )
 
+def getDefaultFlags():
+  # If using the default file in ~, use relative flags w.r.t. the working
+  # directory
+  relative_to = DirectoryOfThisScript()
+  if relative_to == os.path.expanduser("~"):
+    relative_to = ""
+  return MakeRelativePathsInFlagsAbsolute( flags, "" )
 
 def FlagsForFile( filename, **kwargs ):
   if database:
@@ -149,22 +166,24 @@ def FlagsForFile( filename, **kwargs ):
     # python list, but a "list-like" StringVec object
     compilation_info = GetCompilationInfoForFile( filename )
     if not compilation_info:
-      return None
-
-    final_flags = MakeRelativePathsInFlagsAbsolute(
-      compilation_info.compiler_flags_,
-      compilation_info.compiler_working_dir_ )
+      final_flags = getDefaultFlags()
+    else:
+      final_flags = MakeRelativePathsInFlagsAbsolute(
+        compilation_info.compiler_flags_,
+        compilation_info.compiler_working_dir_ )
 
     # NOTE: This is just for YouCompleteMe; it's highly likely that your project
     # does NOT need to remove the stdlib flag. DO NOT USE THIS IN YOUR
     # ycm_extra_conf IF YOU'RE NOT 100% SURE YOU NEED IT.
-    try:
-      final_flags.remove( '-stdlib=libc++' )
-    except ValueError:
-      pass
+    #try:
+    #  final_flags.remove( '-stdlib=libc++' )
+    #except ValueError:
+    #  pass
   else:
-    relative_to = DirectoryOfThisScript()
-    final_flags = MakeRelativePathsInFlagsAbsolute( flags, relative_to )
+
+    # If using the default file in ~, use relative flags w.r.t. the working
+    # directory
+    final_flags = getDefaultFlags()
 
   return {
     'flags': final_flags,
