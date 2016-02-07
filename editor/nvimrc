@@ -351,6 +351,29 @@ function! s:ReplSelect()
     return "\<C-G>".reg
 endfunction
 
+" See: http://stackoverflow.com/a/7321131/1043187
+function! DeleteInactiveBufs()
+  " From tabpagebuflist() help, get a list of all buffers in all tabs
+  let tablist = []
+  for i in range(tabpagenr('$'))
+    call extend(tablist, tabpagebuflist(i + 1))
+  endfor
+
+  " Below originally inspired by Hara Krishna Dara and Keith Roberts
+  " http://tech.groups.yahoo.com/group/vim/message/56425
+  let nWipeouts = 0
+  for i in range(1, bufnr('$'))
+    if bufexists(i) && !getbufvar(i,"&mod") && index(tablist, i) == -1
+      " bufno exists AND isn't modified AND isn't in the list of buffers open
+      " in windows and tabs
+      silent exec 'bwipeout' i
+      let nWipeouts = nWipeouts + 1
+    endif
+  endfor
+  echomsg nWipeouts . ' buffer(s) wiped out'
+endfunction
+command! Bdi :call DeleteInactiveBufs()
+
 " }}}
 " ============================================================================
 " Autocmd {{{
@@ -390,6 +413,9 @@ autocmd FileType man set nolist
 
 " Use :help with K
 autocmd FileType vim set keywordprg=:bel\ help\ \|\ bot\ resize\ 20
+
+" Enable spellchecking for latex
+autocmd FileType tex set spell
 
 " q closes location/quickfix/qfreplace list
 autocmd FileType qf nnoremap <buffer> q :q<cr>
@@ -891,6 +917,11 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
         let s:old_ycm_whitelist = g:ycm_filetype_whitelist
         let g:ycm_filetype_whitelist = {}
       endif
+      " See: https://github.com/terryma/vim-multiple-cursors/pull/185
+      if isdirectory(s:plugin_dir . "targets.vim")
+        xnoremap <buffer> i i
+        onoremap <buffer> i( i(
+      endif
     endfunction
 
     " Called once only when the multiple selection is canceled (default <Esc>)
@@ -898,11 +929,17 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
       if exists("s:old_ycm_whitelist")
         let g:ycm_filetype_whitelist = s:old_ycm_whitelist
       endif
+      " See: https://github.com/terryma/vim-multiple-cursors/pull/185
+      if isdirectory(s:plugin_dir . "targets.vim")
+        xunmap <buffer> i
+        ounmap <buffer> i(
+      endif
     endfunction
 
     " Press Escape and go back to Normal mode
     let g:multi_cursor_exit_from_visual_mode = 0
     let g:multi_cursor_exit_from_insert_mode = 0
+    let g:multi_cursor_quit_key = ''
   endif
   " }}}
   " vim-notes {{{
@@ -942,9 +979,11 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
   " vimtex {{{
     if isdirectory(s:plugin_dir . "vimtex")
       let g:vimtex_latexmk_build_dir = './build'
+      " If using qpdfview
       let g:vimtex_view_general_viewer = 'qpdfview'
       let g:vimtex_view_general_options = '--unique @pdf\#src:@tex:@line:@col'
       let g:vimtex_view_general_options_latexmk = '--unique'
+      let g:ycm_collect_identifiers_from_tags_files = 0
 
       " Remap double click for latex
       autocmd FileType tex nnoremap <silent> <2-LeftMouse> :VimtexView<CR>

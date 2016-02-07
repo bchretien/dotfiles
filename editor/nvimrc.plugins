@@ -29,6 +29,9 @@ silent! if plug#begin(g:plugin_dir)
 
   " Minimalist, versatile Vim motion plugin
   Plug 'justinmk/vim-sneak'
+
+  " Vim plugin that provides additional text objects
+  Plug 'wellle/targets.vim'
 " }}}
 
 " Development plugins {{{
@@ -81,6 +84,7 @@ silent! if plug#begin(g:plugin_dir)
 
   augroup load_us_ycm
     autocmd!
+    autocmd FileType snippets call Load_YCM_US() | autocmd! load_us_ycm
     autocmd InsertEnter * call Load_YCM_US() | autocmd! load_us_ycm
   augroup END
 " }}}
