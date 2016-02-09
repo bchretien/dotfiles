@@ -1,8 +1,5 @@
 # -*- mode: sh -*-
 
-# Path to your oh-my-zsh configuration.
-export ZSH=$HOME/.dotfiles/.zprezto
-
 # My aliases
 alias make='nocorrect make'
 alias mv='nocorrect mv'       # no spelling correction on mv
@@ -39,7 +36,7 @@ if [ -f /etc/zsh_command_not_found ]; then
   . /etc/zsh_command_not_found
 fi
 
-if [ -f ~/.tmuxinator/tmuxinator.zsh ]; then
+if [[ -f ~/.tmuxinator/tmuxinator.zsh && $(command -v tmuxinator >/dev/null 2>&1) ]]; then
   source ~/.tmuxinator/tmuxinator.zsh
 fi
 
@@ -50,6 +47,11 @@ fi
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
+
+if [[ -d  "${HOME}/.tmuxifier" && $(command -v tmuxifier >/dev/null 2>&1) ]]; then
+  eval "$(tmuxifier init -)"
+  alias mux="tmuxifier"
 fi
 
 # Bindings
