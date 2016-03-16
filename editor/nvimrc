@@ -287,12 +287,13 @@ function! s:ZoomToggle() abort
 endfunction
 command! ZoomToggle call s:ZoomToggle()
 
-function! EpsilonCleaning(val)
+function! s:EpsilonCleaning(val)
   normal mz
   exe '%s/\v([-]?[0-9]+[\.]?[0-9]*[e\+-]*[0-9]*)/\='
     \ . 'abs(str2float(submatch(0))) < str2float("'. a:val . '") ? "0" : submatch(0)/ge'
   normal `z
 endfunction
+command! -nargs=+ EpsilonCleaning call s:EpsilonCleaning(expand(<q-args>))
 
 function! s:StripTrailingWhitespace()
   if !&binary && &filetype != 'diff'
@@ -414,8 +415,8 @@ autocmd FileType man set nolist
 " Use :help with K
 autocmd FileType vim set keywordprg=:bel\ help\ \|\ bot\ resize\ 20
 
-" Enable spellchecking for latex
-autocmd FileType tex set spell
+" Enable spellchecking for latex or text
+autocmd FileType text,tex set spell
 
 " q closes location/quickfix/qfreplace list
 autocmd FileType qf nnoremap <buffer> q :q<cr>
@@ -504,6 +505,9 @@ cmap w!! w !sudo tee % >/dev/null
 " Easier formatting
 nnoremap <silent> <leader>q gwip
 vnoremap <silent> <leader>q gw
+
+" Select pasted text
+nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
 
 " Helpers for fugitive
 nnoremap <Leader>gD :call MyCloseDiff()<cr>
