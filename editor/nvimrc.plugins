@@ -47,6 +47,9 @@ silent! if plug#begin(g:plugin_dir)
   " Asynchronous :make using Neovim's job-control functionality
   Plug 'benekastah/neomake', { 'on': 'Neomake' }
 
+  " Wrapper of some neovim's :terminal functions
+  Plug 'kassio/neoterm'
+
   " Commenter plugin
   Plug 'tomtom/tcomment_vim'
 

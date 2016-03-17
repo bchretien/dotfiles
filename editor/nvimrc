@@ -367,7 +367,7 @@ function! DeleteInactiveBufs()
     if bufexists(i) && !getbufvar(i,"&mod") && index(tablist, i) == -1
       " bufno exists AND isn't modified AND isn't in the list of buffers open
       " in windows and tabs
-      silent exec 'bwipeout' i
+      silent exec 'bwipeout!' i
       let nWipeouts = nWipeouts + 1
     endif
   endfor
@@ -424,6 +424,11 @@ autocmd FileType qfreplace nnoremap <buffer> q :bd<cr>
 
 " Move quickfix window to bottom
 autocmd FileType qf wincmd J
+
+" neovim terminal support: enter insert mode by default, remap for escape
+autocmd BufWinEnter,WinEnter term://* startinsert
+autocmd BufLeave term://* stopinsert
+tnoremap <esc><esc> <C-\><C-n>
 
 " Fix Python/CMake comments style for UltiSnips
 autocmd FileType python set comments=b:#
@@ -794,6 +799,25 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
 
       " Run make
       nmap <Leader>b :Neomake!<CR>
+    endif
+  " }}}
+  " neoterm {{{
+    if isdirectory(s:plugin_dir . "neoterm")
+      let g:neoterm_size = 15
+      let g:neoterm_position = "horizontal"
+      let g:neoterm_keep_term_open = 1
+
+      function! s:RunIPython()
+        if g:neoterm.has_any()
+          silent! T %reset -f
+        else
+          silent! T ipython -i --no-banner --no-confirm-exit --quick --quiet --pdb
+        endif
+        let cmd = '%run '.expand('%')
+        silent! call neoterm#do(cmd)
+      endfunction
+      command! RunIPython call s:RunIPython()
+      autocmd FileType python nnoremap <Leader>r :RunIPython<cr>
     endif
   " }}}
   " startify {{{
