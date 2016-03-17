@@ -103,6 +103,13 @@ for (size_t ${1:i} = 0; $1 < ${2:count}; ${3:++$1})
 }
 endsnippet
 
+snippet fora "for loop (auto)"
+for (${1:auto&} ${2:value}: ${3:container})
+{
+	${VISUAL}${0}
+}
+endsnippet
+
 # std::cout
 snippet cout "std::cout << ... << std::endl" w
 std::cout << ${VISUAL}${0} << std::endl;
