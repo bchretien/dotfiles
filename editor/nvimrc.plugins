@@ -24,6 +24,9 @@ silent! if plug#begin(g:plugin_dir)
   " True Sublime Text style multiple selections for Vim
   Plug 'terryma/vim-multiple-cursors'
 
+  " A Vim plugin for looking up words in an online thesaurus
+  Plug 'beloglazov/vim-online-thesaurus', { 'for': ['tex', 'text'] }
+
   " Quoting/parenthesizing made simple
   Plug 'tpope/vim-surround'
 

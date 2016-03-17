@@ -976,6 +976,12 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
       autocmd BufNewFile,BufRead *.note set filetype=notes
     endif
   " }}}
+  " vim-online-thesaurus {{{
+    if isdirectory(s:plugin_dir . "vim-online-thesaurus")
+      let g:online_thesaurus_map_keys = 0
+      autocmd FileType text,tex nnoremap K :OnlineThesaurusCurrentWord<CR>
+    endif
+  " }}}
   " vim-sneak {{{
     if isdirectory(s:plugin_dir . "vim-sneak")
       " Use Sneak as a minimalist alternative to EasyMotion
