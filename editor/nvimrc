@@ -353,7 +353,7 @@ function! s:ReplSelect()
 endfunction
 
 " See: http://stackoverflow.com/a/7321131/1043187
-function! DeleteInactiveBufs()
+function! s:DeleteInactiveBufs()
   " From tabpagebuflist() help, get a list of all buffers in all tabs
   let tablist = []
   for i in range(tabpagenr('$'))
@@ -373,7 +373,17 @@ function! DeleteInactiveBufs()
   endfor
   echomsg nWipeouts . ' buffer(s) wiped out'
 endfunction
-command! Bdi :call DeleteInactiveBufs()
+command! Bdi :call s:DeleteInactiveBufs()
+
+" Formatting function
+function! s:Format()
+  if &ft == 'json'
+    %!python -m json.tool
+  elseif &ft == 'cpp' || &ft == 'c'
+    ClangFormat
+  endif
+endfunction
+command! Format :call s:Format()
 
 " }}}
 " ============================================================================
@@ -520,6 +530,12 @@ nnoremap <Leader>gd :Gdiff<cr>
 
 " Easy zooming
 nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
+
+" unimpaired mappings
+nnoremap <silent> ]q :cnext<CR>
+nnoremap <silent> [q :cprevious<CR>
+nnoremap <silent> ]l :lnext<CR>
+nnoremap <silent> [l :lprevious<CR>
 " }}}
 " ============================================================================
 " Plugins {{{
@@ -797,6 +813,11 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
       " Add clang-tidy support
       let g:neomake_c_clangtidy_args_conf = ['-p', '_build']
 
+      let g:neomake_tex_proselint_maker = {
+          \ 'exe': 'proselint',
+          \ 'errorformat': '%f:%l:%c: %m',
+          \ }
+
       " Run make
       nmap <Leader>b :Neomake!<CR>
     endif
@@ -807,16 +828,17 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
       let g:neoterm_position = "horizontal"
       let g:neoterm_keep_term_open = 1
 
-      function! s:RunIPython()
+      function! s:RunIPython(...)
         if g:neoterm.has_any()
           silent! T %reset -f
         else
-          silent! T ipython -i --no-banner --no-confirm-exit --quick --quiet --pdb
+          let cmd = "ipython -i --no-banner --no-confirm-exit --quick --quiet"
+          silent! call neoterm#do(cmd)
         endif
-        let cmd = '%run '.expand('%')
+        let cmd = '%run ' . join(a:000, ' ') . ' ' . expand('%')
         silent! call neoterm#do(cmd)
       endfunction
-      command! RunIPython call s:RunIPython()
+      command! -nargs=* RunIPython call s:RunIPython(expand(<q-args>))
       autocmd FileType python nnoremap <Leader>r :RunIPython<cr>
     endif
   " }}}
@@ -869,6 +891,8 @@ nnoremap <silent> <Leader><Leader> :ZoomToggle<CR>
       " Custom snippets
       let g:UltiSnipsSnippetsDir = s:nvim_dir . 'custom_snippets'
       let g:UltiSnipsSnippetDirectories=["UltiSnips", "custom_snippets"]
+
+      let g:ultisnips_python_style = "numpy"
 
       " Prevent UltiSnips from stealing ctrl-k.
       augroup VimStartup
