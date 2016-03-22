@@ -119,3 +119,13 @@ endsnippet
 snippet cerr "std::cerr << ... << std::endl" w
 std::cerr << ${VISUAL}${0} << std::endl;
 endsnippet
+
+snippet ld "lambda (one line)"
+[${1:capture}](${2:params}){${3:/* TODO */}}
+endsnippet
+
+snippet lld "lambda (multi-line)"
+[${1:capture}](${2:params}){
+	${3:// TODO}
+}
+endsnippet
