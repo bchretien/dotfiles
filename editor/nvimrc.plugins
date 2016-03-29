@@ -10,6 +10,9 @@ silent! if plug#begin(g:plugin_dir)
   " Auto-close feature for parentheses, brackets etc.
   Plug 'jiangmiao/auto-pairs'
 
+  " Speed up Vim by updating folds only when called-for
+  Plug 'Konfekt/FastFold'
+
   " Provide a completion function for Unicode glyphs
   Plug 'chrisbra/unicode.vim', {
         \ 'do': 'wget -nc http://www.unicode.org/Public/UNIDATA/UnicodeData.txt -O /tmp/UnicodeData.txt && ' .
@@ -75,7 +78,7 @@ silent! if plug#begin(g:plugin_dir)
   Plug 'thinca/vim-qfreplace', { 'on': 'Qfreplace' }
 
   " A code-completion engine for Vim
-  Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py --clang-completer --system-libclang --system-boost',
+  Plug 'Valloric/YouCompleteMe', { 'do': 'EXTRA_CMAKE_ARGS=\"-DCMAKE_BUILD_TYPE=Release\" python ./install.py --clang-completer --system-libclang --system-boost',
                                  \ 'on': [] }
 
   " Enhanced syntax highlighting for C++
@@ -105,6 +108,9 @@ silent! if plug#begin(g:plugin_dir)
   if executable('latexmk')
     Plug 'lervag/vimtex'
   endif
+
+  " File type plugin for folding TeX files
+  Plug 'matze/vim-tex-fold', { 'for': ['tex'] }
 
   " Perform all your Vim insert mode completions with Tab
   Plug 'ervandew/supertab'
