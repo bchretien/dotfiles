@@ -56,6 +56,11 @@ silent! if plug#begin(g:plugin_dir)
   " Wrapper of some neovim's :terminal functions
   Plug 'kassio/neoterm'
 
+  " Vim configuration for Rust
+  if executable('rustc')
+    Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+  endif
+
   " Commenter plugin
   Plug 'tomtom/tcomment_vim'
 
@@ -78,17 +83,26 @@ silent! if plug#begin(g:plugin_dir)
   Plug 'thinca/vim-qfreplace', { 'on': 'Qfreplace' }
 
   " A code-completion engine for Vim
-  Plug 'Valloric/YouCompleteMe', { 'do': 'EXTRA_CMAKE_ARGS=\"-DCMAKE_BUILD_TYPE=Release\" python ./install.py --clang-completer --system-libclang --system-boost',
-                                 \ 'on': [] }
+  " let ycm_flags = "--clang-completer"
+  " if executable("cargo") && executable("rustc")
+  "   let ycm_flags += " --racer-completer"
+  " endif
+  " Plug 'Valloric/YouCompleteMe', { 'do': 'EXTRA_CMAKE_ARGS=\"-DCMAKE_BUILD_TYPE=Release\" python2 ./install.py ' . ycm_flags,
+  "                                \ 'on': [] }
 
   " Enhanced syntax highlighting for C++
   Plug 'octol/vim-cpp-enhanced-highlight'
 
   " Lazy load UltiSnips and YouCompleteMe
   function! Load_YCM_US ()
-    call plug#load('ultisnips', 'YouCompleteMe')
-      \ | call youcompleteme#Enable()
-      \ | echo 'YouCompleteMe & UltiSnips enabled'
+    " TODO: load plugins asynchronously
+    " let vim = rpcstart('nvim', ['--embed'])
+    " call rpcrequest(vim, "vim_command", "call plug#load('ultisnips', 'YouCompleteMe') | call youcompleteme#Enable() | echo 'YouCompleteMe & UltiSnips enabled' ")
+    " call plug#load('ultisnips', 'YouCompleteMe')
+    call plug#load('ultisnips')
+    " call youcompleteme#Enable()
+    " echo 'YouCompleteMe & UltiSnips enabled'
+    echo 'UltiSnips enabled'
   endfunction
 
   augroup load_us_ycm
@@ -96,6 +110,14 @@ silent! if plug#begin(g:plugin_dir)
     autocmd FileType snippets call Load_YCM_US() | autocmd! load_us_ycm
     autocmd InsertEnter * call Load_YCM_US() | autocmd! load_us_ycm
   augroup END
+
+  Plug 'autozimu/LanguageClient-neovim', {
+      \ 'branch': 'next',
+      \ 'do': 'bash install.sh',
+      \ }
+  Plug 'roxma/nvim-completion-manager'
+  Plug 'roxma/ncm-clang'
+  Plug 'w0rp/ale'
 " }}}
 
 " Miscellaneous plugins {{{

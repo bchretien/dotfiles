@@ -68,6 +68,9 @@ set nospell
 " Allow buffer switching without saving
 set hidden
 
+" Insert just one space after a '.', '?' and '!' with a join command
+set nojoinspaces
+
 " Splitting style
 set splitbelow
 set splitright
@@ -89,6 +92,15 @@ set tabstop=2
 
 " Add <> to matchpairs
 set mps+=<:>
+
+" Disable some stock vim options
+let g:loaded_vimballPlugin = 1
+let g:loaded_netrwPlugin = 1
+let g:loaded_2html_plugin = 1
+let g:loaded_tutor_mode_plugin = 1
+let g:loaded_zipPlugin = 1
+let g:loaded_tarPlugin = 1
+let g:loaded_gzip = 1
 
 " Swap, backup, undo {{{
   " Disable swap files
@@ -431,6 +443,9 @@ augroup vimrc_help
   autocmd BufEnter *.txt call s:helptab()
 augroup END
 
+" Treat PKGBUILD as shell scripts
+au BufNewFile,BufRead PKGBUILD set filetype=sh
+
 " Don't show tabs/trailing whitespaces in man pages
 autocmd FileType man set nolist
 
@@ -464,6 +479,13 @@ augroup END
 " Fix Python/CMake comments style for UltiSnips
 autocmd FileType python set comments=b:#
 autocmd FileType cmake set comments=b:#
+
+" Add comment on newline when dealing with doxygen comments
+autocmd FileType c,cpp,cuda setlocal formatoptions+=r
+autocmd FileType c,cpp,cuda setlocal formatoptions+=c
+autocmd FileType c,cpp,cuda setlocal formatoptions+=o
+autocmd FileType c,cpp,cuda setlocal comments-=://
+autocmd FileType c,cpp,cuda setlocal comments+=:///
 " }}}
 " ============================================================================
 " Mappings {{{
@@ -557,10 +579,25 @@ nnoremap <silent> ]q :cnext<CR>
 nnoremap <silent> [q :cprevious<CR>
 nnoremap <silent> ]l :lnext<CR>
 nnoremap <silent> [l :lprevious<CR>
+
+" Backspace ---> ^
+nnoremap <silent> <BS> ^
 " }}}
 " ============================================================================
 " Plugins {{{
 " ============================================================================
+  " ale {{{
+  if isdirectory(s:plugin_dir . "ale")
+    let g:ale_linters = {
+        \   'cpp': ['clang'],
+        \}
+    autocmd BufEnter *.cpp,*.h,*.hpp,*.hxx let g:ale_cpp_clang_options = join(ncm_clang#compilation_info()['args'], ' ')
+
+    " (optional, for completion performance) run linters only when I save files
+    let g:ale_lint_on_text_changed = 'never'
+    let g:ale_lint_on_enter = 0
+  endif
+  " }}}
   " auto-pairs {{{
   if isdirectory(s:plugin_dir . "auto-pairs")
     let g:AutoPairs = {'[':']', '{':'}',"'":"'",'"':'"', '`':'`'}
@@ -585,6 +622,12 @@ nnoremap <silent> [l :lprevious<CR>
     let g:DoxygenToolkit_blockHeader=""
     let g:DoxygenToolkit_blockFooter=""
     let g:DoxygenToolkit_authorName=$FULLNAME
+  endif
+  " }}}
+  " editorconfig-vim {{{
+  if isdirectory(s:plugin_dir . "editorconfig-vim")
+    " Disable for remote files, fugitive...
+    let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
   endif
   " }}}
   " fzf.vim {{{
@@ -726,6 +769,11 @@ nnoremap <silent> [l :lprevious<CR>
     " Ag + qfreplace
     command! -bang -nargs=* Buf call <sid>fzf_buffers(s:w(<bang>0))
     nnoremap <c-@> :Buf<cr>
+
+    " Ctrl-Space to see buffers
+    " Note: <c-space> seen as <c-@> by neovim.
+    " See: https://github.com/neovim/neovim/issues/2782
+    nnoremap <c-space> :Buffers<cr>
   endif
   " }}}
   " gitv {{{
@@ -870,6 +918,23 @@ nnoremap <silent> [l :lprevious<CR>
       autocmd FileType python nnoremap <Leader>r :RunIPython<cr>
     endif
   " }}}
+  " nvim-completion-manager {{{
+    if isdirectory(s:plugin_dir . "nvim-completion-manager")
+      " don't give |ins-completion-menu| messages.  For example,
+      " '-- XXX completion (YYY)', 'match 1 of 2', 'The only match',
+      set shortmess+=c
+    endif
+  " }}}
+  " rust.vim {{{
+    if isdirectory(s:plugin_dir . "rust.vim")
+      let g:rustc_path = "/usr/bin/rustc"
+      let g:rust_fold = 2
+      let g:rust_recommended_style = 0
+      if executable("rustfmt")
+        let g:rustfmt_autosave = 1
+      endif
+    endif
+  " }}}
   " startify {{{
     if isdirectory(s:plugin_dir . "vim-startify")
       " Helper function to center header
@@ -934,6 +999,13 @@ nnoremap <silent> [l :lprevious<CR>
       " map to <Leader>cf in C++ code
       autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
       autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
+
+      let g:clang_format#code_style = "google"
+
+      let g:clang_format#style_options = {
+            \ 'BreakBeforeBraces' : 'Allman',
+            \ 'AllowShortFunctionsOnASingleLine' : 'Empty',
+            \ }
     endif
   " }}}
   " vim-commentary {{{
@@ -943,6 +1015,9 @@ nnoremap <silent> [l :lprevious<CR>
       nmap <Leader>cc       gc
       vmap <Leader>c<Space> gcc
       vmap <Leader>cc       gc
+
+      " Disable text objects (conflicts with textobj-word-column.vim)
+      let g:tcommentTextObjectInlineComment = ''
     endif
   " }}}
   " vim-easy-align {{{
@@ -987,6 +1062,11 @@ nnoremap <silent> [l :lprevious<CR>
     augroup END
 
     nnoremap <silent> <M-Tab> :silent! FSHere<CR>
+  endif
+  " }}}
+  " vim-markdown {{{
+  if isdirectory(s:plugin_dir . "vim-markdown")
+    let g:markdown_folding = 1
   endif
   " }}}
   " vim-multiple-cursors {{{
@@ -1070,8 +1150,15 @@ nnoremap <silent> [l :lprevious<CR>
       let g:vimtex_view_general_options = '--unique @pdf\#src:@tex:@line:@col'
       let g:vimtex_view_general_options_latexmk = '--unique'
 
+      let g:vimtex_quickfix_ignore_all_warnings = 0
+      let g:vimtex_quickfix_mode = 2
+
       let g:vimtex_complete_enabled = 1
       let g:ycm_collect_identifiers_from_tags_files = 0
+
+      if executable('nvr') == 1
+        let g:vimtex_latexmk_progname = 'nvr'
+      endif
 
       if !exists('g:ycm_semantic_triggers')
         let g:ycm_semantic_triggers = {}
