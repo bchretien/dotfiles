@@ -387,16 +387,6 @@ function! s:DeleteInactiveBufs()
 endfunction
 command! Bdi :call s:DeleteInactiveBufs()
 
-" Formatting function
-function! s:Format()
-  if &ft == 'json'
-    %!python -m json.tool
-  elseif &ft == 'cpp' || &ft == 'c'
-    ClangFormat
-  endif
-endfunction
-command! Format :call s:Format()
-
 function! s:StartProfile()
   echomsg "Saving log profile to /tmp/nvim_profile.log"
   profile start /tmp/nvim_profile.log
@@ -580,6 +570,9 @@ nnoremap <silent> [q :cprevious<CR>
 nnoremap <silent> ]l :lnext<CR>
 nnoremap <silent> [l :lprevious<CR>
 
+" File formatting
+nnoremap <silent> <Leader>cf :Autoformat<CR>
+
 " Backspace ---> ^
 nnoremap <silent> <BS> ^
 " }}}
@@ -591,7 +584,6 @@ nnoremap <silent> <BS> ^
     let g:ale_linters = {
         \   'cpp': ['clang'],
         \}
-    autocmd BufEnter *.cpp,*.h,*.hpp,*.hxx let g:ale_cpp_clang_options = join(ncm_clang#compilation_info()['args'], ' ')
 
     " (optional, for completion performance) run linters only when I save files
     let g:ale_lint_on_text_changed = 'never'
@@ -603,6 +595,23 @@ nnoremap <silent> <BS> ^
     let g:AutoPairs = {'[':']', '{':'}',"'":"'",'"':'"', '`':'`'}
     let g:AutoPairsFlyMode = 0
     let g:AutoPairsMultilineClose = 0
+  endif
+  " }}}
+  " deoplete {{{
+  if isdirectory(s:plugin_dir . "deoplete.nvim")
+    let g:deoplete#enable_at_startup = 1
+    let g:deoplete#auto_complete_start_length = 2
+
+    call deoplete#custom#source('LanguageClient',
+                \ 'min_pattern_length',
+                \ 2)
+
+    " Disable the candidates in Comment/String syntaxes.
+    call deoplete#custom#source('_',
+                \ 'disabled_syntaxes', ['Comment', 'String'])
+
+    " <TAB>: completion.
+    inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
   endif
   " }}}
   " DoxygenToolkit.vim {{{
@@ -622,12 +631,6 @@ nnoremap <silent> <BS> ^
     let g:DoxygenToolkit_blockHeader=""
     let g:DoxygenToolkit_blockFooter=""
     let g:DoxygenToolkit_authorName=$FULLNAME
-  endif
-  " }}}
-  " editorconfig-vim {{{
-  if isdirectory(s:plugin_dir . "editorconfig-vim")
-    " Disable for remote files, fugitive...
-    let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
   endif
   " }}}
   " fzf.vim {{{
@@ -662,7 +665,7 @@ nnoremap <silent> <BS> ^
     endfunction
 
     function! s:w(bang)
-      return a:bang ? {} : copy(get(g:, 'fzf_layout', g:fzf#vim#default_layout))
+      return a:bang ? {} : copy(get(g:, 'fzf_layout', g:fzf#wrap()))
     endfunction
 
     function! s:expect()
@@ -776,11 +779,19 @@ nnoremap <silent> <BS> ^
     nnoremap <c-space> :Buffers<cr>
   endif
   " }}}
-  " gitv {{{
-    if isdirectory(s:plugin_dir . "gitv")
-      nmap <leader>gv :Gitv --all<cr>
-      nmap <leader>gV :Gitv! --all<cr>
-      vmap <leader>gV :Gitv! --all<cr>
+  " LanguageClient-neovim {{{
+    if isdirectory(s:plugin_dir . "LanguageClient-neovim")
+      let g:LanguageClient_serverCommands = {
+          \ 'rust': ['/usr/bin/rustup', 'run', 'stable', 'rls'],
+          \ 'cpp': ['clangd'],
+          \ 'c': ['clangd'],
+          \ }
+      let g:LanguageClient_diagnosticsEnable = 1 " enable gutter, highlight and quickfix list
+
+      nnoremap <F5> :call LanguageClient_contextMenu()<CR>
+      nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+      nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+      nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
     endif
   " }}}
   " lightline.vim {{{
@@ -873,68 +884,6 @@ nnoremap <silent> <BS> ^
             \ 'right': [ [ 'close' ] ] }
     endif
   " }}}
-  " neomake {{{
-    if isdirectory(s:plugin_dir . "neomake") || isdirectory(s:plugin_dir . "vim-dispatch")
-      let g:neomake_error_sign = {
-            \ 'text': '>>',
-            \ 'texthl': 'ErrorMsg',
-            \ }
-      let g:neomake_warning_sign = {
-            \ 'text': '>>',
-            \ 'texthl': 'WarningMsg',
-            \ }
-
-      let g:neomake_open_list = 1
-
-      " Add clang-tidy support
-      let g:neomake_c_clangtidy_args_conf = ['-p', '_build']
-
-      let g:neomake_tex_proselint_maker = {
-          \ 'exe': 'proselint',
-          \ 'errorformat': '%f:%l:%c: %m',
-          \ }
-
-      " Run make
-      nmap <Leader>b :Neomake!<CR>
-    endif
-  " }}}
-  " neoterm {{{
-    if isdirectory(s:plugin_dir . "neoterm")
-      let g:neoterm_size = 15
-      let g:neoterm_position = "horizontal"
-      let g:neoterm_keep_term_open = 1
-
-      function! s:RunIPython(...)
-        if g:neoterm.has_any()
-          silent! T %reset -f
-        else
-          let cmd = "ipython -i --no-banner --no-confirm-exit --quick --quiet"
-          silent! call neoterm#do(cmd)
-        endif
-        let cmd = '%run ' . join(a:000, ' ') . ' ' . expand('%')
-        silent! call neoterm#do(cmd)
-      endfunction
-      command! -nargs=* RunIPython call s:RunIPython(expand(<q-args>))
-      autocmd FileType python nnoremap <Leader>r :RunIPython<cr>
-    endif
-  " }}}
-  " nvim-completion-manager {{{
-    if isdirectory(s:plugin_dir . "nvim-completion-manager")
-      " don't give |ins-completion-menu| messages.  For example,
-      " '-- XXX completion (YYY)', 'match 1 of 2', 'The only match',
-      set shortmess+=c
-    endif
-  " }}}
-  " rust.vim {{{
-    if isdirectory(s:plugin_dir . "rust.vim")
-      let g:rustc_path = "/usr/bin/rustc"
-      let g:rust_fold = 2
-      let g:rust_recommended_style = 0
-      if executable("rustfmt")
-        let g:rustfmt_autosave = 1
-      endif
-    endif
-  " }}}
   " startify {{{
     if isdirectory(s:plugin_dir . "vim-startify")
       " Helper function to center header
@@ -994,31 +943,12 @@ nnoremap <silent> <BS> ^
       augroup end
     endif
   " }}}
-  " vim-clang-format {{{
-    if isdirectory(s:plugin_dir . "vim-clang-format")
-      " map to <Leader>cf in C++ code
-      autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
-      autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
-
-      let g:clang_format#code_style = "google"
-
-      let g:clang_format#style_options = {
-            \ 'BreakBeforeBraces' : 'Allman',
-            \ 'AllowShortFunctionsOnASingleLine' : 'Empty',
-            \ }
+  " vim-autoformat {{{
+  if isdirectory(s:plugin_dir . "vim-autoformat")
+    if executable('rustfmt-nightly')
+      let g:formatdef_rustfmt = "rustfmt-nightly"
     endif
-  " }}}
-  " vim-commentary {{{
-    if isdirectory(s:plugin_dir . "vim-commentary") || isdirectory(s:plugin_dir . "tcomment_vim")
-      " For transition from nerdcommenter
-      nmap <Leader>c<Space> gcc
-      nmap <Leader>cc       gc
-      vmap <Leader>c<Space> gcc
-      vmap <Leader>cc       gc
-
-      " Disable text objects (conflicts with textobj-word-column.vim)
-      let g:tcommentTextObjectInlineComment = ''
-    endif
+  endif
   " }}}
   " vim-easy-align {{{
     if isdirectory(s:plugin_dir . "vim-easy-align")
@@ -1073,10 +1003,6 @@ nnoremap <silent> <BS> ^
   if isdirectory(s:plugin_dir . "vim-multiple-cursors")
     " Called once right before you start selecting multiple cursors
     function! Multiple_cursors_before()
-      if exists("g:loaded_youcompleteme")
-        let s:old_ycm_whitelist = g:ycm_filetype_whitelist
-        let g:ycm_filetype_whitelist = {}
-      endif
       " See: https://github.com/terryma/vim-multiple-cursors/pull/185
       if isdirectory(s:plugin_dir . "targets.vim")
         xnoremap <buffer> i i
@@ -1101,12 +1027,6 @@ nnoremap <silent> <BS> ^
     let g:multi_cursor_exit_from_insert_mode = 0
     let g:multi_cursor_quit_key = ''
   endif
-  " }}}
-  " vim-notes {{{
-    if isdirectory(s:plugin_dir . "vim-notes")
-      let g:notes_directories=["~/.local/share/nvim/notes"]
-      autocmd BufNewFile,BufRead *.note set filetype=notes
-    endif
   " }}}
   " vim-online-thesaurus {{{
     if isdirectory(s:plugin_dir . "vim-online-thesaurus")
@@ -1177,15 +1097,12 @@ nnoremap <silent> <BS> ^
       autocmd FileType tex nnoremap <silent> <2-LeftMouse> :VimtexView<CR>
     endif
   " }}}
-  " YouCompleteMe {{{
-    if isdirectory(s:plugin_dir . "YouCompleteMe")
-      let g:ycm_path_to_python_interpreter = '/usr/bin/python'
-      let g:ycm_key_list_select_completion = ['<Down>']
-      " let g:ycm_key_invoke_completion = '<S-Space>'
-      let g:ycm_key_invoke_completion = '<C-y>'
-      let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-      let g:ycm_show_diagnostics_ui = 0
-      let g:ycm_filepath_completion_use_working_dir = 1
+  " zeavim.vim {{{
+    if isdirectory(s:plugin_dir . "zeavim.vim")
+      " Disable default mappings
+      let g:zv_disable_mapping = 1
+
+      autocmd FileType python nnoremap <silent><buffer> K <Plug>Zeavim
     endif
   " }}}
 " }}}
