@@ -46,6 +46,7 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
 fi
 
 if [[ -d  "${HOME}/.tmuxifier" && $(command -v tmuxifier >/dev/null 2>&1) ]]; then
+  # Source tmuxifier
   eval "$(tmuxifier init -)"
   alias mux="tmuxifier"
 fi

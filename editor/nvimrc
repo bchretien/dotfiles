@@ -699,7 +699,7 @@ nnoremap <silent> <BS> ^
 
     function! s:fzf_ag(query, ...)
       let opts={
-            \ 'source':  printf('ag --nogroup --column --color "%s"',
+            \ 'source':  printf('rg --no-heading --column --color always "%s"',
             \                   escape(empty(a:query) ? '^(?=.)' : a:query, '"\')),
             \ 'sink*':    function('s:fzf_ag_handler'),
             \ 'options': '--ansi --delimiter : --nth 4.. --prompt "Ag> " '.

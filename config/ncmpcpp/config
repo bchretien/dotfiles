@@ -15,8 +15,8 @@ visualizer_look = ⚫│
 song_columns_list_format = "(20)[yellow]{a} (3f)[blue]{n} (40)[white]{t|f} (15)[blue]{b} (4f)[cyan]{l}"
 now_playing_prefix = "$b"
 now_playing_suffix = "$/b"
-playlist_display_mode = "columns" (classic/columns)
-ask_before_clearing_playlists ) = "yes"
+playlist_display_mode = "columns"
+ask_before_clearing_playlists = "yes"
 autocenter_mode = "no"
 centered_cursor = "yes"
 cyclic_scrolling = "yes"
@@ -37,11 +37,12 @@ display_volume_level = "yes"
 
 # Browser
 browser_playlist_prefix = "$2plist »$9 "
-browser_display_mode = "columns" (classic/columns)
+browser_display_mode = "columns"
 
 # Colors
 active_column_color = "blue"
 active_window_border = "blue"
+window_border_color = "blue"
 color1 = "default"
 color2 = "green"
 discard_colors_if_item_is_selected = "yes"
@@ -58,11 +59,12 @@ volume_color = "cyan"
 
 # Others
 song_window_title_format = "MPD: {%a > }{%t}{ [%b{ Disc %d}]}|{%f}"
-search_engine_display_mode = "columns" (classic/columns)
+search_engine_display_mode = "columns"
 follow_now_playing_lyrics = "yes"
 #display_screens_numbers_on_start = "yes"
 
 # Fix for mopidy + spotify
 mpd_connection_timeout = 10
+mpd_port = 49000
 
 # vim: set ts=2 sw=2 tw=0 :

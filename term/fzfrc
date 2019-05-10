@@ -1,6 +1,6 @@
 #!/usr/bin/sh
-if [ -f /etc/profile.d/fzf.zsh ]; then
-    source /etc/profile.d/fzf.zsh
+if [ -f /usr/share/fzf/completion.zsh ]; then
+    source /usr/share/fzf/completion.zsh
 fi
 
 

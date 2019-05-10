@@ -22,7 +22,7 @@ export VISUAL='vim'
 export MAIL="/var/mail/$USER"
 
 # Find the first available terminal
-term_arr=("termite" "urxvt" "terminator" "gnome-terminal" "xterm")
+term_arr=("alacritty" "termite" "urxvt" "terminator" "gnome-terminal" "xterm")
 for t in "${term_arr[@]}"
 do
   if command -v $t >/dev/null; then
@@ -42,16 +42,25 @@ if [ "$TMUX" != "" ]; then
   [[ $- == *i* ]] && stty -ixon
 fi
 
-apt_pref='apt-get'
+# Force unicode in tmux
+alias tmux="tmux -u"
 
-# Python
-export PYTHONSTARTUP=$HOME/.pythonrc.py
+# MPD port
+export MPD_PORT=49000
+
+
+apt_pref='apt-get'
 
 # Useful aliases
 alias m="make -j8"
+alias n="ninja -j8"
 alias v="valgrind --tool=memcheck"
+alias open="xdg-open"
+alias rm="rm -I"
 # Useful for use with synctex
 alias vimtex='vim --servername LATEX'
+alias nvimtex='NVIM_LISTEN_ADDRESS=/tmp/nvimtex.sock nvim'
+alias ncmpcpp="ncmpcpp -b ~/.config/ncmpcpp/bindings"
 
 # Enable GCC coloring (GCC >= 4.9)
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
@@ -69,6 +78,11 @@ SAVEHIST=4000
 
 # Watch people logging on the machine (except the current user)
 watch=(notme)
+
+# tmuxifier
+if [[ -d  "${HOME}/.tmuxifier" ]]; then
+  export PATH="$HOME/.tmuxifier/bin:$PATH"
+fi
 
 # Load XDG parameters
 if [ -f  "~/.config/user-dirs.dirs" ]; then
