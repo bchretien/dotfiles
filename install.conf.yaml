@@ -3,16 +3,9 @@
 #######################################################################
 
 - aliases:
-    # Install vim plugins
-    - &vim_plugins
-      command: vim -Nu ~/.vimrc.plugins +PlugInstall
-      stdin: true
-      stdout: true
-      stderr: true
-
     # Install neovim plugins
     - &nvim_plugins
-      command: nvim -u ~/.config/nvim/plugins.vim +PlugInstall
+      command: nvim -u ~/.config/nvim/init.lua +PaqInstall
       stdin: true
       stdout: true
       stderr: true
@@ -49,24 +42,13 @@
     ~/.emacs.d: editor/emacs.d/
     ~/.spacemacs: editor/spacemacs
     # neovim
-    ~/.config/nvim/init.vim: editor/nvimrc
-    ~/.config/nvim/plugins.vim: editor/nvimrc.plugins
-    ~/.local/share/nvim/autoload/plug.vim:
+    ~/.config/nvim/init.lua: editor/init.lua
+    ~/.local/share/nvim/site/pack/paqs/start/paq-nvim:
       create: true
-      path: editor/vim/autoload/plug.vim
+      path: editor/nvim/paq-nvim
     ~/.config/nvim/custom_snippets:
       create: true
       path: editor/custom_snippets/
-    ~/.ycm_extra_conf.py: editor/ycm_extra_conf.py
-    # vim
-    ~/.vimrc: editor/vimrc
-    ~/.vimrc.plugins: editor/vimrc.plugins
-    ~/.vim/autoload/plug.vim:
-      create: true
-      path: editor/vim/autoload/plug.vim
-    ~/.vim/after/compiler/gcc.vim:
-      create: true
-      path: editor/vim/after/compiler/gcc.vim
     ~/.vim/custom_snippets:
       create: true
       path: editor/custom_snippets/
@@ -99,6 +81,9 @@
     ~/.zprofile: term/zsh/zprofile
     ~/.zprofile.local: term/zsh/zprofile.local
     # Special case: ~/.config
+    ~/.config/alacritty/alacritty.yml:
+      create: true
+      path: term/alacritty.yml
     ~/.config/fontconfig:
       create: true
       path: config/fontconfig/
@@ -114,6 +99,9 @@
     ~/.config/ranger:
       create: true
       path: config/ranger/
+    ~/.config/starship/startship.toml:
+      create: true
+      path: term/starship.toml
     ~/.config/termite:
       create: true
       path: config/termite/
@@ -121,5 +109,4 @@
 - shell:
     - fc-cache -vf ~/.fonts # load fonts
     - mkdir -p ~/.ssh 2> /dev/null
-    - *vim_plugins
     - *nvim_plugins

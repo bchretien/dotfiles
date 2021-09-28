@@ -10,12 +10,6 @@ alias v="valgrind --tool=memcheck --track-origins=yes  --show-reachable=yes --er
 alias lf="ls -hltra"
 alias cls='printf "\033c"' # clear screen
 
-alias rm="trash"
-if ! type "trash" > /dev/null; then
-  echo "trash not installed. Falling back to actual rm."
-  alias rm="rm"
-fi
-
 export ALTERNATE_EDITOR="" # Should start emacs --daemon if emacsclient runs without one.
 alias e='emacsclient -t'
 alias ec='emacsclient -c'
@@ -45,6 +39,11 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
+if command -v starship >/dev/null 2>&1; then
+  export STARSHIP_CONFIG=~/.config/starship/starship.toml
+  eval "$(starship init zsh)"
+fi
+
 if [[ -d  "${HOME}/.tmuxifier" && $(command -v tmuxifier >/dev/null 2>&1) ]]; then
   # Source tmuxifier
   eval "$(tmuxifier init -)"
@@ -71,4 +70,8 @@ bindkey '^Z' fancy-ctrl-z
 # Source fzf after prezto with vi mode
 if [ -f ~/.fzfrc ]; then
   source ~/.fzfrc
+fi
+
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
 fi

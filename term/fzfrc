@@ -79,14 +79,14 @@ bindkey '^r' fh
 # TODO: check if still required
 unalias j &>/dev/null
 j() {
-  if ! command -v fasd_cd >/dev/null 2>&1; then
-    exit
+  if ! command -v zoxide >/dev/null 2>&1; then
+    return
   fi
 
   if [[ -z "$*" ]]; then
-    cd "$(fasd_cd -d -l 2>&1 | sed -n 's/^[ 0-9.,]*//p' | fzf-tmux)"
+    zi
   else
-    fasd_cd -d "$@"
+    z "$@"
   fi
 }
 

@@ -31,3 +31,6 @@
 [submodule "term/tmuxifier"]
 	path = term/tmuxifier
 	url = https://github.com/jimeh/tmuxifier.git
+[submodule "editor/nvim/paq-nvim"]
+	path = editor/nvim/paq-nvim
+	url = https://github.com/savq/paq-nvim

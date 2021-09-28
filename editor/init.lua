@@ -14,7 +14,15 @@ local function script_path()
 end
 local nvim_dir = script_path()
 
-local plugins_dir = os.getenv("HOME") .. '/.local/share/nvim/site/pack/paqs/start/'
+-- Bootstrap packer.nvim
+local fn = vim.fn
+local plugins_dir = fn.stdpath('data')..'/site/pack/packer/start/'
+local opt_plugins_dir = fn.stdpath('data')..'/site/pack/packer/opt/'
+local install_path = plugins_dir .. 'packer.nvim'
+if fn.empty(fn.glob(install_path)) > 0 then
+  vim.api.nvim_echo({{'Installing packer.nvim', 'Type'}}, true, {})
+  fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+end
 
 local function opt(scope, key, value)
   scopes[scope][key] = value
@@ -25,6 +33,10 @@ local function map(mode, lhs, rhs, opts)
   local options = {noremap = true}
   if opts then options = vim.tbl_extend('force', options, opts) end
   vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+end
+
+local function binary_exists(name)
+  return os.execute('which -s ' .. name) == 0
 end
 
 -- Check if a file or directory exists in this path
@@ -47,47 +59,137 @@ local function isdir(path)
   return exists(path.."/")
 end
 
+local function has_plugin(name)
+  return isdir(plugins_dir .. name) or isdir(opt_plugins_dir .. name)
+end
+
+
+-- Save copied tables in `copies`, indexed by original table.
+function deepcopy(orig, copies)
+    copies = copies or {}
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        if copies[orig] then
+            copy = copies[orig]
+        else
+            copy = {}
+            copies[orig] = copy
+            for orig_key, orig_value in next, orig, nil do
+                copy[deepcopy(orig_key, copies)] = deepcopy(orig_value, copies)
+            end
+            setmetatable(copy, deepcopy(getmetatable(orig), copies))
+        end
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
+end
+
 -------------------- PLUGINS -------------------------------
-cmd 'packadd paq-nvim'               -- load the package manager
-local paq = require('paq-nvim').paq  -- a convenient alias
-paq {'savq/paq-nvim', opt = true}    -- paq-nvim manages itself
+cmd 'packadd packer.nvim' -- load the package manager
+packer = require 'packer'
+packer.init { disable_commands = false }
+packer.reset()
+
+packer.use {
+  'wbthomason/packer.nvim'
+}
 
 -- Edition plugins
-paq {'mg979/vim-visual-multi'}
-paq {'tpope/vim-surround'}
-paq {'justinmk/vim-sneak'}
-paq {'junegunn/vim-easy-align'} -- TODO: lazy loading
-paq {'sirver/ultisnips'} -- UltiSnips engine
-paq {'honza/vim-snippets'} -- Snippets
-paq {'jiangmiao/auto-pairs'} -- Auto-close feature for parentheses, brackets etc.
-paq {'nvim-treesitter/nvim-treesitter'}
+packer.use 'mg979/vim-visual-multi'
+packer.use 'tpope/vim-surround'
+packer.use 'ggandor/lightspeed.nvim'
+packer.use 'junegunn/vim-easy-align' -- TODO: lazy loading
+packer.use 'sirver/ultisnips' -- UltiSnips engine
+packer.use 'honza/vim-snippets' -- Snippets
+packer.use 'jiangmiao/auto-pairs' -- Auto-close feature for parentheses, brackets etc.
+packer.use 'nvim-treesitter/nvim-treesitter'
 
 -- Development plugins
-paq {'vim-scripts/DoxygenToolkit.vim'} -- TODO: lazy loading
-paq {'tomtom/tcomment_vim'} -- Commenter plugin
-paq {'Chiel92/vim-autoformat'} -- Integration with code formatters
-paq {'tpope/vim-fugitive'} -- Git wrapper
-paq {'dense-analysis/ale'} -- Asynchronous linting
-paq {'cespare/vim-toml'}
+packer.use {
+  'vim-scripts/DoxygenToolkit.vim',
+  ft = {'c', 'cpp'},
+  cmd = 'Dox',
+}
+
+packer.use 'tomtom/tcomment_vim' -- Commenter plugin
+packer.use 'Chiel92/vim-autoformat' -- Integration with code formatters
+packer.use 'tpope/vim-fugitive' -- Git wrapper
+packer.use 'dense-analysis/ale' -- Asynchronous linting
+packer.use {
+  'cespare/vim-toml',
+  ft = 'toml',
+}
 
 -- Completion plugins
--- paq {'shougo/deoplete-lsp'}
--- paq {'shougo/deoplete.nvim', hook = fn['remote#host#UpdateRemotePlugins']}
-paq {'hrsh7th/nvim-compe'}
-paq {'ervandew/supertab'} -- Perform all your Vim insert mode completions with Tab
+packer.use {
+  'hrsh7th/nvim-cmp',
+  requires = {
+    'hrsh7th/cmp-nvim-lsp',
+    'hrsh7th/cmp-buffer',
+    'hrsh7th/cmp-path',
+    'quangnguyen30192/cmp-nvim-ultisnips',
+  }
+}
+packer.use 'ervandew/supertab' -- Perform all your Vim insert mode completions with Tab
 
-paq {'neovim/nvim-lspconfig'}
-paq {'ojroques/nvim-lspfuzzy'}
+packer.use 'neovim/nvim-lspconfig'
+packer.use 'ojroques/nvim-lspfuzzy'
 
 -- Miscellaneous plugins
-paq {'junegunn/fzf'} -- TODO: do not install, check for system fzf
-paq {'junegunn/fzf.vim'}
+packer.use {
+  'nvim-telescope/telescope.nvim',
+  requires = {
+    'nvim-lua/plenary.nvim',
+    'nvim-lua/popup.nvim',
+    'nvim-lua/plenary.nvim',
+    'nvim-telescope/telescope-frecency.nvim',
+    'nvim-telescope/telescope-fzf-native.nvim',
+  },
+  -- FIXME: lazy loading
+  -- setup = [[require('config.telescope_setup')]],
+  -- config = [[require('config.telescope')]],
+  -- cmd = 'Telescope',
+  -- module = 'telescope',
+}
+
+packer.use  {
+  'nvim-telescope/telescope-frecency.nvim',
+  after = 'telescope.nvim',
+  requires = 'tami5/sql.nvim',
+}
+
+packer.use {
+  'nvim-telescope/telescope-fzf-native.nvim',
+  run = 'make',
+}
+
+packer.use {
+  'ahmedkhalf/project.nvim',
+  requires = 'nvim-telescope/telescope.nvim',
+}
+
+packer.use {
+  'folke/trouble.nvim',
+  requires = {
+    'kyazdani42/nvim-web-devicons',
+    'folke/lsp-colors.nvim',
+  },
+}
 
 -- Display plugins
-paq {'bchretien/vim-hybrid'} -- Color scheme
-paq {'glepnir/galaxyline.nvim'}
-paq {'mhinz/vim-signify'} -- Show a VCS diff using Vim's sign column
-paq {'mhinz/vim-startify'} -- Fancy start screen
+packer.use 'bchretien/vim-hybrid' -- Color scheme
+packer.use 'glepnir/galaxyline.nvim'
+packer.use {
+  'lewis6991/gitsigns.nvim',
+  requires = {
+    'nvim-lua/plenary.nvim'
+  },
+  tag = 'release'
+}
+
+packer.use 'mhinz/vim-startify' -- Fancy start screen
 
 -------------------- OPTIONS -------------------------------
 local indent = 2
@@ -304,9 +406,10 @@ map('v', '<leader>zz', [[<Esc>:%s/<c-r>=GetVisual()<cr>/]], {noremap = true})
 --                                Ale                                 --
 ------------------------------------------------------------------------
 
-if isdir(plugins_dir .. 'ale') then
+if has_plugin('ale') then
   g.ale_linters = {
     cpp = { 'clangtidy' },
+    python = { 'mypy', 'pyright', 'pyflakes', 'pylint' },
     lua = { 'luacheck' },
     rust = { 'analyzer' },
   }
@@ -322,7 +425,7 @@ end
 --                             auto-pairs                             --
 ------------------------------------------------------------------------
 
-if isdir(plugins_dir .. 'auto-pairs') then
+if has_plugin('auto-pairs') then
   g.AutoPairs = {
     ['['] = ']',
     ['{'] = '}',
@@ -338,7 +441,7 @@ end
 --                              deoplete                              --
 ------------------------------------------------------------------------
 
-if isdir(plugins_dir .. 'deoplete') then
+if has_plugin('deoplete') then
   g['deoplete#enable_at_startup'] = 1  -- enable deoplete at startup
   cmd 'call deoplete#custom#source("_", "min_pattern_length", 2)'
   -- cmd 'call deoplete#custom#source("LanguageClient", "min_pattern_length", 2)'
@@ -351,7 +454,7 @@ end
 --                         DoxygenToolkit.vim                         --
 ------------------------------------------------------------------------
 
-if isdir(plugins_dir .. 'DoxygenToolkit.vim') then
+if has_plugin('DoxygenToolkit.vim') then
   -- Use C++ here for /// doxygen doc, else /** */ is used.
   g.DoxygenToolkit_commentType = "C++"
   -- Leading character used for @brief, @param...
@@ -374,7 +477,7 @@ end
 --                              fzf.vim                               --
 ------------------------------------------------------------------------
 
-if isdir(plugins_dir .. 'fzf.vim') and #vim.fn.systemlist('which fzf') > 0 then
+if has_plugin('fzf.vim') and binary_exists('fzf') then
   -- Disable statusline overwriting
   g.fzf_nvim_statusline = 0
 
@@ -395,9 +498,10 @@ end
 --                          galaxyline.nvim                           --
 ------------------------------------------------------------------------
 
-if isdir(plugins_dir .. 'galaxyline.nvim') then
+if has_plugin('galaxyline.nvim') then
   local gl = require('galaxyline')
   local gls = gl.section
+  local glc = require('galaxyline.condition')
 
   local colors = {
     bg = '#1c1c1c',
@@ -470,9 +574,22 @@ if isdir(plugins_dir .. 'galaxyline.nvim') then
   gls.left[2] = {
     ViModeSep = {
       provider = function()
-        vim.cmd('hi GalaxyViModeSep guifg='..mode_color[vim.fn.mode()]..' guibg='..colors.bg)
+        vim.cmd('hi GalaxyViModeSep guifg='..mode_color[vim.fn.mode()]..' guibg='..colors.bg2)
         return ' '
       end,
+    },
+  }
+
+  gls.left[3] = {
+    FileName = {
+      -- provider = 'FileName',
+      provider = function()
+        name = string.lower(require('galaxyline.provider_fileinfo').filename_in_special_buffer())
+        if name == '' then return '(empty)' else return name end
+      end,
+      separator = ' ',
+      separator_highlight = {colors.bg2, colors.bg},
+      highlight = {colors.fg2, colors.bg2},
     },
   }
 
@@ -528,37 +645,66 @@ if isdir(plugins_dir .. 'galaxyline.nvim') then
   }
 end
 
+
 ------------------------------------------------------------------------
---                             nvim-compe                             --
+--                           gitsigns.nvim                            --
 ------------------------------------------------------------------------
 
-if isdir(plugins_dir .. 'nvim-compe') then
-  require'compe'.setup {
-    enabled = true;
-    debug = false;
-    min_length = 2;
-    preselect = 'disable'; -- 'enable', 'disable' or 'always';
-    -- throttle_time = ... number ...;
-    -- source_timeout = ... number ...;
-    -- incomplete_delay = ... number ...;
-    allow_prefix_unmatch = false;
+if has_plugin('gitsigns.nvim') then
+  vim.api.nvim_command[[autocmd ColorScheme * highlight GitSignsChange ctermbg=black ctermfg=24 guibg=none guifg=#5dade2]]
 
-    source = {
-      buffer = true;
-      nvim_lsp = true;
-      path = true;
-      ultisnips = true;
-      vsnip = false;
-      -- nvim_lua = { ... overwrite source configuration ... };
-    };
+  require('gitsigns').setup {
+    signs = {
+      add          = {hl = 'GitSignsAdd'   , text = '▋+', numhl='GitSignsAdd'   , linehl='GitSignsAdd'},
+      change       = {hl = 'GitSignsChange', text = '▋~', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
+      delete       = {hl = 'GitSignsDelete', text = '▋-', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
+      topdelete    = {hl = 'GitSignsDelete', text = '▋?', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
+      changedelete = {hl = 'GitSignsChange', text = '▋!', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
+    },
   }
+end
+
+------------------------------------------------------------------------
+--                          lightspeed.nvim                           --
+------------------------------------------------------------------------
+
+if has_plugin('lightspeed.nvim') then
+end
+
+------------------------------------------------------------------------
+--                             nvim-cmp                             --
+------------------------------------------------------------------------
+
+if has_plugin('nvim-cmp') then
+  local cmp = require'cmp'
+  cmp.setup({
+    preselect = cmp.PreselectMode.None,
+    snippet = {
+      expand = function(args)
+        -- For `ultisnips` user.
+        vim.fn["UltiSnips#Anon"](args.body)
+      end,
+    },
+    mapping = {
+      ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.close(),
+    },
+    sources = {
+      { name = 'nvim_lsp' },
+      { name = 'ultisnips' },
+      { name = 'buffer' },
+      { name = 'path' },
+    }
+  })
 end
 
 ------------------------------------------------------------------------
 --                              supertab                              --
 ------------------------------------------------------------------------
 
-if isdir(plugins_dir .. 'supertab') then
+if has_plugin('supertab') then
   g.SuperTabDefaultCompletionType = '<Tab>'
   g.SuperTabBackward = '<C-S-Tab>'
   g.SuperTabCrMapping = 1
@@ -568,7 +714,7 @@ end
 --                             ultisnips                              --
 ------------------------------------------------------------------------
 
-if isdir(plugins_dir .. 'ultisnips') then
+if has_plugin('ultisnips') then
   -- Trigger configuration.
   g.UltiSnipsExpandTrigger = "<tab>"
   g.UltiSnipsJumpForwardTrigger = "<tab>"
@@ -589,7 +735,7 @@ end
 --                           vim-easy-align                           --
 ------------------------------------------------------------------------
 
-if isdir(plugins_dir .. 'vim-easy-align') then
+if has_plugin('vim-easy-align') then
   -- Start interactive EasyAlign in visual mode
   map('v', '<enter>', '<Plug>(EasyAlign)')
 
@@ -621,12 +767,12 @@ end
 --                            vim-startify                            --
 ------------------------------------------------------------------------
 
-if isdir(plugins_dir .. 'vim-startify') then
+if has_plugin('vim-startify') then
   g.startify_files_number = 5
 
   g.startify_list_order = {{'-- Bookmarks --'}, 'bookmarks', {'-- Sessions --'}, 'sessions', {'-- Recent files --'}, 'files'}
-  g.startify_bookmarks = { nvim_dir .. '/init.lua' }
-  g.startify_session_dir = nvim_dir .. '/sessions'
+  g.startify_bookmarks = { nvim_dir .. 'init.lua' }
+  g.startify_session_dir = nvim_dir .. 'sessions'
 
   -- Skip list
   g.startify_skiplist = { '^/tmp' }
@@ -641,11 +787,14 @@ if isdir(plugins_dir .. 'vim-startify') then
   end
 
   local function CowSay()
-    local command = 'cowsay -f "$(ls /usr/share/cowsay/cows/ | grep -vE "head|sod|kiss|surg|tele" | sort -R | head -1)" "$(fortune -s)"'
-    local handle = io.popen(command, 'r')
-    local result = handle:read("*a")
-    handle:close()
-    return result
+    if binary_exists('cowsay') and binary_exists('fortune') then
+      local command = 'cowsay -f "$(ls /usr/share/cowsay/cows/ | grep -vE "head|sod|kiss|surg|tele" | sort -R | head -1)" "$(fortune -s)"'
+      local handle = io.popen(command, 'r')
+      local result = handle:read("*a")
+      handle:close()
+      return result
+    end
+    return ""
   end
 
   -- Call fortune and cowsay (if present)
@@ -656,7 +805,7 @@ end
 --                             vim-sneak                              --
 ------------------------------------------------------------------------
 
-if isdir(plugins_dir .. 'vim-sneak') then
+if has_plugin('vim-sneak') then
   -- Use Sneak as a minimalist alternative to EasyMotion
   g["sneak#streak"] = 1
 
@@ -680,37 +829,109 @@ if isdir(plugins_dir .. 'vim-sneak') then
 end
 
 ------------------------------------------------------------------------
+--                           telescope.nvim                           --
+------------------------------------------------------------------------
+
+if has_plugin('telescope.nvim') then
+  require'telescope'.setup({})
+
+  -- Modified version of the ivy theme
+  ivy_small = require('telescope.themes').get_ivy()
+  ivy_small['layout_config']['height'] = 10
+
+  -- Ctrl-P
+  map('n', '<C-p>', ':lua require("telescope.builtin").find_files(ivy_small)<cr>')
+
+  -- Ctrl-Space to see buffers
+  -- FIXME: Ctrl-Space not working on OSX with tmux?!
+  map('n', '<C-space>', ':lua require("telescope.builtin").buffers(ivy_small)<cr>')
+
+  -- Grep-like search
+  -- map('n', '<leader>/', ':lua require("telescope.builtin").live_grep(ivy_small)<cr>', {noremap = true})
+  ivy_small_grep_string = deepcopy(ivy_small)
+  ivy_small_grep_string['path_display'] = { truncate = 70 }
+  ivy_small_grep_string['only_sort_text'] = true
+  ivy_small_grep_string['search'] = ""
+  map('n', '<leader>/', ':lua require("telescope.builtin").grep_string(ivy_small_grep_string)<cr>', {noremap = true})
+  map('v', '<leader>/', ':lua require("telescope.builtin").grep_string(ivy_small)<cr>', {noremap = true})
+
+  -- require'telescope.builtin'
+end
+
+------------------------------------------------------------------------
 --                             treesitter                             --
 ------------------------------------------------------------------------
 
-if isdir(plugins_dir .. 'nvim-treesitter') then
+if has_plugin('nvim-treesitter') then
   local ts = require 'nvim-treesitter.configs'
   ts.setup {ensure_installed = 'maintained', highlight = {enable = true}}
 
   opt('w', 'foldmethod', 'expr')
   opt('w', 'foldexpr', 'nvim_treesitter#foldexpr()')
   opt('w', 'foldenable', false)
+  opt('w', 'foldnestmax', 2)
+end
+
+------------------------------------------------------------------------
+--                            project.nvim                            --
+------------------------------------------------------------------------
+
+if has_plugin('project.nvim') then
+  require('project_nvim').setup {}
+
+  -- Enable support in telescope
+  require('telescope').load_extension('projects')
+end
+
+------------------------------------------------------------------------
+--                            trouble.nvim                            --
+------------------------------------------------------------------------
+
+if has_plugin('trouble.nvim') then
+  require('trouble').setup {
+    height = 10,
+  }
 end
 
 ------------------------------------------------------------------------
 --                                LSP                                 --
 ------------------------------------------------------------------------
 
-if isdir(plugins_dir .. 'nvim-lspconfig') then
+if has_plugin('nvim-lspconfig') then
   local lsp = require 'lspconfig'
+  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
   -- root_dir is where the LSP server will start: here at the project root otherwise in current folder
-  if #vim.fn.systemlist('which ccls') > 0 then
-    lsp.ccls.setup {root_dir = lsp.util.root_pattern('.git', fn.getcwd())}
-  elseif #vim.fn.systemlist('which clangd') > 0 then
-    lsp.clangd.setup {root_dir = lsp.util.root_pattern('.git', fn.getcwd())}
+  if binary_exists('ccls') then
+    lsp.ccls.setup {
+      root_dir = lsp.util.root_pattern('.git', fn.getcwd()),
+      capabilities = capabilities,
+    }
+  elseif binary_exists('clangd') then
+    lsp.clangd.setup {
+      root_dir = lsp.util.root_pattern('.git', fn.getcwd()),
+      capabilities = capabilities,
+    }
   end
 
-  if #vim.fn.systemlist('which pyls') > 0 then
-    lsp.pyls.setup {root_dir = lsp.util.root_pattern('.git', fn.getcwd())}
+  if lsp.pyright and binary_exists('pyright') then
+    lsp.pyright.setup {
+      root_dir = lsp.util.root_pattern('.git', fn.getcwd()),
+      capabilities = capabilities,
+    }
+  elseif lsp.pylsp and binary_exists('pylsp') then
+    lsp.pylsp.setup {
+      root_dir = lsp.util.root_pattern('.git', fn.getcwd()),
+      capabilities = capabilities,
+    }
+  elseif lsp.pyls and binary_exists('pyls') then
+    lsp.pyls.setup {
+      root_dir = lsp.util.root_pattern('.git', fn.getcwd()),
+      capabilities = capabilities,
+    }
   end
 
-  if #vim.fn.systemlist('which rust-analyzer') > 0 then
+  if binary_exists('rust-analyzer') then
     lsp.rust_analyzer.setup {
       cmd = { 'rust-analyzer' },
       root_dir = lsp.util.root_pattern('Cargo.toml', fn.getcwd()),
@@ -725,7 +946,7 @@ if isdir(plugins_dir .. 'nvim-lspconfig') then
         }
       }
     }
-  elseif #vim.fn.systemlist('which rls') > 0 then
+  elseif binary_exists('rls') then
     lsp.rls.setup {
       cmd = { 'rustup', 'run', 'nightly', 'rls' },
       root_dir = lsp.util.root_pattern('Cargo.toml', fn.getcwd()),
@@ -736,6 +957,7 @@ if isdir(plugins_dir .. 'nvim-lspconfig') then
           all_features = true,
         },
       },
+      capabilities = capabilities,
     }
   end
 
@@ -750,7 +972,7 @@ if isdir(plugins_dir .. 'nvim-lspconfig') then
   map('n', '<space>s', '<cmd>lua vim.lsp.buf.document_symbol()<CR>')
 end
 
-if isdir(plugins_dir .. 'nvim-lspfuzzy') then
+if has_plugin('nvim-lspfuzzy') then
   local lspfuzzy = require 'lspfuzzy'
   lspfuzzy.setup {}  -- Make the LSP client use FZF instead of the quickfix list
 end

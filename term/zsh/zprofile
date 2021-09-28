@@ -12,7 +12,9 @@ fi
 # run local .zprofile
 source ~/.zprofile.local
 
-run_process gpg-agent --daemon &>/dev/null
+if command_exists gpg-agent; then
+  run_process gpg-agent --daemon &>/dev/null
+fi
 
 # load keychain to manage SSH and GPG keys
 if command_exists keychain; then
