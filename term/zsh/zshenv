@@ -55,6 +55,7 @@ apt_pref='apt-get'
 alias m="make -j8"
 alias n="ninja -j8"
 alias v="valgrind --tool=memcheck"
+alias gitk="gitk --all"
 
 if command -v xdg-open >/dev/null; then
   alias open="xdg-open"

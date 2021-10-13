@@ -5,8 +5,13 @@ export BATTERY_ID=BAT1
 
 if [ -n "$DISPLAY" ]; then
   # Load .Xresources (if any)
-  [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
-  [[ -f ~/.config/xmodmap/conf ]] && xmodmap ~/.config/xmodmap/conf
+  if command_exists xrdb; then
+    [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
+  fi
+
+  if command_exists xmodmap; then
+    [[ -f ~/.config/xmodmap/conf ]] && xmodmap ~/.config/xmodmap/conf
+  fi
 fi
 
 # run local .zprofile

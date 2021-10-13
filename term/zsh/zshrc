@@ -1,5 +1,9 @@
 # -*- mode: sh -*-
 
+export LANG="en_US.UTF-8"
+export LANGUAGE="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+
 # My aliases
 alias make='nocorrect make'
 alias mv='nocorrect mv'       # no spelling correction on mv
@@ -72,6 +76,7 @@ if [ -f ~/.fzfrc ]; then
   source ~/.fzfrc
 fi
 
+PATH="${HOME}/.cargo/bin:${PATH}"
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
 fi

@@ -118,8 +118,11 @@
     # Fix permissions
     permission-reset = "!git diff -p -R | grep -E \"^(diff|(old|new) mode)\" | git apply"
 [core]
-	editor = vim
+	editor = nvim
 [diff]
 	wordRegex = [A-z0-9_\\.]+|[^[:space:]]
 [difftool.latex]
 	cmd = latexdiff "$LOCAL" "$REMOTE"
+[user]
+	name = Benjamin Chrétien
+	email = 2742231+bchretien@users.noreply.github.com

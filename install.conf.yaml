@@ -49,9 +49,6 @@
     ~/.config/nvim/custom_snippets:
       create: true
       path: editor/custom_snippets/
-    ~/.vim/custom_snippets:
-      create: true
-      path: editor/custom_snippets/
     # gui
     ~/.i3: gui/i3/
     ~/.themes: gui/themes/

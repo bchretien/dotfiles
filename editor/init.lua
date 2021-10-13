@@ -36,7 +36,7 @@ local function map(mode, lhs, rhs, opts)
 end
 
 local function binary_exists(name)
-  return os.execute('which -s ' .. name) == 0
+  return os.execute('type ' .. name .. ' &>/dev/null') == 0
 end
 
 -- Check if a file or directory exists in this path
@@ -65,7 +65,7 @@ end
 
 
 -- Save copied tables in `copies`, indexed by original table.
-function deepcopy(orig, copies)
+local function deepcopy(orig, copies)
     copies = copies or {}
     local orig_type = type(orig)
     local copy
@@ -108,9 +108,10 @@ packer.use 'nvim-treesitter/nvim-treesitter'
 
 -- Development plugins
 packer.use {
-  'vim-scripts/DoxygenToolkit.vim',
-  ft = {'c', 'cpp'},
-  cmd = 'Dox',
+  'kkoomen/vim-doge',
+  run = ':call doge#install()',
+  -- FIXME: lazy loading
+  -- cmd = 'DogeGenerate',
 }
 
 packer.use 'tomtom/tcomment_vim' -- Commenter plugin
@@ -135,6 +136,13 @@ packer.use {
 packer.use 'ervandew/supertab' -- Perform all your Vim insert mode completions with Tab
 
 packer.use 'neovim/nvim-lspconfig'
+packer.use {
+  -- FIXME: move back to glepnir as soon as he remaintains it
+  'tami5/lspsaga.nvim',
+  requires = {
+    'neovim/nvim-lspconfig'
+  }
+}
 packer.use 'ojroques/nvim-lspfuzzy'
 
 -- Miscellaneous plugins
@@ -672,6 +680,23 @@ if has_plugin('lightspeed.nvim') then
 end
 
 ------------------------------------------------------------------------
+--                            lspsaga.nvim                            --
+------------------------------------------------------------------------
+
+if has_plugin('lspsaga.nvim') then
+  local saga = require 'lspsaga'
+  saga.init_lsp_saga()
+
+  map('n', '<space>gh', '<cmd>lua require"lspsaga.provider".lsp_finder()<CR>', {noremap = false, silent = true})
+  map('n', '<leader>ca', '<cmd>lua require("lspsaga.codeaction").code_action()<CR>', {noremap = false, silent = true})
+  map('v', '<leader>ca', ':<C-U>lua require("lspsaga.codeaction").code_action()<CR>', {noremap = false, silent = true})
+  map('n', 'K', '<cmd>lua require("lspsaga.hover").render_hover_doc()<CR>', {noremap = false, silent = true})
+  map('n', 'gs', '<cmd>lua require("lspsaga.signaturehelp").signature_help()<CR>', {noremap = false, silent = true})
+  map('n', 'gr', '<cmd>lua require("lspsaga.rename").rename()<CR>', {noremap = false, silent = true})
+  map('n', '<leader>gd', '<cmd>lua require("lspsaga.provider").preview_definition()<CR>', {noremap = false, silent = true})
+end
+
+------------------------------------------------------------------------
 --                             nvim-cmp                             --
 ------------------------------------------------------------------------
 
@@ -690,6 +715,8 @@ if has_plugin('nvim-cmp') then
       ['<C-f>'] = cmp.mapping.scroll_docs(4),
       ['<C-Space>'] = cmp.mapping.complete(),
       ['<C-e>'] = cmp.mapping.close(),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }),
+      ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 's' }),
     },
     sources = {
       { name = 'nvim_lsp' },
@@ -729,6 +756,15 @@ if has_plugin('ultisnips') then
   g.UltiSnipsSnippetDirectories = {"UltiSnips", "custom_snippets"}
 
   g.ultisnips_python_style = "numpy"
+end
+
+
+------------------------------------------------------------------------
+--                              vim-doge                              --
+------------------------------------------------------------------------
+
+if has_plugin('vim-doge') then
+  g.doge_doc_standard_python = 'numpy'
 end
 
 ------------------------------------------------------------------------
@@ -854,8 +890,6 @@ if has_plugin('telescope.nvim') then
   ivy_small_grep_string['search'] = ""
   map('n', '<leader>/', ':lua require("telescope.builtin").grep_string(ivy_small_grep_string)<cr>', {noremap = true})
   map('v', '<leader>/', ':lua require("telescope.builtin").grep_string(ivy_small)<cr>', {noremap = true})
-
-  -- require'telescope.builtin'
 end
 
 ------------------------------------------------------------------------
@@ -890,6 +924,7 @@ end
 if has_plugin('trouble.nvim') then
   require('trouble').setup {
     height = 10,
+    mode = 'lsp_document_diagnostics',
   }
 end
 
@@ -961,15 +996,10 @@ if has_plugin('nvim-lspconfig') then
     }
   end
 
-  map('n', '<space>,', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>')
-  map('n', '<space>;', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>')
-  map('n', '<space>a', '<cmd>lua vim.lsp.buf.code_action()<CR>')
-  map('n', '<space>d', '<cmd>lua vim.lsp.buf.definition()<CR>')
-  map('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>')
-  map('n', '<space>h', '<cmd>lua vim.lsp.buf.hover()<CR>')
-  map('n', '<space>m', '<cmd>lua vim.lsp.buf.rename()<CR>')
-  map('n', '<space>r', '<cmd>lua vim.lsp.buf.references()<CR>')
-  map('n', '<space>s', '<cmd>lua vim.lsp.buf.document_symbol()<CR>')
+  map('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>')
+  map('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>')
+  map('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>')
+  map('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>')
 end
 
 if has_plugin('nvim-lspfuzzy') then
