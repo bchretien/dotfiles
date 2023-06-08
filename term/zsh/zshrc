@@ -71,12 +71,12 @@ fancy-ctrl-z () {
 zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
 
-# Source fzf after prezto with vi mode
-if [ -f ~/.fzfrc ]; then
-  source ~/.fzfrc
-fi
-
 PATH="${HOME}/.cargo/bin:${PATH}"
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
+fi
+
+# Source fzf after prezto with vi mode
+if [ -f ~/.fzfrc ]; then
+  source ~/.fzfrc
 fi

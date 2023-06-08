@@ -898,7 +898,7 @@ end
 
 if has_plugin('nvim-treesitter') then
   local ts = require 'nvim-treesitter.configs'
-  ts.setup {ensure_installed = 'maintained', highlight = {enable = true}}
+  ts.setup {ensure_installed = 'all', highlight = {enable = true}}
 
   opt('w', 'foldmethod', 'expr')
   opt('w', 'foldexpr', 'nvim_treesitter#foldexpr()')
@@ -924,7 +924,7 @@ end
 if has_plugin('trouble.nvim') then
   require('trouble').setup {
     height = 10,
-    mode = 'lsp_document_diagnostics',
+    mode = 'document_diagnostics',
   }
 end
 
@@ -934,7 +934,7 @@ end
 
 if has_plugin('nvim-lspconfig') then
   local lsp = require 'lspconfig'
-  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
   -- root_dir is where the LSP server will start: here at the project root otherwise in current folder
   if binary_exists('ccls') then
